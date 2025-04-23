@@ -1,0 +1,44 @@
+# macOS
+.DS_Store
+.AppleDouble
+.LSOverride
+Icon?
+._*
+.Spotlight-V100
+.Trashes
+*.swp
+*.swo
+*~
+
+# VSCode
+.vscode/
+*.code-workspace
+
+# iOS (Swift / Xcode)
+iOS/QuickBill/DerivedData/
+iOS/QuickBill/build/
+iOS/QuickBill/*.xcworkspace
+iOS/QuickBill/xcuserdata/
+iOS/QuickBill/*.xcuserstate
+iOS/QuickBill/*.xcodeproj/xcuserdata/
+iOS/QuickBill/*.xcodeproj/project.xcworkspace/
+iOS/QuickBill/*.moved-aside
+iOS/QuickBill/*.xcscmblueprint
+iOS/QuickBill/*.xcuserdatad
+iOS/QuickBill/.swiftpm/
+iOS/QuickBill/Package.resolved
+
+# Android (Kotlin / Android Studio)
+Android/QuickBill/.gradle/
+Android/QuickBill/.idea/
+Android/QuickBill/*.iml
+Android/QuickBill/local.properties
+Android/QuickBill/captures/
+Android/QuickBill/build/
+Android/QuickBill/.cxx/
+Android/QuickBill/.externalNativeBuild/
+Android/QuickBill/obj/
+
+# Temporary files and logs
+*.log
+*.hprof
