@@ -17,9 +17,9 @@ struct MenuView: View {
                     Text("Smart billing made simple.")
                     Text("Everything your business needs, in one place.")
                 }.padding(.bottom, 50).foregroundColor(.gray)
-                NavigationLink {
+                NavigationLink(destination:{
                     // TODO: Add sign in view
-                } label: {
+                }){
                     Text("Sign in to QuickBill")
                         .foregroundColor(.black)
                         .font(.headline)
@@ -30,9 +30,9 @@ struct MenuView: View {
                         .cornerRadius(50)
                         .padding(.vertical, 20)
                 }
-                NavigationLink {
+                NavigationLink(destination:{
                     // TODO: Add sign up view
-                } label: {
+                }){
                     Text("Sign up")
                         .foregroundColor(.black)
                         .font(.headline)
