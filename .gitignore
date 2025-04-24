@@ -27,6 +27,7 @@ iOS/QuickBill/Package.resolved
 *.xcuserstate
 *.xcworkspace
 *.moved-aside
+GoogleService-Info.plist
 
 # Android (Kotlin / Android Studio)
 Android/QuickBill/.gradle/
