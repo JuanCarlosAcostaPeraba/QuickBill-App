@@ -18,7 +18,7 @@ struct MenuView: View {
                     Text("Everything your business needs, in one place.")
                 }.padding(.bottom, 50).foregroundColor(.gray)
                 NavigationLink {
-                    
+                    // TODO: Add sign in view
                 } label: {
                     Text("Sign in to QuickBill")
                         .foregroundColor(.black)
@@ -31,7 +31,7 @@ struct MenuView: View {
                         .padding(.vertical, 20)
                 }
                 NavigationLink {
-                    
+                    // TODO: Add sign up view
                 } label: {
                     Text("Sign up")
                         .foregroundColor(.black)
