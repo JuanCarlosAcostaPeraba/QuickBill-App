@@ -3,7 +3,7 @@
 <p align="center">
 	Your invoices, your team, your clients...
 	<br/>
-	<img src="./assets/QuickBill.png" alt="QuickBill Logo" width="100" />
+	<img src="./assets/QuickBill-logo.svg" alt="QuickBill Logo" width="100" />
 	<br/>
 	all connected in one app.
 </p>
