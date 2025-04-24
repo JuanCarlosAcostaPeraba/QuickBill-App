@@ -7,38 +7,45 @@
 
 import SwiftUI
 
-struct MenuView: View {
+struct StartView: View {
     var body: some View {
-        NavigationStack {
-            VStack {
+        VStack {
+            NavigationStack {
                 Image("Start-image")
                     .padding(.bottom, 50)
                 VStack {
                     Text("Smart billing made simple.")
                     Text("Everything your business needs, in one place.")
-                }.padding(.bottom, 50).foregroundColor(.gray)
+                }.padding(.bottom, 50).foregroundColor(.zinc500)
                 NavigationLink(destination:{
                     // TODO: Add sign in view
                 }){
                     Text("Sign in to QuickBill")
-                        .foregroundColor(.black)
+                        .foregroundColor(.cyan950)
                         .font(.headline)
-                        .padding()
-                        .padding(.horizontal, 50)
-                        .background(.blue.opacity(0.3))
+                        .padding(.horizontal, 70)
+                        .padding(.vertical, 15)
                         .foregroundColor(.black)
+                        .background(.blue300)
                         .cornerRadius(50)
-                        .padding(.vertical, 20)
+                        .shadow(
+                            color: .blue300.opacity(0.5),
+                            radius: 10,
+                            x: 0,
+                            y: 10
+                        )
                 }
+                Spacer()
+                    .frame(height: 30)
                 NavigationLink(destination:{
                     // TODO: Add sign up view
                 }){
                     Text("Sign up")
-                        .foregroundColor(.black)
+                        .foregroundColor(.cyan950)
                         .font(.headline)
                 }
-            }.padding(.horizontal, 16)
-        }
+            }
+        }.padding(.horizontal, 16)
     }
 }
 
