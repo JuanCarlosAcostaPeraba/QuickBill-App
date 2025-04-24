@@ -17,16 +17,16 @@ Icon?
 # iOS (Swift / Xcode)
 iOS/QuickBill/DerivedData/
 iOS/QuickBill/build/
-iOS/QuickBill/*.xcworkspace
 iOS/QuickBill/xcuserdata/
-iOS/QuickBill/*.xcuserstate
+iOS/QuickBill/.swiftpm/
 iOS/QuickBill/*.xcodeproj/xcuserdata/
 iOS/QuickBill/*.xcodeproj/project.xcworkspace/
-iOS/QuickBill/*.moved-aside
-iOS/QuickBill/*.xcscmblueprint
-iOS/QuickBill/*.xcuserdatad
-iOS/QuickBill/.swiftpm/
 iOS/QuickBill/Package.resolved
+*.xcscmblueprint
+*.xcuserdatad
+*.xcuserstate
+*.xcworkspace
+*.moved-aside
 
 # Android (Kotlin / Android Studio)
 Android/QuickBill/.gradle/
