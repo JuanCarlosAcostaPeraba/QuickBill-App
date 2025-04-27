@@ -7,24 +7,36 @@
 
 import SwiftUI
 import FirebaseCore
+import FirebaseAuth
 
-class AppDelegate: NSObject, UIApplicationDelegate {
+class AppDelegate: NSObject, UIApplicationDelegate, ObservableObject {
+  // add published property
+  @Published var isSignedIn: Bool = false
+
   func application(_ application: UIApplication,
                    didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey : Any]? = nil) -> Bool {
     FirebaseApp.configure()
-
+    // Listen for auth state changes
+    Auth.auth().addStateDidChangeListener { _, user in
+        DispatchQueue.main.async {
+            self.isSignedIn = (user != nil)
+        }
+    }
     return true
   }
 }
 
 @main
 struct QuickBillApp: App {
-    // register app delegate for Firebase setup
     @UIApplicationDelegateAdaptor(AppDelegate.self) var delegate
-    
+
     var body: some Scene {
         WindowGroup {
-            MainView()
+            if delegate.isSignedIn {
+                HomeView()
+            } else {
+                StartView()
+            }
         }
     }
 }

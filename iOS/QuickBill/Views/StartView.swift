@@ -1,54 +1,63 @@
 //
-//  MenuView.swift
+//  StartView.swift
 //  QuickBill
 //
-//  Created by Juan Carlos Acosta Perabá on 24/4/25.
+//  Created by Juan Carlos Acosta Perabá on 25/4/25.
 //
 
 import SwiftUI
 
 struct StartView: View {
     var body: some View {
-        VStack {
-            NavigationStack {
-                Image("Start-image")
-                    .padding(.bottom, 50)
-                VStack {
-                    Text("Smart billing made simple.")
-                    Text("Everything your business needs, in one place.")
-                }.padding(.bottom, 50).foregroundColor(.zinc500)
-                NavigationLink(destination:{
-                    // TODO: Add sign in view
-                }){
-                    Text("Sign in to QuickBill")
-                        .foregroundColor(.cyan950)
-                        .font(.headline)
-                        .padding(.horizontal, 70)
-                        .padding(.vertical, 15)
-                        .foregroundColor(.black)
-                        .background(.blue300)
-                        .cornerRadius(50)
-                        .shadow(
-                            color: .blue300.opacity(0.5),
-                            radius: 10,
-                            x: 0,
-                            y: 10
-                        )
-                }
+        NavigationStack {
+            VStack(spacing: 24) {
                 Spacer()
-                    .frame(height: 30)
-                NavigationLink(destination:{
-                    // TODO: Add sign up view
-                }){
-                    Text("Sign up")
-                        .foregroundColor(.cyan950)
+
+                // Illustration at top
+                Image("startIllustration")
+                    .resizable()
+                    .scaledToFit()
+                    .frame(maxHeight: 300)
+
+                // Headline and subheadline
+                VStack(spacing: 4) {
+                    Text("Smart billing made simple.")
                         .font(.headline)
+                    Text("Everything your business needs, in one place.")
+                        .font(.subheadline)
+                        .foregroundColor(.gray)
                 }
+                .multilineTextAlignment(.center)
+                .padding(.horizontal)
+
+                // Sign in button
+                NavigationLink(destination: SignInView()) {
+                    Text("Sign in to QuickBill")
+                        .font(.headline)
+                        .foregroundColor(.white)
+                        .frame(maxWidth: .infinity)
+                        .padding()
+                        .background(Color.blue.opacity(0.7))
+                        .cornerRadius(30)
+                }
+                .padding(.horizontal)
+
+                // Sign up text button
+                NavigationLink(destination: SignUpView()) {
+                    Text("Sign up")
+                        .font(.headline)
+                        .foregroundColor(.black)
+                }
+
+                Spacer()
             }
-        }.padding(.horizontal, 16)
+            .frame(maxWidth: .infinity, maxHeight: .infinity)
+            .background(Color.white)
+            .navigationBarHidden(true)
+        }
     }
 }
 
 #Preview {
-    MenuView()
+    StartView()
 }
