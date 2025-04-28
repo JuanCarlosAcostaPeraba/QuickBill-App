@@ -28,7 +28,7 @@ enum InvoiceStatus: String, CaseIterable {
         switch self {
         case .all: return Color.blue
         case .paid: return Color.green
-        case .pending: return Color.blue
+        case .pending: return Color.purple
         case .overdue: return Color.red
         }
     }
@@ -169,7 +169,7 @@ struct HomeView: View {
             
             // Invoice grid
             if viewModel.filteredInvoices.isEmpty {
-                Text("Empty")
+                Text("No invoices")
                     .font(.title)
                     .foregroundColor(.gray)
                     .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .center)
