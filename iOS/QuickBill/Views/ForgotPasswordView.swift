@@ -79,7 +79,3 @@ struct ForgotPasswordView: View {
         .navigationBarHidden(true)
     }
 }
-
-#Preview {
-    ForgotPasswordView()
-}
