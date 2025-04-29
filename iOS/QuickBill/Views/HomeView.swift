@@ -15,8 +15,14 @@ struct HomeView: View {
     
     var body: some View {
         VStack(spacing: 0) {
-            // Toggle search button
+            // Search bar and toggle button in one row
             HStack {
+                if viewModel.showSearch {
+                    TextField("Search invoices...", text: $viewModel.searchText)
+                        .padding(8)
+                        .background(Color.gray.opacity(0.1))
+                        .cornerRadius(8)
+                }
                 Spacer()
                 Button(action: {
                     viewModel.showSearch.toggle()
@@ -24,19 +30,11 @@ struct HomeView: View {
                     Image(systemName: viewModel.showSearch ? "xmark" : "magnifyingglass")
                         .font(.title2)
                         .foregroundColor(.blue)
+                        .padding(.vertical, 6.5)
                 }
-                .padding(.horizontal)
-                .padding(.top, 8)
             }
-            // Search bar
-            if viewModel.showSearch {
-                TextField("Search invoices...", text: $viewModel.searchText)
-                    .padding(8)
-                    .background(Color.gray.opacity(0.1))
-                    .cornerRadius(8)
-                    .padding(.horizontal)
-                    .padding(.top, 8)
-            }
+            .padding(.horizontal)
+            .padding(.top, 8)
             
             // Filter bar
             ScrollView(.horizontal, showsIndicators: false) {
@@ -85,5 +83,13 @@ struct HomeView: View {
         .onAppear {
             viewModel.fetchInvoices()
         }
+    }
+}
+
+// Preview
+struct HomeView_Previews: PreviewProvider {
+    static var previews: some View {
+        HomeView()
+            .environmentObject(InvoiceListViewModel())
     }
 }
