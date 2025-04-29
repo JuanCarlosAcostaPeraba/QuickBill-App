@@ -55,17 +55,3 @@ struct Phase3View: View {
         }
     }
 }
-
-struct Phase3View_Previews: PreviewProvider {
-    static var previews: some View {
-        Phase3View(
-            companyName: .constant("Example Ltd."),
-            tagline: .constant("We do things"),
-            taxId: .constant("ESB12345678"),
-            companyEmail: .constant("info@example.com"),
-            companyPhone: .constant("+1234567890")
-        )
-        .padding()
-        .previewLayout(.sizeThatFits)
-    }
-}

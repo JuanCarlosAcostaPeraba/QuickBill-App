@@ -53,11 +53,3 @@ struct Phase1View: View {
         }
     }
 }
-
-struct Phase1View_Previews: PreviewProvider {
-    static var previews: some View {
-        Phase1View(email: .constant(""), password: .constant(""))
-            .padding()
-            .previewLayout(.sizeThatFits)
-    }
-}

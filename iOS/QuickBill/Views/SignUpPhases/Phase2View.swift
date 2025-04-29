@@ -30,11 +30,3 @@ struct Phase2View: View {
         }
     }
 }
-
-struct Phase2View_Previews: PreviewProvider {
-    static var previews: some View {
-        Phase2View(fullName: .constant(""), phone: .constant(""), rememberMe: .constant(false))
-            .padding()
-            .previewLayout(.sizeThatFits)
-    }
-}

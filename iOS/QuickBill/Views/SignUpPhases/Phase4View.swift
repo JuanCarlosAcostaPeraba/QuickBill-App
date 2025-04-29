@@ -49,16 +49,3 @@ struct Phase4View: View {
         }
     }
 }
-
-struct Phase4View_Previews: PreviewProvider {
-    static var previews: some View {
-        Phase4View(
-            address: .constant("123 Main St"),
-            city: .constant("Springfield"),
-            country: .constant("USA"),
-            postcode: .constant("12345")
-        )
-        .padding()
-        .previewLayout(.sizeThatFits)
-    }
-}
