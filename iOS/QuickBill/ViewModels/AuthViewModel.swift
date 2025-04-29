@@ -6,23 +6,22 @@
 //
 
 import Foundation
-import FirebaseAuth
 
 class AuthViewModel: ObservableObject {
-  @Published var isSignedIn: Bool = Auth.auth().currentUser != nil
-  private var handle: AuthStateDidChangeListenerHandle?
+    @Published var isSignedIn: Bool = false
+    private let authService: AuthService
 
-  init() {
-    handle = Auth.auth().addStateDidChangeListener { [weak self] _, user in
-      DispatchQueue.main.async {
-        self?.isSignedIn = (user != nil)
-      }
+    init(authService: AuthService = AuthService()) {
+        self.authService = authService
+        self.isSignedIn = authService.isUserSignedIn()
+        authService.observeAuthStateChange { [weak self] isSignedIn in
+            DispatchQueue.main.async {
+                self?.isSignedIn = isSignedIn
+            }
+        }
     }
-  }
 
-  deinit {
-    if let h = handle {
-      Auth.auth().removeStateDidChangeListener(h)
+    deinit {
+        authService.removeAuthStateListener()
     }
-  }
 }
