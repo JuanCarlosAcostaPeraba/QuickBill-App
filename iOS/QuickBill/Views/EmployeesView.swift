@@ -32,6 +32,13 @@ struct EmployeesView: View {
                         NavigationLink(destination: EmployeeView(employee: employee)) {
                             Text(employee.name)
                         }
+                        .swipeActions(edge: .trailing) {
+                            Button(role: .destructive) {
+                                viewModel.deleteEmployee(employee: employee)
+                            } label: {
+                                Label("Delete", systemImage: "trash")
+                            }
+                        }
                     }
                 }
             }

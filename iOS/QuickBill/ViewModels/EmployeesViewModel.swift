@@ -91,4 +91,33 @@ class EmployeesViewModel: ObservableObject {
             }
         }
     }
+    
+    /// Deletes an existing employee document and refreshes the list
+    func deleteEmployee(employee: Employee) {
+        // 1) Find this user's business reference
+        let empQuery = db.collectionGroup("employees")
+            .whereField("userId", isEqualTo: currentUserId)
+        empQuery.getDocuments { empSnap, empErr in
+            if let empErr = empErr {
+                print("Error finding current employee record: \(empErr)")
+                return
+            }
+            guard let empDoc = empSnap?.documents.first,
+                  let businessRef = empDoc.reference.parent.parent else {
+                print("Business not found for user \(self.currentUserId)")
+                return
+            }
+            // 2) Delete the specific employee document
+            businessRef.collection("employees").document(employee.id).delete { error in
+                if let error = error {
+                    print("Error deleting employee: \(error)")
+                } else {
+                    // Refresh list
+                    DispatchQueue.main.async {
+                        self.fetchEmployees()
+                    }
+                }
+            }
+        }
+    }
 }
