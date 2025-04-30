@@ -12,21 +12,30 @@ import FirebaseFirestore
 struct EmployeesView: View {
     @StateObject private var viewModel = EmployeesViewModel()
     @State private var showAddEmployee = false
+    @State private var searchText: String = ""
     
     var body: some View {
         NavigationStack {
-            if viewModel.employees.isEmpty {
-                Text("Empty employee list")
-                    .font(.title)
-                    .foregroundColor(.gray)
-                    .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .center)
-            } else {
-                List(viewModel.employees) { employee in
-                    NavigationLink(destination: EmployeeView(employee: employee)) {
-                        Text(employee.name)
+            // Compute filtered list
+            let filtered = searchText.isEmpty
+              ? viewModel.employees
+              : viewModel.employees.filter { $0.name.lowercased().contains(searchText.lowercased()) }
+            
+            List {
+                if filtered.isEmpty {
+                    Text("Empty employee list")
+                        .font(.title)
+                        .foregroundColor(.gray)
+                        .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .center)
+                } else {
+                    ForEach(filtered) { employee in
+                        NavigationLink(destination: EmployeeView(employee: employee)) {
+                            Text(employee.name)
+                        }
                     }
                 }
             }
+            .searchable(text: $searchText, placement: .navigationBarDrawer(displayMode: .automatic), prompt: "Search")
         }
         .sheet(isPresented: $showAddEmployee) {
             AddEmployeeView(isPresented: $showAddEmployee, viewModel: viewModel)
