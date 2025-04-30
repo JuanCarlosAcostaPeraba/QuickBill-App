@@ -35,17 +35,29 @@ struct HomeViewContent: View {
                 HStack(spacing: 12) {
                     ForEach(InvoiceStatus.allCases, id: \.self) { status in
                         Button {
-                            withAnimation { viewModel.selectedStatus = status }
+                            withAnimation(.easeInOut) {
+                                viewModel.selectedStatus = status
+                            }
                         } label: {
-                            HStack {
-                                Image(systemName: status.iconName)
-                                Text(status.rawValue)
+                            Group {
+                                if viewModel.selectedStatus == status {
+                                    HStack(spacing: 8) {
+                                        Image(systemName: status.iconName)
+                                            .font(.title)
+                                        Text(status.rawValue)
+                                    }
+                                } else {
+                                    Image(systemName: status.iconName)
+                                        .font(.title)
+                                }
                             }
                             .padding(.vertical, 8)
                             .padding(.horizontal, 12)
                             .foregroundColor(viewModel.selectedStatus == status ? .white : .gray)
                             .background(viewModel.selectedStatus == status ? status.color : Color.gray.opacity(0.2))
                             .cornerRadius(16)
+                            .frame(minWidth: viewModel.selectedStatus == status ? 80 : 40, minHeight: 40)
+                            .animation(.easeInOut(duration: 0.3), value: viewModel.selectedStatus)
                         }
                     }
                 }
