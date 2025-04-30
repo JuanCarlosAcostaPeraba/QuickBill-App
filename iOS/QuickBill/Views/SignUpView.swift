@@ -84,6 +84,12 @@ struct SignUpView: View {
                 .padding(.horizontal)
                 
                 Spacer()
+                
+                Text("\(viewModel.step)/4")
+                    .font(.footnote)
+                    .foregroundColor(.gray)
+                    .frame(maxWidth: .infinity, alignment: .center)
+                    .padding(.bottom, 16)
             }
             .padding(.horizontal)
             .alert(viewModel.alertTitle,
