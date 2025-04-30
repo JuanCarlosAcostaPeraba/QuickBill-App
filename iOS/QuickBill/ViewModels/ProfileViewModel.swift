@@ -5,7 +5,6 @@
 //  Created by Juan Carlos Acosta Perabá on 30/4/25.
 //
 
-
 import SwiftUI
 import FirebaseAuth
 import FirebaseFirestore
