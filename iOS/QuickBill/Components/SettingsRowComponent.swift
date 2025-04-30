@@ -9,6 +9,7 @@ import SwiftUI
 
 /// A row in the settings screen with a title and chevron
 struct SettingsRowComponent<Destination: View>: View {
+    
     let title: String
     let destination: Destination
 
