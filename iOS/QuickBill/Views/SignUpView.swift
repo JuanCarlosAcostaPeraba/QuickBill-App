@@ -10,13 +10,10 @@ import FirebaseAuth
 
 struct SignUpView: View {
     @StateObject private var viewModel = SignUpViewModel()
+    @EnvironmentObject var auth: AuthViewModel
 
     var body: some View {
         NavigationStack {
-            NavigationLink(destination: HomeView(), isActive: $viewModel.navigateToHome) {
-                EmptyView()
-            }
-            .hidden()
             VStack(alignment: .leading, spacing: 16) {
                 // App title at top
                 Text("QuickBill")
@@ -94,6 +91,11 @@ struct SignUpView: View {
                    actions: { Button("OK", role: .cancel) {} },
                    message: { Text(viewModel.alertMessage) })
             .navigationBarHidden(true)
+            .onChange(of: viewModel.navigateToHome) {
+                if viewModel.navigateToHome {
+                    auth.isSignedIn = true
+                }
+            }
         }
     }
 }

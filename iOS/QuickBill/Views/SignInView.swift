@@ -14,15 +14,10 @@ struct SignInView: View {
     @State private var showPassword: Bool = false
     @State private var showAlert: Bool = false
     @State private var alertMessage: String = ""
-    @State private var navigateToHome: Bool = false
+    @EnvironmentObject var auth: AuthViewModel
 
     var body: some View {
         NavigationStack {
-            // Hidden navigation link to Home
-            NavigationLink(destination: HomeView(), isActive: $navigateToHome) {
-                EmptyView()
-            }
-            .hidden()
 
             VStack(alignment: .leading, spacing: 16) {
                 // App title (toolbar handles this, but keep if needed)
@@ -96,7 +91,7 @@ struct SignInView: View {
                     Task {
                         do {
                             _ = try await Auth.auth().signIn(withEmail: email, password: password)
-                            navigateToHome = true
+                            auth.isSignedIn = true
                         } catch {
                             alertMessage = error.localizedDescription
                             showAlert = true
