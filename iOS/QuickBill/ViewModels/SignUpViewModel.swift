@@ -9,6 +9,7 @@ import Foundation
 import FirebaseAuth
 import FirebaseFirestore
 
+@MainActor
 class SignUpViewModel: ObservableObject {
     @Published var step: Int = 1
 
@@ -143,15 +144,10 @@ class SignUpViewModel: ObservableObject {
                 ]
                 try await businessRef.collection("employees").document(user.uid).setData(employeeData)
 
-                // Navigate to home screen
-                DispatchQueue.main.async {
-                    self.navigateToHome = true
-                }
+                self.navigateToHome = true
             } catch {
-                DispatchQueue.main.async {
-                    self.alertMessage = error.localizedDescription
-                    self.showAlert = true
-                }
+                self.alertMessage = error.localizedDescription
+                self.showAlert = true
             }
         }
     }
