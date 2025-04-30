@@ -7,6 +7,7 @@
 
 import SwiftUI
 import FirebaseCore
+import FirebaseAuth
 
 @main
 struct QuickBillApp: App {
@@ -19,10 +20,11 @@ struct QuickBillApp: App {
   var body: some Scene {
     WindowGroup {
       if auth.isSignedIn {
-        HomeView()
+        MainTabView()
       } else {
         StartView()
       }
     }
+    .environmentObject(auth)
   }
 }
