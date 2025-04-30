@@ -16,8 +16,8 @@ struct SettingsViewContent: View {
             VStack(spacing: 0) {
                 VStack(alignment: .leading, spacing: 15) {
                     SettingsRowComponent(title: "Profile", destination: ProfileView())
-                    SettingsRowComponent(title: "Company Data", destination: EmptyView()/*CompanyDataView()*/)
-                    SettingsRowComponent(title: "Employees", destination: EmptyView()/*EmployeesView()*/)
+                    SettingsRowComponent(title: "Company Data", destination: CompanyDataView())
+                    SettingsRowComponent(title: "Employees", destination: EmployeesView())
                 }
                 .font(.headline)
                 .padding()
