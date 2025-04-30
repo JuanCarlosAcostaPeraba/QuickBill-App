@@ -1,0 +1,56 @@
+//
+//  EmployeesViewModel.swift
+//  QuickBill
+//
+//  Created by Juan Carlos Acosta Perabá on 30/4/25.
+//
+
+import SwiftUI
+import FirebaseAuth
+import FirebaseFirestore
+
+@MainActor
+class EmployeesViewModel: ObservableObject {
+    @Published var employees: [Employee] = []
+    private let db = Firestore.firestore()
+    private var currentUserId: String { Auth.auth().currentUser?.uid ?? "" }
+
+    func fetchEmployees() {
+        // 1) Find this user's business reference
+        let empQuery = db.collectionGroup("employees")
+            .whereField("userId", isEqualTo: currentUserId)
+        empQuery.getDocuments { empSnap, empErr in
+            if let empErr = empErr {
+                print("Error finding current employee record: \(empErr)")
+                return
+            }
+            guard let empDoc = empSnap?.documents.first,
+                  let businessRef = empDoc.reference.parent.parent else {
+                print("Business not found for user \(self.currentUserId)")
+                return
+            }
+            // 2) Fetch all employees under that business
+            businessRef.collection("employees").getDocuments { snap, err in
+                if let err = err {
+                    print("Error fetching employees: \(err)")
+                    return
+                }
+                let items = snap?.documents.compactMap { doc -> Employee? in
+                    let data = doc.data()
+                    let uid = doc.documentID
+                    guard uid != self.currentUserId,
+                          let name = data["name"] as? String,
+                          let email = data["email"] as? String,
+                          let phone = data["phone"] as? String,
+                          let role = data["role"] as? String else {
+                        return nil
+                    }
+                    return Employee(id: uid, name: name, email: email, phone: phone, role: role)
+                } ?? []
+                DispatchQueue.main.async {
+                    self.employees = items
+                }
+            }
+        }
+    }
+}
