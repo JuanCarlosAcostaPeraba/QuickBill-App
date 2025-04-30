@@ -68,4 +68,18 @@ class ProfileViewModel: ObservableObject {
             }
         }
     }
+    
+    /// Sends a password reset email to the current user
+    func resetPassword() {
+        Task {
+            do {
+                try await Auth.auth().sendPasswordReset(withEmail: email)
+                alertMessage = "A password reset link has been sent to \(email)."
+                showAlert = true
+            } catch {
+                alertMessage = "Error sending reset: \(error.localizedDescription)"
+                showAlert = true
+            }
+        }
+    }
 }

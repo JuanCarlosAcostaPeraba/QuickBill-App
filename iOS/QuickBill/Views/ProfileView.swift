@@ -7,6 +7,7 @@
 
 import SwiftUI
 import FirebaseFirestore
+import FirebaseAuth
 
 struct ProfileView: View {
     @StateObject private var viewModel = ProfileViewModel()
@@ -18,6 +19,7 @@ struct ProfileView: View {
                     if viewModel.isEditing {
                         TextField("Full Name", text: $viewModel.fullName)
                         TextField("Email", text: $viewModel.email)
+                            .foregroundColor(.gray)
                             .disabled(true)
                         TextField("Phone", text: $viewModel.phone)
                     } else {
@@ -40,7 +42,7 @@ struct ProfileView: View {
                 }
                 Section {
                     Button("Change Password") {
-                        // Navigate to ChangePasswordView or trigger reset
+                        viewModel.resetPassword()
                     }
                 }
             }
