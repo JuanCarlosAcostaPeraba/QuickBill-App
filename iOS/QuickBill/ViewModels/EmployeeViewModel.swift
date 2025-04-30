@@ -15,7 +15,7 @@ class EmployeeViewModel: ObservableObject {
     @Published var name: String
     @Published var email: String
     @Published var phone: String
-    @Published var role: String
+    @Published var isAdmin: Bool
     @Published var isEditing: Bool = false
     @Published var showAlert: Bool = false
     @Published var alertMessage: String = ""
@@ -27,7 +27,7 @@ class EmployeeViewModel: ObservableObject {
         self.name = employee.name
         self.email = employee.email
         self.phone = employee.phone
-        self.role = employee.role
+        self.isAdmin = (employee.role.lowercased() == "admin")
         self.employeeId = employee.id
     }
 
@@ -45,6 +45,9 @@ class EmployeeViewModel: ObservableObject {
                     throw NSError(domain: "EmployeeView", code: 0, userInfo: [NSLocalizedDescriptionKey: "Business not found"])
                 }
 
+                // Sync role string from toggle
+                let roleString = isAdmin ? "admin" : "employee"
+
                 // Update the specific employee document
                 try await businessRef
                     .collection("employees")
@@ -52,7 +55,7 @@ class EmployeeViewModel: ObservableObject {
                     .updateData([
                         "name": name,
                         "phone": phone,
-                        "role": role
+                        "role": roleString
                     ])
 
                 alertMessage = "Employee updated successfully."

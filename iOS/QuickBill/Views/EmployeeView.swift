@@ -25,7 +25,8 @@ struct EmployeeView: View {
                         TextField("Email", text: $viewModel.email)
                             .disabled(true)
                         TextField("Phone", text: $viewModel.phone)
-                        TextField("Role", text: $viewModel.role)
+                        Toggle("Admin", isOn: $viewModel.isAdmin)
+                            .padding(.vertical, 4)
                     } else {
                         HStack {
                             Text("Name")
@@ -45,9 +46,11 @@ struct EmployeeView: View {
                         HStack {
                             Text("Role")
                             Spacer()
-                            Text(viewModel.role)
+                            Text(viewModel.isAdmin ? "admin" : "employee")
                         }
                     }
+                } footer: {
+                    EmptyView()
                 }
             }
             .navigationTitle(employee.name)

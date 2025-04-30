@@ -11,6 +11,7 @@ import FirebaseFirestore
 
 struct EmployeesView: View {
     @StateObject private var viewModel = EmployeesViewModel()
+    @State private var showAddEmployee = false
     
     var body: some View {
         NavigationStack {
@@ -27,11 +28,14 @@ struct EmployeesView: View {
                 }
             }
         }
+        .sheet(isPresented: $showAddEmployee) {
+            AddEmployeeView(isPresented: $showAddEmployee, viewModel: viewModel)
+        }
         .navigationTitle("Employees")
         .toolbar {
             ToolbarItem(placement: .navigationBarTrailing) {
                 Button("Add employee") {
-                    // TODO: implement add employee
+                    showAddEmployee = true
                 }
             }
         }

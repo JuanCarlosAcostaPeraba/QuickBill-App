@@ -53,4 +53,42 @@ class EmployeesViewModel: ObservableObject {
             }
         }
     }
+    
+    /// Adds a new employee record under the current user's business
+    func addEmployee(name: String, email: String, phone: String, role: String) {
+        // 1) Find this user's business reference
+        let empQuery = db.collectionGroup("employees")
+            .whereField("userId", isEqualTo: currentUserId)
+        empQuery.getDocuments { empSnap, empErr in
+            if let empErr = empErr {
+                print("Error finding current employee record: \(empErr)")
+                return
+            }
+            guard let empDoc = empSnap?.documents.first,
+                  let businessRef = empDoc.reference.parent.parent else {
+                print("Business not found for user \(self.currentUserId)")
+                return
+            }
+            // 2) Create a new employee document
+            let newEmpRef = businessRef.collection("employees").document()
+            let data: [String: Any] = [
+                "userId": newEmpRef.documentID, // placeholder ID until linked to Auth
+                "name": name,
+                "email": email,
+                "phone": phone,
+                "role": role,
+                "joinedAt": Timestamp()
+            ]
+            newEmpRef.setData(data) { error in
+                if let error = error {
+                    print("Error adding employee: \(error)")
+                } else {
+                    // Refresh list
+                    DispatchQueue.main.async {
+                        self.fetchEmployees()
+                    }
+                }
+            }
+        }
+    }
 }
