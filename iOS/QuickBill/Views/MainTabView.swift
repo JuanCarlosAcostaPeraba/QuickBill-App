@@ -13,11 +13,9 @@ struct MainTabView: View {
     @State private var selectedTab: TabItem = .home
     var body: some View {
         VStack(spacing: 0) {
-            // Main content for each tab
             ZStack {
                 switch selectedTab {
                 case .home:
-                    // Extracted home content
                     HomeViewContent(viewModel: invoicesVM)
                 case .products:
                     //ProductsView()
