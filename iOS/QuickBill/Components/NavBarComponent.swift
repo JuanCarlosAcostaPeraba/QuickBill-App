@@ -30,7 +30,7 @@ enum TabItem: String, CaseIterable, Identifiable {
 }
 
 /// A bottom navigation bar with tabs
-struct BarNavComponent: View {
+struct NavBarComponent: View {
     @Binding var selectedTab: TabItem
 
     var body: some View {
@@ -68,20 +68,5 @@ struct BarNavComponent: View {
         .padding(.horizontal)
         .padding(.top, 8)
         .background(Color(UIColor.systemBackground).ignoresSafeArea(edges: .bottom))
-    }
-}
-
-struct BarNavComponent_Previews: PreviewProvider {
-    struct PreviewWrapper: View {
-        @State private var tab: TabItem = .home
-        var body: some View {
-            VStack { Spacer() }
-            BarNavComponent(selectedTab: $tab)
-        }
-    }
-
-    static var previews: some View {
-        PreviewWrapper()
-            .previewLayout(.sizeThatFits)
     }
 }
