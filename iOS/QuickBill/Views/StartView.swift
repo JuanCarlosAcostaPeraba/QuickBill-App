@@ -12,14 +12,10 @@ struct StartView: View {
         NavigationStack {
             VStack(spacing: 24) {
                 Spacer()
-
-                // Illustration at top
                 Image("startIllustration")
                     .resizable()
                     .scaledToFit()
                     .frame(maxHeight: 300)
-
-                // Headline and subheadline
                 VStack(spacing: 4) {
                     Text("Smart billing made simple.")
                         .font(.headline)
@@ -29,8 +25,6 @@ struct StartView: View {
                 }
                 .multilineTextAlignment(.center)
                 .padding(.horizontal)
-
-                // Sign in button
                 NavigationLink(destination: SignInView()) {
                     Text("Sign in to QuickBill")
                         .font(.headline)
@@ -41,14 +35,11 @@ struct StartView: View {
                         .cornerRadius(30)
                 }
                 .padding(.horizontal)
-
-                // Sign up text button
                 NavigationLink(destination: SignUpView()) {
                     Text("Sign up")
                         .font(.headline)
                         .foregroundColor(.black)
                 }
-
                 Spacer()
             }
             .frame(maxWidth: .infinity, maxHeight: .infinity)
