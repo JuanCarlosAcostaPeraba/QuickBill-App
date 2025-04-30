@@ -1,21 +1,17 @@
 //
-//  HomeView.swift
+//  HomeViewContent.swift
 //  QuickBill
 //
-//  Created by Juan Carlos Acosta Perabá on 25/4/25.
+//  Created by Juan Carlos Acosta Perabá on 30/4/25.
 //
 
 import SwiftUI
-import FirebaseAuth
-import FirebaseFirestore
 
-struct HomeView: View {
-    @StateObject private var viewModel = InvoiceListViewModel()
-    @State private var selectedTab: TabItem = .home
+struct HomeViewContent: View {
+    @ObservedObject var viewModel: InvoiceListViewModel
     
     var body: some View {
         VStack(spacing: 0) {
-            // Search bar and toggle button in one row
             HStack {
                 if viewModel.showSearch {
                     TextField("Search invoices...", text: $viewModel.searchText)
@@ -35,8 +31,6 @@ struct HomeView: View {
             }
             .padding(.horizontal)
             .padding(.top, 8)
-            
-            // Filter bar
             ScrollView(.horizontal, showsIndicators: false) {
                 HStack(spacing: 12) {
                     ForEach(InvoiceStatus.allCases, id: \.self) { status in
@@ -58,8 +52,6 @@ struct HomeView: View {
                 .padding(.horizontal)
                 .padding(.top, 8)
             }
-            
-            // Invoice grid
             if viewModel.filteredInvoices.isEmpty {
                 Text("No invoices")
                     .font(.title)
@@ -77,19 +69,9 @@ struct HomeView: View {
             }
             
             Spacer()
-            // Bottom navigation bar
-            BarNavComponent(selectedTab: $selectedTab)
         }
         .onAppear {
             viewModel.fetchInvoices()
         }
-    }
-}
-
-// Preview
-struct HomeView_Previews: PreviewProvider {
-    static var previews: some View {
-        HomeView()
-            .environmentObject(InvoiceListViewModel())
     }
 }
