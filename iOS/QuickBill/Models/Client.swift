@@ -5,8 +5,6 @@
 //  Created by Juan Carlos Acosta Perabá on 1/5/25.
 //
 
-import SwiftUI
-
 struct Client: Identifiable {
     let id: String
     let companyName: String

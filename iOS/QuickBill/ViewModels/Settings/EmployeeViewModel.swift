@@ -5,7 +5,6 @@
 //  Created by Juan Carlos Acosta Perabá on 30/4/25.
 //
 
-import SwiftUI
 import FirebaseAuth
 import FirebaseFirestore
 
@@ -19,10 +18,10 @@ class EmployeeViewModel: ObservableObject {
     @Published var isEditing: Bool = false
     @Published var showAlert: Bool = false
     @Published var alertMessage: String = ""
-
+    
     private let db = Firestore.firestore()
     private let employeeId: String
-
+    
     init(employee: Employee) {
         self.name = employee.name
         self.email = employee.email
@@ -30,7 +29,7 @@ class EmployeeViewModel: ObservableObject {
         self.isAdmin = (employee.role.lowercased() == "admin")
         self.employeeId = employee.id
     }
-
+    
     /// Saves edits back to Firestore under the current user's business
     func saveChanges() {
         Task {
@@ -44,10 +43,10 @@ class EmployeeViewModel: ObservableObject {
                       let businessRef = empDoc.reference.parent.parent else {
                     throw NSError(domain: "EmployeeView", code: 0, userInfo: [NSLocalizedDescriptionKey: "Business not found"])
                 }
-
+                
                 // Sync role string from toggle
                 let roleString = isAdmin ? "admin" : "employee"
-
+                
                 // Update the specific employee document
                 try await businessRef
                     .collection("employees")
@@ -57,7 +56,7 @@ class EmployeeViewModel: ObservableObject {
                         "phone": phone,
                         "role": roleString
                     ])
-
+                
                 alertMessage = "Employee updated successfully."
                 showAlert = true
                 isEditing = false

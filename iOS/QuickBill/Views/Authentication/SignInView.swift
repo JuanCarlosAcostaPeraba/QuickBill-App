@@ -6,14 +6,9 @@
 //
 
 import SwiftUI
-import FirebaseAuth
 
 struct SignInView: View {
-    @State private var email: String = ""
-    @State private var password: String = ""
-    @State private var showPassword: Bool = false
-    @State private var showAlert: Bool = false
-    @State private var alertMessage: String = ""
+    @StateObject private var viewModel = SignInViewModel()
     @EnvironmentObject var auth: AuthViewModel
 
     var body: some View {
@@ -45,7 +40,7 @@ struct SignInView: View {
                 }
 
                 // Email field
-                TextField("Email", text: $email)
+                TextField("Email", text: $viewModel.email)
                     .keyboardType(.emailAddress)
                     .textContentType(.emailAddress)
                     .autocapitalization(.none)
@@ -55,10 +50,10 @@ struct SignInView: View {
 
                 // Password field with toggle
                 ZStack {
-                    if showPassword {
-                        TextField("Password", text: $password)
+                    if viewModel.showPassword {
+                        TextField("Password", text: $viewModel.password)
                     } else {
-                        SecureField("Password", text: $password)
+                        SecureField("Password", text: $viewModel.password)
                     }
                 }
                 .keyboardType(.default)
@@ -68,8 +63,8 @@ struct SignInView: View {
                 .background(Color.gray.opacity(0.1))
                 .cornerRadius(16)
                 .overlay(
-                    Button(action: { showPassword.toggle() }) {
-                        Image(systemName: showPassword ? "eye.slash" : "eye")
+                    Button(action: { viewModel.showPassword.toggle() }) {
+                        Image(systemName: viewModel.showPassword ? "eye.slash" : "eye")
                             .foregroundColor(.gray)
                     }
                     .padding(.trailing, 16),
@@ -89,12 +84,9 @@ struct SignInView: View {
                 // Sign in button
                 Button(action: {
                     Task {
-                        do {
-                            _ = try await Auth.auth().signIn(withEmail: email, password: password)
+                        await viewModel.signIn()
+                        if viewModel.didSignIn {
                             auth.isSignedIn = true
-                        } catch {
-                            alertMessage = error.localizedDescription
-                            showAlert = true
                         }
                     }
                 }) {
@@ -110,10 +102,10 @@ struct SignInView: View {
                 Spacer()
             }
             .padding(.horizontal)
-            .alert("Sign in Error", isPresented: $showAlert) {
+            .alert("Sign in Error", isPresented: $viewModel.showAlert) {
                 Button("OK", role: .cancel) { }
             } message: {
-                Text(alertMessage)
+                Text(viewModel.alertMessage)
             }
             .navigationBarBackButtonHidden()
         }

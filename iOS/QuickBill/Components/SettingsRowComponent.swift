@@ -12,7 +12,7 @@ struct SettingsRowComponent<Destination: View>: View {
     
     let title: String
     let destination: Destination
-
+    
     var body: some View {
         NavigationLink(destination: destination) {
             HStack {

@@ -5,7 +5,6 @@
 //  Created by Juan Carlos Acosta Perabá on 30/4/25.
 //
 
-import SwiftUI
 import FirebaseAuth
 import FirebaseFirestore
 
@@ -17,16 +16,16 @@ class ProfileViewModel: ObservableObject {
     @Published var isEditing: Bool = false
     @Published var showAlert = false
     @Published var alertMessage = ""
-
+    
     private let db = Firestore.firestore()
     private var userId: String {
         Auth.auth().currentUser?.uid ?? ""
     }
-
+    
     init() {
         loadProfile()
     }
-
+    
     func loadProfile() {
         Task {
             do {
@@ -44,7 +43,7 @@ class ProfileViewModel: ObservableObject {
             }
         }
     }
-
+    
     func saveChanges() {
         Task {
             do {

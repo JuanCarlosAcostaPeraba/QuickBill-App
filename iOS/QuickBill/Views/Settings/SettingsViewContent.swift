@@ -6,10 +6,10 @@
 //
 
 import SwiftUI
-import FirebaseAuth
 
 struct SettingsViewContent: View {
     @EnvironmentObject var auth: AuthViewModel
+    @StateObject private var viewModel = SettingsViewModel()
     
     var body: some View {
         NavigationStack {
@@ -25,12 +25,7 @@ struct SettingsViewContent: View {
                 Spacer()
                 
                 Button(action: {
-                    do {
-                        try Auth.auth().signOut()
-                        auth.isSignedIn = false
-                    } catch {
-                        print("Error signing out: \(error.localizedDescription)")
-                    }
+                    viewModel.signOut(auth: auth)
                 }) {
                     Text("Sign out")
                         .foregroundColor(.red)

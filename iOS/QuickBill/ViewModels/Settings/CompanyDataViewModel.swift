@@ -5,7 +5,6 @@
 //  Created by Juan Carlos Acosta Perabá on 30/4/25.
 //
 
-import SwiftUI
 import FirebaseFirestore
 import FirebaseAuth
 
@@ -23,14 +22,14 @@ class CompanyDataViewModel: ObservableObject {
     @Published var isEditing: Bool = false
     @Published var showAlert: Bool = false
     @Published var alertMessage: String = ""
-
+    
     private let db = Firestore.firestore()
     private var userId: String { Auth.auth().currentUser?.uid ?? "" }
-
+    
     init() {
         loadCompanyData()
     }
-
+    
     /// Finds the business document via the employee record, then loads its data
     func loadCompanyData() {
         Task {
@@ -61,7 +60,7 @@ class CompanyDataViewModel: ObservableObject {
             }
         }
     }
-
+    
     /// Saves edits back to Firestore
     func saveChanges() {
         Task {

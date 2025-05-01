@@ -7,37 +7,14 @@
 
 import SwiftUI
 
-/// Enum representing each tab in the bar
-enum TabItem: String, CaseIterable, Identifiable {
-    case home = "Home"
-    case products = "Products"
-    case add = "Add"
-    case clients = "Clients"
-    case settings = "Settings"
-
-    var id: Self { self }
-
-    /// System image name for each tab
-    var iconName: String {
-        switch self {
-        case .home:      return "house"
-        case .products:  return "doc.plaintext"
-        case .add:       return "plus"
-        case .clients:   return "person.2"
-        case .settings:  return "gearshape"
-        }
-    }
-}
-
-/// A bottom navigation bar with tabs
 struct NavBarComponent: View {
     @Binding var selectedTab: TabItem
-
+    
     var body: some View {
         HStack {
             ForEach(TabItem.allCases) { tab in
                 Spacer()
-
+                
                 Button(action: {
                     selectedTab = tab
                 }) {
@@ -61,7 +38,7 @@ struct NavBarComponent: View {
                         .foregroundColor(selectedTab == tab ? Color.blue : Color.gray)
                     }
                 }
-
+                
                 Spacer()
             }
         }

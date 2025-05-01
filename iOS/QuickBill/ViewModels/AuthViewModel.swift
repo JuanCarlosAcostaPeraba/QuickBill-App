@@ -10,7 +10,7 @@ import Foundation
 class AuthViewModel: ObservableObject {
     @Published var isSignedIn: Bool = false
     private let authService: AuthService
-
+    
     init(authService: AuthService = AuthService()) {
         self.authService = authService
         self.isSignedIn = authService.isUserSignedIn()
@@ -20,7 +20,7 @@ class AuthViewModel: ObservableObject {
             }
         }
     }
-
+    
     deinit {
         authService.removeAuthStateListener()
     }

@@ -5,8 +5,6 @@
 //  Created by Juan Carlos Acosta Perabá on 29/4/25.
 //
 
-
-import SwiftUI
 import FirebaseAuth
 import FirebaseFirestore
 
@@ -20,9 +18,9 @@ class InvoiceListViewModel: ObservableObject {
         invoices.filter { inv in
             (selectedStatus == .all || inv.status == selectedStatus) &&
             (searchText.isEmpty ||
-                inv.companyName.lowercased().contains(searchText.lowercased()) ||
-                inv.period.contains(searchText) ||
-                String(format: "%.2f", inv.amount).contains(searchText)
+             inv.companyName.lowercased().contains(searchText.lowercased()) ||
+             inv.period.contains(searchText) ||
+             String(format: "%.2f", inv.amount).contains(searchText)
             )
         }
     }

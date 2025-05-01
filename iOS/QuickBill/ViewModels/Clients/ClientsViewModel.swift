@@ -5,7 +5,6 @@
 //  Created by Juan Carlos Acosta Perabá on 1/5/25.
 //
 
-import SwiftUI
 import FirebaseAuth
 import FirebaseFirestore
 
@@ -14,7 +13,7 @@ class ClientsViewModel: ObservableObject {
     @Published var clients: [Client] = []
     private let db = Firestore.firestore()
     private var currentUserId: String { Auth.auth().currentUser?.uid ?? "" }
-
+    
     func fetchClients() {
         // 1) Find the current user's business reference
         let empQuery = db.collectionGroup("employees")

@@ -6,12 +6,9 @@
 //
 
 import SwiftUI
-import FirebaseAuth
 
 struct ForgotPasswordView: View {
-    @State private var email: String = ""
-    @State private var showAlert: Bool = false
-    @State private var alertMessage: String = ""
+    @StateObject private var viewModel = ForgotPasswordViewModel()
     @Environment(\.dismiss) private var dismiss
 
     var body: some View {
@@ -39,7 +36,7 @@ struct ForgotPasswordView: View {
             }
 
             // Email field
-            TextField("Email", text: $email)
+            TextField("Email", text: $viewModel.email)
                 .keyboardType(.emailAddress)
                 .textContentType(.emailAddress)
                 .autocapitalization(.none)
@@ -51,13 +48,7 @@ struct ForgotPasswordView: View {
             // Recover button
             Button {
                 Task {
-                    do {
-                        try await Auth.auth().sendPasswordReset(withEmail: email)
-                        alertMessage = "A password reset link has been sent to \(email)."
-                    } catch {
-                        alertMessage = error.localizedDescription
-                    }
-                    showAlert = true
+                    await viewModel.resetPassword()
                 }
             } label: {
                 Text("Recover Password")
@@ -71,10 +62,10 @@ struct ForgotPasswordView: View {
 
             Spacer()
         }
-        .alert("Notice", isPresented: $showAlert) {
+        .alert("Notice", isPresented: $viewModel.showAlert) {
             Button("OK") { }
         } message: {
-            Text(alertMessage)
+            Text(viewModel.alertMessage)
         }
         .navigationBarHidden(true)
     }

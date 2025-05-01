@@ -2,12 +2,10 @@
 //  InvoiceStatus.swift
 //  QuickBill
 //
-//  Created by Juan Carlos Acosta Perabá on 29/4/25.
+//  Created by Juan Carlos Acosta Perabá on 1/5/25.
 //
 
 import SwiftUI
-import FirebaseAuth
-import FirebaseFirestore
 
 enum InvoiceStatus: String, CaseIterable {
     case all = "All"

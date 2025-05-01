@@ -5,10 +5,7 @@
 //  Created by Juan Carlos Acosta Perabá on 29/4/25.
 //
 
-
 import SwiftUI
-import FirebaseAuth
-import FirebaseFirestore
 
 struct InvoiceCardComponent: View {
     let invoice: Invoice

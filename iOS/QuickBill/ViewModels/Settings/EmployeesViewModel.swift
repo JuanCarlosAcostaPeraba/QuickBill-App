@@ -5,7 +5,6 @@
 //  Created by Juan Carlos Acosta Perabá on 30/4/25.
 //
 
-import SwiftUI
 import FirebaseAuth
 import FirebaseFirestore
 
@@ -14,7 +13,7 @@ class EmployeesViewModel: ObservableObject {
     @Published var employees: [Employee] = []
     private let db = Firestore.firestore()
     private var currentUserId: String { Auth.auth().currentUser?.uid ?? "" }
-
+    
     func fetchEmployees() {
         // 1) Find this user's business reference
         let empQuery = db.collectionGroup("employees")
