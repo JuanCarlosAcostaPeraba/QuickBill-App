@@ -7,7 +7,7 @@
 
 import SwiftUI
 
-struct SettingsViewContent: View {
+struct SettingsView: View {
     @EnvironmentObject var auth: AuthViewModel
     @StateObject private var viewModel = SettingsViewModel()
     

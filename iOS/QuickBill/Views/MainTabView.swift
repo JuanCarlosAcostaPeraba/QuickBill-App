@@ -9,14 +9,13 @@ import SwiftUI
 
 struct MainTabView: View {
     @EnvironmentObject var auth: AuthViewModel
-    @StateObject private var invoicesVM = InvoiceListViewModel()
     @State private var selectedTab: TabItem = .home
     var body: some View {
         VStack(spacing: 0) {
             ZStack {
                 switch selectedTab {
                 case .home:
-                    HomeViewContent(viewModel: invoicesVM)
+                    HomeView()
                 case .products:
                     //ProductsView()
                     EmptyView()
@@ -24,15 +23,12 @@ struct MainTabView: View {
                     //AddInvoiceView()
                     EmptyView()
                 case .clients:
-                    ClientsViewContent()
+                    ClientsView()
                 case .settings:
-                    SettingsViewContent(auth: _auth)
+                    SettingsView(auth: _auth)
                 }
             }
             NavBarComponent(selectedTab: $selectedTab)
-        }
-        .onAppear {
-            invoicesVM.fetchInvoices()
         }
     }
 }

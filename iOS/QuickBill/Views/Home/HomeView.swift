@@ -7,8 +7,8 @@
 
 import SwiftUI
 
-struct HomeViewContent: View {
-    @ObservedObject var viewModel: InvoiceListViewModel
+struct HomeView: View {
+    @StateObject private var viewModel = InvoiceListViewModel()
     
     var body: some View {
         VStack(spacing: 0) {

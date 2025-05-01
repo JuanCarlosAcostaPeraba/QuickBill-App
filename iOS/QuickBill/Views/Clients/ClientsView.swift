@@ -7,7 +7,7 @@
 
 import SwiftUI
 
-struct ClientsViewContent: View {
+struct ClientsView: View {
     @StateObject private var viewModel = ClientsViewModel()
     @State private var searchText: String = ""
     @State private var showAddClient = false
