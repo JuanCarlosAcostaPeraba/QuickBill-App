@@ -6,8 +6,6 @@
 //
 
 import SwiftUI
-import FirebaseAuth
-import FirebaseFirestore
 
 struct EmployeesView: View {
     @StateObject private var viewModel = EmployeesViewModel()
