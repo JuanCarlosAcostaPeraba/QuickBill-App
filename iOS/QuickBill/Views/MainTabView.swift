@@ -24,8 +24,7 @@ struct MainTabView: View {
                     //AddInvoiceView()
                     EmptyView()
                 case .clients:
-                    //ClientsView()
-                    EmptyView()
+                    ClientsViewContent()
                 case .settings:
                     SettingsViewContent(auth: _auth)
                 }
