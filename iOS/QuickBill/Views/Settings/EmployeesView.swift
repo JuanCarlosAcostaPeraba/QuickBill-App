@@ -14,10 +14,10 @@ struct EmployeesView: View {
     
     var body: some View {
         NavigationStack {
-            // Compute filtered list
+            
             let filtered = searchText.isEmpty
-              ? viewModel.employees
-              : viewModel.employees.filter { $0.name.lowercased().contains(searchText.lowercased()) }
+            ? viewModel.employees
+            : viewModel.employees.filter { $0.name.lowercased().contains(searchText.lowercased()) }
             
             List {
                 if filtered.isEmpty {
@@ -40,7 +40,11 @@ struct EmployeesView: View {
                     }
                 }
             }
-            .searchable(text: $searchText, placement: .navigationBarDrawer(displayMode: .automatic), prompt: "Search")
+            .searchable(
+                text: $searchText,
+                placement: .navigationBarDrawer(displayMode: .automatic),
+                prompt: "Search"
+            )
         }
         .sheet(isPresented: $showAddEmployee) {
             AddEmployeeView(isPresented: $showAddEmployee, viewModel: viewModel)

@@ -11,7 +11,7 @@ struct Phase2View: View {
     @Binding var fullName: String
     @Binding var phone: String
     @Binding var rememberMe: Bool
-
+    
     var body: some View {
         VStack(alignment: .leading, spacing: 16) {
             // Full name field
@@ -20,7 +20,7 @@ struct Phase2View: View {
                 .padding(16)
                 .background(Color.gray.opacity(0.1))
                 .cornerRadius(16)
-
+            
             // Phone number field
             TextField("Phone number", text: $phone)
                 .keyboardType(.phonePad)

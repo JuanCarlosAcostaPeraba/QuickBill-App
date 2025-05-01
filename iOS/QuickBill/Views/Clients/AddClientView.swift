@@ -10,7 +10,7 @@ import SwiftUI
 struct AddClientView: View {
     @Binding var isPresented: Bool
     @ObservedObject var viewModel: ClientsViewModel
-
+    
     @State private var companyName: String = ""
     @State private var clientName: String = ""
     @State private var email: String = ""
@@ -19,7 +19,7 @@ struct AddClientView: View {
     @State private var city: String = ""
     @State private var country: String = ""
     @State private var postcode: String = ""
-
+    
     var body: some View {
         NavigationStack {
             Form {

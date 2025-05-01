@@ -10,7 +10,7 @@ import SwiftUI
 struct SignUpView: View {
     @StateObject private var viewModel = SignUpViewModel()
     @EnvironmentObject var auth: AuthViewModel
-
+    
     var body: some View {
         NavigationStack {
             VStack(alignment: .leading, spacing: 16) {
@@ -22,7 +22,7 @@ struct SignUpView: View {
                     .padding(.top, 16)
                 
                 Spacer()
-
+                
                 // Centered content: header + phase-specific view
                 VStack(alignment: .leading, spacing: 16) {
                     // Header
@@ -40,7 +40,7 @@ struct SignUpView: View {
                                 .foregroundColor(.blue)
                         }
                     }
-
+                    
                     // Phase content
                     Group {
                         switch viewModel.step {
@@ -70,7 +70,7 @@ struct SignUpView: View {
                 .frame(maxWidth: .infinity)
                 
                 Spacer()
-
+                
                 // Continue / Join button at bottom
                 Button(action: viewModel.nextStep) {
                     Text(viewModel.step < 4 ? "Continue" : "Join")

@@ -10,12 +10,12 @@ import SwiftUI
 struct AddEmployeeView: View {
     @Binding var isPresented: Bool
     @ObservedObject var viewModel: EmployeesViewModel
-
+    
     @State private var name: String = ""
     @State private var email: String = ""
     @State private var phone: String = ""
     @State private var isAdmin: Bool = false
-
+    
     var body: some View {
         NavigationStack {
             Form {

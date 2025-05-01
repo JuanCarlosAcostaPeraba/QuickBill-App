@@ -10,7 +10,7 @@ import SwiftUI
 struct ForgotPasswordView: View {
     @StateObject private var viewModel = ForgotPasswordViewModel()
     @Environment(\.dismiss) private var dismiss
-
+    
     var body: some View {
         VStack(spacing: 24) {
             // Back button
@@ -22,7 +22,7 @@ struct ForgotPasswordView: View {
                 Spacer()
             }
             .padding(.horizontal)
-
+            
             // Title and subtitle
             VStack(spacing: 8) {
                 Text("Did you forget your Password?")
@@ -34,7 +34,7 @@ struct ForgotPasswordView: View {
                     .multilineTextAlignment(.center)
                     .padding(.horizontal)
             }
-
+            
             // Email field
             TextField("Email", text: $viewModel.email)
                 .keyboardType(.emailAddress)
@@ -44,7 +44,7 @@ struct ForgotPasswordView: View {
                 .background(Color.gray.opacity(0.1))
                 .cornerRadius(16)
                 .padding(.horizontal)
-
+            
             // Recover button
             Button {
                 Task {
@@ -59,7 +59,7 @@ struct ForgotPasswordView: View {
                     .cornerRadius(30)
             }
             .padding(.horizontal)
-
+            
             Spacer()
         }
         .alert("Notice", isPresented: $viewModel.showAlert) {

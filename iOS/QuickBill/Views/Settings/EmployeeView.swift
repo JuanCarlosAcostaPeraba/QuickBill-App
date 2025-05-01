@@ -10,12 +10,12 @@ import SwiftUI
 struct EmployeeView: View {
     let employee: Employee
     @StateObject private var viewModel: EmployeeViewModel
-
+    
     init(employee: Employee) {
         self.employee = employee
         _viewModel = StateObject(wrappedValue: EmployeeViewModel(employee: employee))
     }
-
+    
     var body: some View {
         NavigationStack {
             Form {

@@ -11,8 +11,7 @@ struct ClientsViewContent: View {
     @StateObject private var viewModel = ClientsViewModel()
     @State private var searchText: String = ""
     @State private var showAddClient = false
-
-    // Computed filtered list
+    
     private var filtered: [Client] {
         if searchText.isEmpty { return viewModel.clients }
         let lower = searchText.lowercased()
@@ -21,7 +20,7 @@ struct ClientsViewContent: View {
             $0.clientName.lowercased().contains(lower)
         }
     }
-
+    
     var body: some View {
         NavigationStack {
             List {

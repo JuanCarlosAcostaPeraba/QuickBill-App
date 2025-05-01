@@ -13,7 +13,7 @@ struct Phase3View: View {
     @Binding var taxId: String
     @Binding var companyEmail: String
     @Binding var companyPhone: String
-
+    
     var body: some View {
         VStack(alignment: .leading, spacing: 16) {
             // Company name
@@ -22,21 +22,21 @@ struct Phase3View: View {
                 .padding(16)
                 .background(Color.gray.opacity(0.1))
                 .cornerRadius(16)
-
+            
             // Tagline (optional)
             TextField("Tagline (optional)", text: $tagline)
                 .autocapitalization(.sentences)
                 .padding(16)
                 .background(Color.gray.opacity(0.1))
                 .cornerRadius(16)
-
+            
             // Tax ID (CIF, VAT, EIN...)
             TextField("Tax ID (CIF, VAT, EIN...)", text: $taxId)
                 .autocapitalization(.allCharacters)
                 .padding(16)
                 .background(Color.gray.opacity(0.1))
                 .cornerRadius(16)
-
+            
             // Company email
             TextField("Company email", text: $companyEmail)
                 .keyboardType(.emailAddress)
@@ -45,7 +45,7 @@ struct Phase3View: View {
                 .padding(16)
                 .background(Color.gray.opacity(0.1))
                 .cornerRadius(16)
-
+            
             // Company phone
             TextField("Company phone", text: $companyPhone)
                 .keyboardType(.phonePad)

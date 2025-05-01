@@ -11,7 +11,7 @@ struct Phase1View: View {
     @Binding var email: String
     @Binding var password: String
     @State private var showPassword: Bool = false
-
+    
     var body: some View {
         VStack(alignment: .leading, spacing: 16) {
             // Email field
@@ -22,7 +22,7 @@ struct Phase1View: View {
                 .padding(16)
                 .background(Color.gray.opacity(0.1))
                 .cornerRadius(16)
-
+            
             // Password field with toggle
             ZStack {
                 if showPassword {
@@ -42,10 +42,10 @@ struct Phase1View: View {
                     Image(systemName: showPassword ? "eye.slash" : "eye")
                         .foregroundColor(.gray)
                 }
-                .padding(.trailing, 16),
+                    .padding(.trailing, 16),
                 alignment: .trailing
             )
-
+            
             // Hint text
             Text("Password must be 6+ characters")
                 .font(.caption)

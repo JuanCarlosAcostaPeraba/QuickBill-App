@@ -10,10 +10,10 @@ import SwiftUI
 struct SignInView: View {
     @StateObject private var viewModel = SignInViewModel()
     @EnvironmentObject var auth: AuthViewModel
-
+    
     var body: some View {
         NavigationStack {
-
+            
             VStack(alignment: .leading, spacing: 16) {
                 // App title (toolbar handles this, but keep if needed)
                 Text("QuickBill")
@@ -22,7 +22,7 @@ struct SignInView: View {
                     .padding(.top, 16)
                 
                 Spacer()
-
+                
                 // Header
                 VStack(alignment: .leading, spacing: 0) {
                     Text("Sign in")
@@ -38,7 +38,7 @@ struct SignInView: View {
                             .foregroundColor(.blue)
                     }
                 }
-
+                
                 // Email field
                 TextField("Email", text: $viewModel.email)
                     .keyboardType(.emailAddress)
@@ -47,7 +47,7 @@ struct SignInView: View {
                     .padding(16)
                     .background(Color.gray.opacity(0.1))
                     .cornerRadius(16)
-
+                
                 // Password field with toggle
                 ZStack {
                     if viewModel.showPassword {
@@ -67,10 +67,10 @@ struct SignInView: View {
                         Image(systemName: viewModel.showPassword ? "eye.slash" : "eye")
                             .foregroundColor(.gray)
                     }
-                    .padding(.trailing, 16),
+                        .padding(.trailing, 16),
                     alignment: .trailing
                 )
-
+                
                 // Forgot password link
                 NavigationLink(destination: ForgotPasswordView()) {
                     Text("Forgot password?")
@@ -80,7 +80,7 @@ struct SignInView: View {
                 }
                 
                 Spacer()
-
+                
                 // Sign in button
                 Button(action: {
                     Task {
@@ -98,7 +98,7 @@ struct SignInView: View {
                         .cornerRadius(30)
                 }
                 .padding(.horizontal)
-
+                
                 Spacer()
             }
             .padding(.horizontal)
