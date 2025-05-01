@@ -17,8 +17,7 @@ struct MainTabView: View {
                 case .home:
                     HomeView()
                 case .products:
-                    //ProductsView()
-                    EmptyView()
+                    ProductsView()
                 case .add:
                     //AddInvoiceView()
                     EmptyView()
