@@ -16,7 +16,6 @@ enum TabItem: String, CaseIterable, Identifiable {
     
     var id: Self { self }
     
-    /// System image name for each tab
     var iconName: String {
         switch self {
         case .home:      return "house"
