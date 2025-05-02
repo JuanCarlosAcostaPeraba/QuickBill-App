@@ -6,20 +6,28 @@
 //
 
 import SwiftUI
+import Foundation
 
 struct InvoiceCardComponent: View {
     let invoice: Invoice
     
     var body: some View {
         VStack(alignment: .leading, spacing: 8) {
+            // 1. Company name
             Text(invoice.companyName)
                 .font(.headline)
-            Text(invoice.period)
+            
+            // 2. Issued date formatted
+            Text(invoice.issuedAt, style: .date)
                 .font(.subheadline)
                 .foregroundColor(.gray)
-            Text("\(String(format: "%.2f", invoice.amount))\(invoice.currency)")
+            
+            // 3. Total amount with currency
+            Text(String(format: "%.2f %@", invoice.totalAmount, invoice.currency))
                 .font(.title2)
                 .fontWeight(.bold)
+            
+            // 4. Status badge
             Text(invoice.status.rawValue)
                 .font(.caption2)
                 .fontWeight(.bold)
