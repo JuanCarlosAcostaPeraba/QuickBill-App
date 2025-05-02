@@ -7,8 +7,16 @@
 
 import FirebaseAuth
 import FirebaseFirestore
+import Foundation
 
 class InvoiceListViewModel: ObservableObject {
+    /// Formatter for issuedAt date to support text search
+    private let dateFormatter: DateFormatter = {
+        let df = DateFormatter()
+        df.dateFormat = "dd/MM/yyyy"
+        return df
+    }()
+    
     @Published var invoices: [Invoice] = []
     @Published var selectedStatus: InvoiceStatus = .all
     @Published var searchText: String = ""
@@ -19,8 +27,8 @@ class InvoiceListViewModel: ObservableObject {
             (selectedStatus == .all || inv.status == selectedStatus) &&
             (searchText.isEmpty ||
              inv.companyName.lowercased().contains(searchText.lowercased()) ||
-             inv.period.contains(searchText) ||
-             String(format: "%.2f", inv.amount).contains(searchText)
+             dateFormatter.string(from: inv.issuedAt).contains(searchText) ||
+             String(format: "%.2f", inv.totalAmount).contains(searchText)
             )
         }
     }
@@ -46,29 +54,53 @@ class InvoiceListViewModel: ObservableObject {
                     print("Error fetching invoices: \(invErr)")
                     return
                 }
-                let fetched: [Invoice] = invSnap?.documents.compactMap { doc in
+                let fetched: [Invoice] = invSnap?.documents.compactMap { (doc) -> Invoice? in
                     let data = doc.data()
                     guard
-                        let companyName = data["clientName"] as? String ?? data["companyName"] as? String,
-                        let timestamp = data["issuedAt"] as? Timestamp,
-                        let amount = data["totalAmount"] as? Double,
+                        let companyName = data["companyName"] as? String,
+                        let issuedTs = data["issuedAt"] as? Timestamp,
+                        let dueTs = data["dueDate"] as? Timestamp,
+                        let subtotal = data["subtotal"] as? Double,
+                        let taxTotal = data["taxTotal"] as? Double,
+                        let discounts = data["discounts"] as? Double,
+                        let totalAmount = data["totalAmount"] as? Double,
                         let currency = data["currency"] as? String,
+                        let clientId = data["clientId"] as? String,
+                        let employeeId = data["employeeId"] as? String,
                         let statusRaw = data["status"] as? String,
                         let status = InvoiceStatus(rawValue: statusRaw)
                     else {
                         return nil
                     }
-                    // Format period as month/year
-                    let date = timestamp.dateValue()
-                    let formatter = DateFormatter()
-                    formatter.dateFormat = "MM/yyyy"
-                    let period = formatter.string(from: date)
+                    // Convert timestamps to Date
+                    let issuedAt = issuedTs.dateValue()
+                    let dueDate = dueTs.dateValue()
+                    // Optional fields
+                    let pdfURL: URL? = {
+                        if let urlString = data["pdfURL"] as? String {
+                            return URL(string: urlString)
+                        }
+                        return nil
+                    }()
+                    let deleteAfter: Date? = (data["deleteAfter"] as? Timestamp)?.dateValue()
+                    // For now, leave productsStack empty; can fetch subcollection later
+                    let productsStack: [ProductStack] = []
                     return Invoice(
                         id: doc.documentID,
                         companyName: companyName,
-                        period: period,
-                        amount: amount,
+                        issuedAt: issuedAt,
+                        dueDate: dueDate,
+                        amount: totalAmount,
+                        subtotal: subtotal,
+                        taxTotal: taxTotal,
+                        discounts: discounts,
+                        totalAmount: totalAmount,
                         currency: currency,
+                        clientId: clientId,
+                        employeeId: employeeId,
+                        pdfURL: pdfURL,
+                        deleteAfter: deleteAfter,
+                        productsStack: productsStack,
                         status: status
                     )
                 } ?? []
