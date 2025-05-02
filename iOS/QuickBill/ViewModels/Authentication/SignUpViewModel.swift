@@ -59,7 +59,6 @@ class SignUpViewModel: ObservableObject {
         }
     }
     
-    // Move to next phase or register
     func nextStep() {
         guard canProceed else {
             alertMessage = "Please fill all fields correctly."
@@ -73,19 +72,16 @@ class SignUpViewModel: ObservableObject {
         }
     }
     
-    // Move to previous phase
     func previousStep() {
         if step > 1 {
             step -= 1
         }
     }
     
-    // Cancel signup (pop or dismiss)
     func cancel() {
         // Implement dismissal logic in the view (e.g. pop)
     }
     
-    // Reset all fields
     func reset() {
         step = 1
         email = ""

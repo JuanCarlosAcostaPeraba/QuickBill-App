@@ -17,7 +17,6 @@ class SignInViewModel: ObservableObject {
     @Published var alertMessage: String = ""
     @Published var didSignIn: Bool = false
     
-    /// Attempts to sign in with Firebase Auth
     func signIn() async {
         do {
             _ = try await Auth.auth().signIn(withEmail: email, password: password)

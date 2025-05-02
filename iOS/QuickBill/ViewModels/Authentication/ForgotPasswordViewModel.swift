@@ -14,7 +14,6 @@ class ForgotPasswordViewModel: ObservableObject {
     @Published var showAlert: Bool = false
     @Published var alertMessage: String = ""
 
-    /// Sends a password reset email and updates alert state
     func resetPassword() async {
         do {
             try await Auth.auth().sendPasswordReset(withEmail: email)
