@@ -19,8 +19,7 @@ struct MainTabView: View {
                 case .products:
                     ProductsView()
                 case .add:
-                    //AddInvoiceView()
-                    EmptyView()
+                    AddInvoiceView()
                 case .clients:
                     ClientsView()
                 case .settings:
