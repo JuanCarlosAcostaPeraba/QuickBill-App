@@ -118,6 +118,13 @@ struct AddInvoiceView: View {
                         .keyboardType(.decimalPad)
                 }
                 .padding(.vertical, 4)
+                .swipeActions(edge: .trailing) {
+                    Button(role: .destructive) {
+                        viewModel.lineItems.remove(at: idx)
+                    } label: {
+                        Label("Delete", systemImage: "trash")
+                    }
+                }
             }
             Button("Add Product") {
                 viewModel.addLineItem()
