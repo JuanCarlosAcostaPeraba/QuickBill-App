@@ -65,7 +65,7 @@ class AddInvoiceViewModel: ObservableObject {
                 }
             }
     }
-
+    
     /// Resets the form fields to their initial state for creating a new invoice
     func resetForm() {
         // Reset dates
@@ -123,6 +123,7 @@ class AddInvoiceViewModel: ObservableObject {
     
     /// Save the invoice to Firestore under the business
     func saveInvoice(completion: @escaping (Result<Void, Error>) -> Void) {
+        
         // 1) Validate inputs
         guard !selectedClientId.isEmpty, !lineItems.isEmpty else {
             alertMessage = "Select a client and add at least one product."
@@ -130,6 +131,7 @@ class AddInvoiceViewModel: ObservableObject {
             completion(.failure(NSError(domain: "", code: -1)))
             return
         }
+        
         // 2) Build the productsStack array
         let stackData: [[String: Any]] = lineItems.compactMap { item in
             guard let qty = Int(item.quantityText),
@@ -146,10 +148,12 @@ class AddInvoiceViewModel: ObservableObject {
                 "taxNet": amount * (tax / 100)
             ]
         }
+        
         // 3) Compute totals
         let subtotal = stackData.reduce(0) { $0 + ($1["amount"] as? Double ?? 0) }
         let taxTotal = stackData.reduce(0) { $0 + ($1["taxNet"] as? Double ?? 0) }
         let totalAmount = subtotal + taxTotal
+        
         // 4) Prepare base invoice data
         var invoiceData: [String: Any] = [
             "issuedAt": Timestamp(date: issuedAt),
@@ -169,8 +173,8 @@ class AddInvoiceViewModel: ObservableObject {
         db.collectionGroup("employees")
             .whereField("userId", isEqualTo: currentUserId)
             .getDocuments {
- empSnap,
- empErr in
+                empSnap,
+                empErr in
                 if let empErr = empErr {
                     completion(.failure(empErr)); return
                 }
@@ -181,8 +185,8 @@ class AddInvoiceViewModel: ObservableObject {
                 
                 // 6) Fetch subscriptionPlan to compute deleteAfter
                 businessRef.getDocument {
- bizSnap,
- bizErr in
+                    bizSnap,
+                    bizErr in
                     if let bizErr = bizErr {
                         completion(.failure(bizErr)); return
                     }
