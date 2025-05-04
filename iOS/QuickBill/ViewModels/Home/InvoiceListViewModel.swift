@@ -27,6 +27,7 @@ class InvoiceListViewModel: ObservableObject {
     @Published var searchText: String = ""
     @Published var showSearch: Bool = false
     
+    /// Filtered invoices based on selected status and search text
     var filteredInvoices: [Invoice] {
         invoices.filter { inv in
             (selectedStatus == .all || inv.status == selectedStatus) &&
@@ -38,10 +39,10 @@ class InvoiceListViewModel: ObservableObject {
         }
     }
     
+    /// Fetches invoices from Firestore
     func fetchInvoices() {
         guard let uid = Auth.auth().currentUser?.uid else { return }
         
-        // 1. Find employee → business reference
         let firestore = Firestore.firestore()
         firestore.collectionGroup("employees")
             .whereField("userId", isEqualTo: uid)
@@ -72,7 +73,6 @@ class InvoiceListViewModel: ObservableObject {
                         }
                     }
                     
-                    // 3. Ahora trae todas las facturas
                     businessRef.collection("invoices").getDocuments { invSnap, invErr in
                         if let invErr = invErr {
                             print("Error fetching invoices: \(invErr)")
@@ -82,7 +82,6 @@ class InvoiceListViewModel: ObservableObject {
                         let fetched: [Invoice] = invSnap?.documents.compactMap { doc -> Invoice? in
                             let data = doc.data()
                             
-                            // Campos imprescindibles
                             guard
                                 let issuedTs    = data["issuedAt"]   as? Timestamp,
                                 let dueTs       = data["dueDate"]    as? Timestamp,
@@ -97,7 +96,6 @@ class InvoiceListViewModel: ObservableObject {
                                 let status      = InvoiceStatus(rawValue: statusRaw)
                             else { return nil }
                             
-                            // Nombre de cliente desde el diccionario
                             let companyName = clientNameById[clientId] ?? "—"
                             
                             let pdfURL      = (data["pdfURL"] as? String).flatMap(URL.init(string:))
