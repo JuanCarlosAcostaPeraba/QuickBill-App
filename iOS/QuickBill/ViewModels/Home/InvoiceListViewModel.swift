@@ -54,54 +54,48 @@ class InvoiceListViewModel: ObservableObject {
                     print("Error fetching invoices: \(invErr)")
                     return
                 }
-                let fetched: [Invoice] = invSnap?.documents.compactMap { (doc) -> Invoice? in
+                let fetched: [Invoice] = invSnap?.documents.compactMap { doc -> Invoice? in
                     let data = doc.data()
+                    
+                    // 1️⃣  Campos imprescindibles
                     guard
-                        let companyName = data["companyName"] as? String,
-                        let issuedTs = data["issuedAt"] as? Timestamp,
-                        let dueTs = data["dueDate"] as? Timestamp,
-                        let subtotal = data["subtotal"] as? Double,
-                        let taxTotal = data["taxTotal"] as? Double,
-                        let discounts = data["discounts"] as? Double,
-                        let totalAmount = data["totalAmount"] as? Double,
-                        let currency = data["currency"] as? String,
-                        let clientId = data["clientId"] as? String,
-                        let employeeId = data["employeeId"] as? String,
-                        let statusRaw = data["status"] as? String,
-                        let status = InvoiceStatus(rawValue: statusRaw)
-                    else {
-                        return nil
-                    }
-                    // Convert timestamps to Date
-                    let issuedAt = issuedTs.dateValue()
-                    let dueDate = dueTs.dateValue()
-                    // Optional fields
-                    let pdfURL: URL? = {
-                        if let urlString = data["pdfURL"] as? String {
-                            return URL(string: urlString)
-                        }
-                        return nil
-                    }()
-                    let deleteAfter: Date? = (data["deleteAfter"] as? Timestamp)?.dateValue()
-                    // For now, leave productsStack empty; can fetch subcollection later
-                    let productsStack: [ProductStack] = []
+                        let issuedTs    = data["issuedAt"]   as? Timestamp,
+                        let dueTs       = data["dueDate"]    as? Timestamp,
+                        let subtotal    = data["subtotal"]   as? Double,
+                        let taxTotal    = data["taxTotal"]   as? Double,
+                        let discounts   = data["discounts"]  as? Double,
+                        let totalAmount = data["totalAmount"]as? Double,
+                        let currency    = data["currency"]   as? String,
+                        let clientId    = data["clientId"]   as? String,
+                        let employeeId  = data["employeeId"] as? String,
+                        let statusRaw   = data["status"]     as? String,
+                        let status      = InvoiceStatus(rawValue: statusRaw)
+                    else { return nil }
+                    
+                    // 2️⃣  Opcionales con valor por defecto
+                    let companyName = data["companyName"] as? String ?? "—"
+                    let pdfURL      = (data["pdfURL"] as? String).flatMap(URL.init(string:))
+                    let deleteAfter = (data["deleteAfter"] as? Timestamp)?.dateValue()
+                    
+                    print(companyName)
+                    
                     return Invoice(
-                        id: doc.documentID,
-                        companyName: companyName,
-                        issuedAt: issuedAt,
-                        dueDate: dueDate,
-                        amount: totalAmount,
-                        subtotal: subtotal,
-                        taxTotal: taxTotal,
-                        discounts: discounts,
-                        totalAmount: totalAmount,
-                        currency: currency,
-                        clientId: clientId,
-                        employeeId: employeeId,
-                        pdfURL: pdfURL,
-                        deleteAfter: deleteAfter,
-                        productsStack: productsStack,
-                        status: status
+                        id:              doc.documentID,
+                        companyName:     companyName,
+                        issuedAt:        issuedTs.dateValue(),
+                        dueDate:         dueTs.dateValue(),
+                        amount:        subtotal + taxTotal - discounts,
+                        subtotal:        subtotal,
+                        taxTotal:        taxTotal,
+                        discounts:       discounts,
+                        totalAmount:     totalAmount,
+                        currency:        currency,
+                        clientId:        clientId,
+                        employeeId:      employeeId,
+                        pdfURL:          pdfURL,
+                        deleteAfter:     deleteAfter,
+                        productsStack:   [],          // si aún no los cargas
+                        status:          status
                     )
                 } ?? []
                 DispatchQueue.main.async {
