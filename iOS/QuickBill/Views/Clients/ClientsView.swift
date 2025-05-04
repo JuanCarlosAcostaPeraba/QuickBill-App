@@ -32,7 +32,7 @@ struct ClientsView: View {
                 } else {
                     ForEach(filtered) { client in
                         NavigationLink(destination: ClientView(client: client)) {
-                            Text(client.companyName)
+                            Text("\(client.companyName) - \(client.clientName)")
                         }
                     }
                 }
