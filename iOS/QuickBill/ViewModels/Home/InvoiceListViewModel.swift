@@ -9,6 +9,11 @@ import FirebaseAuth
 import FirebaseFirestore
 import Foundation
 
+private struct ClientInfo {
+    let id: String
+    let name: String
+}
+
 class InvoiceListViewModel: ObservableObject {
     /// Formatter for issuedAt date to support text search
     private let dateFormatter: DateFormatter = {
@@ -35,73 +40,94 @@ class InvoiceListViewModel: ObservableObject {
     
     func fetchInvoices() {
         guard let uid = Auth.auth().currentUser?.uid else { return }
-        // 1. Find the employee document for this user
-        let empQuery = Firestore.firestore().collectionGroup("employees")
+        
+        // 1. Find employee → business reference
+        let firestore = Firestore.firestore()
+        firestore.collectionGroup("employees")
             .whereField("userId", isEqualTo: uid)
-        empQuery.getDocuments { empSnap, empErr in
-            if let empErr = empErr {
-                print("Error fetching employee record: \(empErr)")
-                return
-            }
-            guard let empDoc = empSnap?.documents.first,
-                  let businessRef = empDoc.reference.parent.parent else {
-                print("No business found for user \(uid)")
-                return
-            }
-            // 2. Fetch invoices under that business
-            businessRef.collection("invoices").getDocuments { invSnap, invErr in
-                if let invErr = invErr {
-                    print("Error fetching invoices: \(invErr)")
+            .getDocuments { empSnap, empErr in
+                
+                if let empErr = empErr {
+                    print("Error fetching employee record: \(empErr)")
                     return
                 }
-                let fetched: [Invoice] = invSnap?.documents.compactMap { doc -> Invoice? in
-                    let data = doc.data()
+                guard
+                    let empDoc = empSnap?.documents.first,
+                    let businessRef = empDoc.reference.parent.parent
+                else {
+                    print("No business found for user \(uid)")
+                    return
+                }
+                
+                // 2. Pre‑fetch all clients once and build a [clientId: name] dictionary
+                businessRef.collection("clients").getDocuments { clientSnap, _ in
+                    var clientNameById: [String: String] = [:]
+                    if let docs = clientSnap?.documents {
+                        for doc in docs {
+                            let d = doc.data()
+                            // Usa companyName, o clientName si no existe companyName
+                            let name = (d["companyName"] as? String) ??
+                            (d["clientName"]  as? String)  ?? "—"
+                            clientNameById[doc.documentID] = name
+                        }
+                    }
                     
-                    // 1️⃣  Campos imprescindibles
-                    guard
-                        let issuedTs    = data["issuedAt"]   as? Timestamp,
-                        let dueTs       = data["dueDate"]    as? Timestamp,
-                        let subtotal    = data["subtotal"]   as? Double,
-                        let taxTotal    = data["taxTotal"]   as? Double,
-                        let discounts   = data["discounts"]  as? Double,
-                        let totalAmount = data["totalAmount"]as? Double,
-                        let currency    = data["currency"]   as? String,
-                        let clientId    = data["clientId"]   as? String,
-                        let employeeId  = data["employeeId"] as? String,
-                        let statusRaw   = data["status"]     as? String,
-                        let status      = InvoiceStatus(rawValue: statusRaw)
-                    else { return nil }
-                    
-                    // 2️⃣  Opcionales con valor por defecto
-                    let companyName = data["companyName"] as? String ?? "—"
-                    let pdfURL      = (data["pdfURL"] as? String).flatMap(URL.init(string:))
-                    let deleteAfter = (data["deleteAfter"] as? Timestamp)?.dateValue()
-                    
-                    print(companyName)
-                    
-                    return Invoice(
-                        id:              doc.documentID,
-                        companyName:     companyName,
-                        issuedAt:        issuedTs.dateValue(),
-                        dueDate:         dueTs.dateValue(),
-                        amount:        subtotal + taxTotal - discounts,
-                        subtotal:        subtotal,
-                        taxTotal:        taxTotal,
-                        discounts:       discounts,
-                        totalAmount:     totalAmount,
-                        currency:        currency,
-                        clientId:        clientId,
-                        employeeId:      employeeId,
-                        pdfURL:          pdfURL,
-                        deleteAfter:     deleteAfter,
-                        productsStack:   [],          // si aún no los cargas
-                        status:          status
-                    )
-                } ?? []
-                DispatchQueue.main.async {
-                    self.invoices = fetched
+                    // 3. Ahora trae todas las facturas
+                    businessRef.collection("invoices").getDocuments { invSnap, invErr in
+                        if let invErr = invErr {
+                            print("Error fetching invoices: \(invErr)")
+                            return
+                        }
+                        
+                        let fetched: [Invoice] = invSnap?.documents.compactMap { doc -> Invoice? in
+                            let data = doc.data()
+                            
+                            // Campos imprescindibles
+                            guard
+                                let issuedTs    = data["issuedAt"]   as? Timestamp,
+                                let dueTs       = data["dueDate"]    as? Timestamp,
+                                let subtotal    = data["subtotal"]   as? Double,
+                                let taxTotal    = data["taxTotal"]   as? Double,
+                                let discounts   = data["discounts"]  as? Double,
+                                let totalAmount = data["totalAmount"]as? Double,
+                                let currency    = data["currency"]   as? String,
+                                let clientId    = data["clientId"]   as? String,
+                                let employeeId  = data["employeeId"] as? String,
+                                let statusRaw   = data["status"]     as? String,
+                                let status      = InvoiceStatus(rawValue: statusRaw)
+                            else { return nil }
+                            
+                            // Nombre de cliente desde el diccionario
+                            let companyName = clientNameById[clientId] ?? "—"
+                            
+                            let pdfURL      = (data["pdfURL"] as? String).flatMap(URL.init(string:))
+                            let deleteAfter = (data["deleteAfter"] as? Timestamp)?.dateValue()
+                            
+                            return Invoice(
+                                id:            doc.documentID,
+                                companyName:   companyName,
+                                issuedAt:      issuedTs.dateValue(),
+                                dueDate:       dueTs.dateValue(),
+                                amount:       totalAmount,
+                                subtotal:      subtotal,
+                                taxTotal:      taxTotal,
+                                discounts:     discounts,
+                                totalAmount:   totalAmount,
+                                currency:      currency,
+                                clientId:      clientId,
+                                employeeId:    employeeId,
+                                pdfURL:        pdfURL,
+                                deleteAfter:   deleteAfter,
+                                productsStack: [],
+                                status:        status
+                            )
+                        } ?? []
+                        
+                        DispatchQueue.main.async {
+                            self.invoices = fetched
+                        }
+                    }
                 }
             }
-        }
     }
 }
