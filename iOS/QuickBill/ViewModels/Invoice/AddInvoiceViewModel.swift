@@ -122,31 +122,52 @@ class AddInvoiceViewModel: ObservableObject {
     }
     
     /// Save the invoice to Firestore under the business
-    func saveInvoice(completion: @escaping (Result<Void, Error>) -> Void) {
-        
-        // 1) Validate inputs
-        guard !selectedClientId.isEmpty, !lineItems.isEmpty else {
-            alertMessage = "Select a client and add at least one product."
+func saveInvoice(completion: @escaping (Result<Void, Error>) -> Void) {
+        // 1) Validate client selection
+        if selectedClientId.isEmpty {
+            alertMessage = "Please select a client."
             showAlert = true
-            completion(.failure(NSError(domain: "", code: -1)))
             return
         }
-        
-        // 2) Build the productsStack array
-        let stackData: [[String: Any]] = lineItems.compactMap { item in
-            guard let qty = Int(item.quantityText),
-                  let amount = Double(item.amountText),
-                  let tax = Double(item.taxRateText) else {
-                return nil
+        // 2) Validate at least one product
+        if lineItems.isEmpty {
+            alertMessage = "Add at least one product."
+            showAlert = true
+            return
+        }
+        // 3) Validate each product quantity is a positive integer
+        for item in lineItems {
+            guard let qty = Int(item.quantityText), qty > 0 else {
+                alertMessage = "Each product must have a positive quantity."
+                showAlert = true
+                return
             }
-            return [
-                "productId": item.productId,
+        }
+        // 4) Build the productsStack array with detailed logging
+        var stackData: [[String: Any]] = []
+        for item in lineItems {
+            // Validate quantity
+            guard let qty = Int(item.quantityText), qty > 0 else {
+                continue
+            }
+            // Default tax rate to 0 if empty
+            let taxRate = Double(item.taxRateText) ?? 0
+            // Find product
+            guard let product = products.first(where: { $0.id == item.productId }) else {
+                continue
+            }
+            // Compute amounts
+            let amount = product.unitPrice * Double(qty)
+            let taxNet = amount * (taxRate / 100)
+            let entry: [String: Any] = [
+                "productId": product.id,
                 "supplyDate": Timestamp(date: issuedAt),
                 "quantity": qty,
                 "amount": amount,
-                "taxRate": tax,
-                "taxNet": amount * (tax / 100)
+                "taxRate": taxRate,
+                "taxNet": taxNet
             ]
+            stackData.append(entry)
         }
         
         // 3) Compute totals
