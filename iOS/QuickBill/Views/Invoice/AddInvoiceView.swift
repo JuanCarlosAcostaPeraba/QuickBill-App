@@ -79,7 +79,7 @@ struct AddInvoiceView: View {
                     Text("Client")
                     Spacer()
                     if let selected = viewModel.clients.first(where: { $0.id == viewModel.selectedClientId }) {
-                        Text(selected.clientName)
+                        Text("\(selected.companyName) - \(selected.clientName)")
                             .foregroundColor(.primary)
                     } else {
                         Text("Select client")
@@ -141,7 +141,7 @@ struct AddInvoiceView: View {
                     clientSearchText.isEmpty ||
                     $0.clientName.lowercased().contains(clientSearchText.lowercased())
                 }) { client in
-                    Button(client.clientName) {
+                    Button("\(client.companyName) - \(client.clientName)") {
                         viewModel.selectedClientId = client.id
                         showClientPicker = false
                         clientSearchText = ""
