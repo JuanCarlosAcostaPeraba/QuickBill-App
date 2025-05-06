@@ -23,6 +23,7 @@ class InvoiceListViewModel: ObservableObject {
     }()
     
     @Published var invoices: [Invoice] = []
+    @Published var clientNameById: [String: String] = [:]
     @Published var selectedStatus: InvoiceStatus = .all
     @Published var searchText: String = ""
     @Published var showSearch: Bool = false
@@ -46,7 +47,9 @@ class InvoiceListViewModel: ObservableObject {
         let firestore = Firestore.firestore()
         firestore.collectionGroup("employees")
             .whereField("userId", isEqualTo: uid)
-            .getDocuments { empSnap, empErr in
+            .getDocuments {
+ empSnap,
+ empErr in
                 
                 if let empErr = empErr {
                     print("Error fetching employee record: \(empErr)")
@@ -61,15 +64,18 @@ class InvoiceListViewModel: ObservableObject {
                 }
                 
                 // 2. Pre‑fetch all clients once and build a [clientId: name] dictionary
-                businessRef.collection("clients").getDocuments { clientSnap, _ in
-                    var clientNameById: [String: String] = [:]
+                businessRef.collection("clients").getDocuments {
+ clientSnap,
+ _ in
+                    var nameDict: [String: String] = [:]
                     if let docs = clientSnap?.documents {
                         for doc in docs {
                             let d = doc.data()
                             // Usa companyName, o clientName si no existe companyName
                             let name = (d["companyName"] as? String) ??
-                            (d["clientName"]  as? String)  ?? "—"
-                            clientNameById[doc.documentID] = name
+                            (d["clientName"] as? String) ?? "—"
+                            self.clientNameById[doc.documentID] = d["clientName"] as? String
+                            nameDict[doc.documentID] = name
                         }
                     }
                     
@@ -96,7 +102,7 @@ class InvoiceListViewModel: ObservableObject {
                                 let status      = InvoiceStatus(rawValue: statusRaw)
                             else { return nil }
                             
-                            let companyName = clientNameById[clientId] ?? "—"
+                            let companyName = nameDict[clientId] ?? "—"
                             
                             let pdfURL      = (data["pdfURL"] as? String).flatMap(URL.init(string:))
                             let deleteAfter = (data["deleteAfter"] as? Timestamp)?.dateValue()
@@ -127,5 +133,10 @@ class InvoiceListViewModel: ObservableObject {
                     }
                 }
             }
+    }
+    
+    /// Return client name for a given client id
+    func getClientName(for clientId: String) -> String {
+        clientNameById[clientId] ?? "—"
     }
 }
