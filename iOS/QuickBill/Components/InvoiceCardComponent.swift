@@ -10,12 +10,25 @@ import Foundation
 
 struct InvoiceCardComponent: View {
     let invoice: Invoice
+    let clientName: String
     
     var body: some View {
         VStack(alignment: .leading, spacing: 6) {
-            // 1. Company name
-            Text(invoice.companyName)
-                .font(.headline)
+            HStack {
+                // 1. Company name
+                Text(invoice.companyName)
+                    .font(.headline)
+                    .fontWeight(.bold)
+                    .foregroundColor(.black)
+                
+                Spacer()
+
+                // 1. Client name
+                Text(clientName)
+                    .font(.headline)
+                    .foregroundColor(.gray)
+                    .padding(.leading, 8)
+            }
             
             // 2. Issued date formatted
             Text(invoice.issuedAt, style: .date)
@@ -27,6 +40,7 @@ struct InvoiceCardComponent: View {
                 Text(String(format: "%.2f %@", invoice.totalAmount, invoice.currency))
                     .font(.title2)
                     .fontWeight(.bold)
+                    .foregroundColor(.black)
                 
                 // 4. Status badge
                 Text(invoice.status.rawValue)
