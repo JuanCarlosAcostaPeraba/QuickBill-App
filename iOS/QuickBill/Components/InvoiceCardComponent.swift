@@ -23,7 +23,6 @@ struct InvoiceCardComponent: View {
                 .foregroundColor(.gray)
             
             VStack(alignment: .trailing, spacing: 6) {
-                
                 // 3. Total amount with currency
                 Text(String(format: "%.2f %@", invoice.totalAmount, invoice.currency))
                     .font(.title2)
