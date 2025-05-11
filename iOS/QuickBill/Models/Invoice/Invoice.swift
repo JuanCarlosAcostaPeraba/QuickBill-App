@@ -23,5 +23,5 @@ struct Invoice: Identifiable {
     let pdfURL: URL?
     let deleteAfter: Date?
     let productsStack: [ProductStack]
-    let status: InvoiceStatus
+    var status: InvoiceStatus
 }
