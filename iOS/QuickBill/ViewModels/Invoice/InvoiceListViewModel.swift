@@ -48,8 +48,8 @@ class InvoiceListViewModel: ObservableObject {
         firestore.collectionGroup("employees")
             .whereField("userId", isEqualTo: uid)
             .getDocuments {
- empSnap,
- empErr in
+                empSnap,
+                empErr in
                 
                 if let empErr = empErr {
                     print("Error fetching employee record: \(empErr)")
@@ -65,8 +65,8 @@ class InvoiceListViewModel: ObservableObject {
                 
                 // 2. Pre‑fetch all clients once and build a [clientId: name] dictionary
                 businessRef.collection("clients").getDocuments {
- clientSnap,
- _ in
+                    clientSnap,
+                    _ in
                     var nameDict: [String: String] = [:]
                     if let docs = clientSnap?.documents {
                         for doc in docs {
