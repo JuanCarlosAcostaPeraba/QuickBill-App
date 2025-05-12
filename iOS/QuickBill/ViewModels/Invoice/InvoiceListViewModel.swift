@@ -107,7 +107,7 @@ class InvoiceListViewModel: ObservableObject {
                             let pdfURL      = (data["pdfURL"] as? String).flatMap(URL.init(string:))
                             let deleteAfter = (data["deleteAfter"] as? Timestamp)?.dateValue()
                             
-                            return Invoice(
+                            let mapped = Invoice(
                                 id:            doc.documentID,
                                 companyName:   companyName,
                                 issuedAt:      issuedTs.dateValue(),
@@ -125,6 +125,22 @@ class InvoiceListViewModel: ObservableObject {
                                 productsStack: [],
                                 status:        status
                             )
+                            
+                            // Sincronizar estado Overdue si procede
+                            let liveStatus = InvoiceStatusService.effectiveStatus(for: mapped)
+                            if liveStatus == .overdue && mapped.status != .overdue {
+                                doc.reference.updateData(["status": "Overdue"]) { err in
+                                    if let err = err {
+                                        print("Failed to update status for \(mapped.id): \(err)")
+                                    }
+                                }
+                                // Actualizamos en memoria para que la UI refleje el cambio
+                                var updated = mapped
+                                updated.status = .overdue
+                                return updated
+                            }
+                            
+                            return mapped
                         } ?? []
                         
                         DispatchQueue.main.async {
