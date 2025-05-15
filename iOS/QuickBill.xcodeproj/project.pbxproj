@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		CE03BF112DD356CC00A4FBF8 /* Localizable.xcstrings in Resources */ = {isa = PBXBuildFile; fileRef = CE03BF102DD356CC00A4FBF8 /* Localizable.xcstrings */; };
 		CED8CFEC2DBA6D0C00D99E09 /* FirebaseAnalytics in Frameworks */ = {isa = PBXBuildFile; productRef = CED8CFEB2DBA6D0C00D99E09 /* FirebaseAnalytics */; };
 		CED8CFEE2DBA6D0C00D99E09 /* FirebaseAnalyticsOnDeviceConversion in Frameworks */ = {isa = PBXBuildFile; productRef = CED8CFED2DBA6D0C00D99E09 /* FirebaseAnalyticsOnDeviceConversion */; };
 		CED8CFF02DBA6D0C00D99E09 /* FirebaseAnalyticsWithoutAdIdSupport in Frameworks */ = {isa = PBXBuildFile; productRef = CED8CFEF2DBA6D0C00D99E09 /* FirebaseAnalyticsWithoutAdIdSupport */; };
@@ -34,6 +35,7 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		CE03BF102DD356CC00A4FBF8 /* Localizable.xcstrings */ = {isa = PBXFileReference; lastKnownFileType = text.json.xcstrings; path = Localizable.xcstrings; sourceTree = "<group>"; };
 		CE106B972DB7BC9E0078FE97 /* QuickBill.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = QuickBill.app; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
@@ -83,6 +85,7 @@
 		CE106B8E2DB7BC9E0078FE97 = {
 			isa = PBXGroup;
 			children = (
+				CE03BF102DD356CC00A4FBF8 /* Localizable.xcstrings */,
 				CE106B992DB7BC9E0078FE97 /* QuickBill */,
 				CE106B982DB7BC9E0078FE97 /* Products */,
 			);
@@ -165,6 +168,7 @@
 			hasScannedForEncodings = 0;
 			knownRegions = (
 				en,
+				es,
 				Base,
 			);
 			mainGroup = CE106B8E2DB7BC9E0078FE97;
@@ -187,6 +191,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				CE03BF112DD356CC00A4FBF8 /* Localizable.xcstrings in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -262,6 +267,7 @@
 				ONLY_ACTIVE_ARCH = YES;
 				SDKROOT = iphoneos;
 				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "DEBUG $(inherited)";
+				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 			};
 			name = Debug;
@@ -318,6 +324,7 @@
 				MTL_FAST_MATH = YES;
 				SDKROOT = iphoneos;
 				SWIFT_COMPILATION_MODE = wholemodule;
+				SWIFT_EMIT_LOC_STRINGS = YES;
 				VALIDATE_PRODUCT = YES;
 			};
 			name = Release;
