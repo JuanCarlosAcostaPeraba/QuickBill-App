@@ -31,20 +31,22 @@ Por último, la movilidad se ha consolidado como requisito operativo. Según el 
 \begin{large}
 
 \subsection{Objetivo general}
-El objetivo principal de este trabajo consiste en desarrollar una plataforma de facturación integral que combine aplicaciones móviles nativas para iOS y Android con un portal web administrativo. Este sistema ofrecerá funcionamiento continuo en ausencia de conexión, cumplirá con la normativa vigente y facilitará una experiencia de usuario intuitiva y satisfactoria.
+El proyecto persigue la creación de una plataforma de facturación integral formada por aplicaciones móviles nativas para iOS y Android y por un portal web administrativo. La solución debe operar sin interrupciones, incluso en ausencia de conexión, y ofrecer una experiencia de uso clara, accesible y satisfactoria.
 
 \subsection{Objetivos específicos}
-El primer objetivo específico es diseñar una arquitectura de datos sólida que modele con claridad las entidades propias del dominio de facturación tales como empresas, usuarios y facturas y que permita ampliar y mantener el sistema con facilidad.
+En primer lugar se plantea el diseño de una arquitectura de datos sólida que represente con precisión las entidades del dominio, es decir, empresas, usuarios y facturas, y permita la evolución y el mantenimiento del sistema sin inconsistencias.
 
-El segundo objetivo específico se centra en implementar un sistema de autenticación y autorización capaz de gestionar roles y permisos de manera rigurosa para garantizar que cada usuario acceda únicamente a las funcionalidades correspondientes a su perfil.
+El segundo objetivo establece la implantación de un mecanismo de autenticación y autorización que gestione roles y permisos con rigor, de manera que cada perfil acceda únicamente a las funciones que le correspondan.
 
-El tercer objetivo específico aborda el desarrollo de la lógica de generación automática de facturas incluyendo el cálculo adecuado de impuestos y la exportación de los documentos a formato PDF con calidad profesional y compatibilidad con estándares de facturación electrónica.
+El tercer objetivo se centra en desarrollar la lógica de generación automática de facturas, incorporando el cálculo exacto de impuestos y la exportación de los documentos a PDF con calidad profesional y compatibilidad con los estándares de facturación electrónica.
 
-El cuarto objetivo específico persigue dotar al sistema de un modo de funcionamiento sin conexión que posibilite la creación y modificación de facturas en entornos offline así como la sincronización de los cambios con el servidor una vez restablecida la conectividad.
+El cuarto objetivo persigue proporcionar a la plataforma un modo de funcionamiento sin conexión que posibilite crear o modificar facturas en entornos offline y sincronizar los cambios en cuanto se restablezca la conectividad.
 
-El quinto objetivo específico contempla la creación de un portal web administrativo que muestre cuadros de mando y métricas financieras detalladas con el fin de facilitar el seguimiento de ingresos, gastos y morosidad y apoyar la toma de decisiones.
+\pagebreak
 
-El sexto objetivo específico consiste en asegurar la confidencialidad e integridad de la información mediante el uso de cifrado de datos en tránsito y en reposo para cumplir con los requisitos del \gls{rgpd}.
+El quinto objetivo aborda la construcción de un portal web administrativo con cuadros de mando y métricas financieras detalladas, cuyo propósito es facilitar el seguimiento de ingresos, gastos y morosidad y respaldar la toma de decisiones.
+
+Por último, el sexto objetivo apunta a proteger la confidencialidad e integridad de la información mediante cifrado tanto en tránsito como en reposo, garantizando el cumplimiento de los requisitos establecidos por el \gls{rgpd}.
 \end{large}
 
 %----------------------------------------------------------
@@ -53,7 +55,7 @@ El sexto objetivo específico consiste en asegurar la confidencialidad e integri
 \begin{large}
 El desarrollo de este proyecto ha exigido movilizar un conjunto de competencias técnicas directamente relacionadas con el diseño, implementación y evaluación de sistemas de información avanzados. A continuación se detallan las competencias específicas que se han puesto en práctica a lo largo de la realización de este trabajo:
 
-\begin{itemize}
+\begin{itemize}[label=\raisebox{0.15ex}{\scriptsize$\blacksquare$}]
   \item \textbf{CI8.} Capacidad para analizar, diseñar, construir y mantener aplicaciones de forma robusta, segura y eficiente, seleccionando el paradigma y los lenguajes de programación más adecuados.  
   \item \textbf{CI12.} Conocimiento y aplicación de las características, funcionalidades y estructura de las bases de datos, que permitan su diseño, análisis e implementación de soluciones de almacenamiento de información.  
   \item \textbf{CI13.} Conocimiento y aplicación de las herramientas necesarias para el almacenamiento, procesamiento y acceso a los sistemas de información, incluidos los basados en web.  
@@ -66,12 +68,10 @@ El desarrollo de este proyecto ha exigido movilizar un conjunto de competencias 
 Estos conocimientos y habilidades, extraídos directamente del plan de estudios oficial, han sido fundamentales para llevar a cabo el análisis, diseño e implementación de la plataforma de facturación propuesta \cite{grado2024ulpgc}.
 \end{large}
 
-\pagebreak
-
 %----------------------------------------------------------
 \section{Alineamiento con los Objetivos de Desarrollo Sostenible}
 %----------------------------------------------------------
-\begin{table}[!htbp]
+\begin{table}[H]
 \caption{Grado de relación del TFT con los objetivos de desarrollo sostenible.}
 \label{tab:ODS}
 \centering
@@ -100,8 +100,6 @@ ODS & 0 No procede & 1 Bajo & 2 Medio & 3 Alto \\ \cline{1-5}
 \end{table}
 
 \begin{large}
-La contribución de este proyecto a los Objetivos de Desarrollo Sostenible de la Agenda 2030 de Naciones Unidas se detalla a continuación \cite{un_agenda2030,sdg_report2023}.
-
 En primer lugar, en relación con el \textbf{ODS 9 – Industria, innovación e infraestructuras}, la aplicación propone una infraestructura digital accesible y resiliente, capaz de operar sin conexión para garantizar la continuidad del negocio en entornos con conectividad limitada. Además, sus funciones de generación y exportación de facturas en PDF introducen innovaciones que modernizan los procesos administrativos. 
 
 Respecto al \textbf{ODS 10 – Reducción de las desigualdades}, el diseño centrado en la usabilidad del teléfono móvil facilita que microempresas y autónomos, con recursos más reducidos, puedan adoptar tecnología avanzada de facturación, reduciendo la brecha digital frente a grandes organizaciones. 

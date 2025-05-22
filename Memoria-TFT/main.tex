@@ -23,18 +23,19 @@
 \usepackage{algorithm}
 \usepackage{algpseudocode}
 
-% Glosario de términos - BEGIN
+% Glosario de términos
 \usepackage[acronym,nonumberlist]{glossaries}
-
 \makeglossaries
 
-%\usepackage{fancyhdr}
+% Viñetas cuadradas en todas las listas itemize
+\usepackage{amssymb}
+\renewcommand\labelitemi{$\blacksquare$}
+
+% Otros paquetes y ajustes
 \usepackage{geometry}
-\usepackage{color}\usepackage{graphicx,xcolor}
+\usepackage{xcolor}
 
 \renewcommand{\lstlistingname}{Algoritmo}
-%\renewcommand{\lstlistlistingnam%e}{Índice de~\lstlistingname s}
-
 \floatname{algorithm}{Algoritmo}
 \renewcommand{\listalgorithmname}{Índice de~\lstlistingname s}
 
@@ -52,14 +53,12 @@
 \urlstyle{same}
 \title{Sistema de Facturación: Aplicación Móvil Nativa para la Generación y Gestión de Facturas con Funcionalidades Avanzadas}
 \author{Juan Carlos Acosta Perabá}
-\date{Curso 20XX - 20XX}
+\date{Curso 20XX -- 20XX}
 \renewcommand{\contentsname}{Contenido}
 \renewcommand{\figurename}{Ilustración}
-\usepackage{pifont}
-\renewcommand\labelitemi{\ding{52}}
 
 \begin{document}
-%\maketittle
+%\maketitle
 \input{Portada.tex}
 
 \input{TFT04C.tex}
@@ -73,21 +72,16 @@
 \input{Resumen.tex}
 \tableofcontents
 
-%\addcontentsline{toc}{section}{Listings}
-%\lstlistoflistings
 \listofalgorithms 
-
 \listoffigures
-
 \listoftables
-
 
 \clearpage
 \pagenumbering{arabic}
 
 % 1. Introducción
 \chapter{Introducción}
-\input{Introduccion.tex} 
+\input{Introduccion.tex}
 
 % 2. Análisis
 \chapter{Análisis}
@@ -97,8 +91,8 @@
 \chapter{Desarrollo}
 \input{Desarrollo.tex}
 
-% 4. Resultados y trababo futuro
-\chapter{Resultados y trababo futuro}
+% 4. Resultados y trabajo futuro
+\chapter{Resultados y trabajo futuro}
 \input{Resultados.tex}
 
 \vspace{1cm}
