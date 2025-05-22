@@ -1,0 +1,95 @@
+%----------------------------------------------------------
+% Capítulo 2 – Análisis
+%----------------------------------------------------------
+
+%----------------------------------------------------------
+\section{Problema}
+%----------------------------------------------------------
+\begin{large}
+El día a día de muchas pymes y profesionales autónomos, la facturación sigue un recorrido fragmentado que combina plantillas de hojas de cálculo, correos electrónicos y archivado físico de documentos. Cada paso requiere intervención manual para verificar importes, registrar pagos y mantener la trazabilidad, lo que incrementa la probabilidad de errores humanos y alarga el ciclo de cobro y pago. La ausencia de una plataforma única obliga a reintroducir datos en distintas aplicaciones de contabilidad, gestión de clientes y seguimiento de inventario, de modo que las inconsistencias se propagan y dificultan la elaboración de un estado financiero fiable.
+
+La falta de conectividad estable agrava este panorama. Cuando el personal trabaja en movilidad o en ubicaciones con cobertura deficiente no puede emitir ni consultar facturas en tiempo real, por lo que la información se desactualiza y se generan cuellos de botella en la toma de decisiones. A ello se suman los riesgos inherentes al almacenamiento disperso, tanto en equipos locales como en servidores poco seguros, que exponen a las organizaciones a pérdidas de datos, accesos no autorizados y complicaciones durante las auditorías.
+
+El marco regulador también introduce exigencias que resultan complejas de cumplir con herramientas tradicionales. La Ley 18 / 2022 de Creación y Crecimiento Empresarial obliga a emitir factura electrónica en todas las transacciones entre empresas, mantener un registro íntegro de los movimientos y garantizar la autenticidad de cada documento \cite{ley18_2022}. Para muchos negocios la adaptación implica invertir en nuevas soluciones, capacitar al personal y rediseñar los procesos internos, con el consiguiente impacto económico y operativo. La combinación de tareas manuales, carencia de integración y presión normativa describe un problema que no solo merma la productividad, sino que también compromete la competitividad y la capacidad de crecimiento de las empresas.
+\end{large}
+
+%----------------------------------------------------------
+\section{Solución}
+%----------------------------------------------------------
+\begin{large}
+Para resolver las ineficiencias detectadas se propone una plataforma de facturación concebida bajo el principio \textit{mobile first} y respaldada íntegramente por los servicios gestionados de Firebase, que actúan como fuente única de verdad para todos los datos. La solución incluye aplicaciones nativas para iOS y Android que comparten la misma lógica de negocio y un portal web administrativo dedicado al análisis financiero y a la configuración avanzada. Los tres clientes se conectan a Firestore mediante SDK nativos o, cuando procede, mediante peticiones REST, lo que garantiza la consistencia y simplifica el mantenimiento evolutivo.
+
+Las aplicaciones móviles siguen un modelo \textit{offline-first}. Cuando el dispositivo carece de red, las facturas, los clientes o los productos se guardan en la caché local persistente cifrada; tan pronto como vuelve la conectividad, Firestore sincroniza los cambios con la nube y resuelve posibles conflictos mediante sellos temporales, de modo que la actividad puede continuar sin interrupciones.
+
+El plano de servidor se apoya en Cloud Functions y Firestore, una base de datos de documentos con escalado automático. Esto ofrece alta disponibilidad sin administración de servidores y ajusta el coste al uso real, una ventaja decisiva para pymes y profesionales autónomos. Las funciones generan los PDF de las facturas, aplican la numeración secuencial exigida por la Ley 18/2022 y almacenan los archivos en Cloud Storage. Las reglas de seguridad de Firestore, combinadas con Firebase Authentication y el cifrado transparente de Google, protegen los datos en tránsito y en reposo, cumpliendo los requisitos del \gls{rgpd} y dejando un registro de auditoría para cada operación sensible.
+
+El portal web, alojado en Firebase Hosting, muestra en tiempo real indicadores como ingresos cobrados, importes pendientes y ratio de morosidad. Estos paneles se actualizan al instante gracias a la suscripción en tiempo real a Firestore. La interfaz, construida con \gls{astro}, renderiza contenido estático en el servidor y aplica hidratación parcial solo donde es necesario, sigue las pautas WCAG 2.1 y se adapta a distintos tamaños de pantalla.
+
+Este planteamiento elimina la fragmentación de herramientas, permite facturar desde cualquier lugar sin depender de la red, garantiza la trazabilidad legal y reduce drásticamente los costes operativos. El resultado es un flujo de trabajo unificado y escalable que minimiza errores y mejora la experiencia tanto de la empresa emisora como del cliente receptor.
+\end{large}
+
+%----------------------------------------------------------
+\section{Metodología}
+%----------------------------------------------------------
+\begin{large}
+El trabajo sigue un enfoque ágil para iterar rápidamente y validar funcionalidades con usuarios reales.  
+\end{large}
+
+\subsection{Sprints y feedback}
+\begin{large}
+Iteraciones de dos semanas incluyen planificación, desarrollo, pruebas unitarias y revisión con usuarios, lo que permite ajustar el alcance según necesidades reales.
+\end{large}
+
+\subsection{Integración continua}
+\begin{large}
+Pipeline automatizado realiza compilaciones, ejecuta pruebas y despliega artefactos en entornos de prueba, asegurando calidad y detección temprana de errores.
+\end{large}
+
+%----------------------------------------------------------
+\section{Organización del proyecto}
+%----------------------------------------------------------
+\begin{large}
+El proyecto se dividió en cinco fases sucesivas, desde el análisis de requisitos hasta el despliegue y pruebas finales.  
+\end{large}
+
+\subsection{Fase 1: Análisis de requisitos}
+\begin{large}
+Recogida de necesidades con pymes y autónomos para definir objetivos y priorizar funcionalidades.
+\end{large}
+
+\subsection{Fase 2: Diseño}
+\begin{large}
+Arquitectura del sistema y prototipado de interfaces en Figma, validando usabilidad antes de comenzar la implementación.
+\end{large}
+
+\subsection{Fase 3 y 4: Implementación móvil}
+\begin{large}
+Desarrollo en Swift (iOS) y Kotlin (Android), abordando primero la versión completa de iOS y luego una edición simplificada para Android.
+\end{large}
+
+\subsection{Fase 5: Portal web y pruebas}
+\begin{large}
+Construcción del portal en Node.js/Express y fase de pruebas de usabilidad, rendimiento y seguridad antes del lanzamiento.
+\end{large}
+
+%----------------------------------------------------------
+\section{Herramientas}
+%----------------------------------------------------------
+\begin{large}
+La elección de herramientas favoreció productividad, calidad y colaboración en todo el ciclo de vida.  
+\end{large}
+
+\subsection{Desarrollo móvil}
+\begin{large}
+Xcode 14 para Swift y Android Studio Flamingo para Kotlin, utilizando emuladores y depuradores integrados.
+\end{large}
+
+\subsection{Portal web y base de datos}
+\begin{large}
+Visual Studio Code con Node.js/Express y Firebase Firestore para un backend ligero, sincronización en tiempo real y cifrado nativo.
+\end{large}
+
+\subsection{Colaboración y documentación}
+\begin{large}
+GitHub gestionó versiones y pull requests, GitHub Actions automatizó CI/CD, Postman validó APIs y Swagger generó la documentación del API.
+\end{large}
