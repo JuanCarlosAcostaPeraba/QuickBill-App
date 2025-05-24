@@ -30,15 +30,15 @@ iOS/QuickBill/Package.resolved
 GoogleService-Info.plist
 
 # Android (Kotlin / Android Studio)
-Android/QuickBill/.gradle/
-Android/QuickBill/.idea/
-Android/QuickBill/*.iml
-Android/QuickBill/local.properties
-Android/QuickBill/captures/
-Android/QuickBill/build/
-Android/QuickBill/.cxx/
-Android/QuickBill/.externalNativeBuild/
-Android/QuickBill/obj/
+Android/.gradle/
+Android/.idea/
+Android/*.iml
+Android/local.properties
+Android/captures/
+Android/build/
+Android/.cxx/
+Android/.externalNativeBuild/
+Android/obj/
 
 # Temporary files and logs
 *.log
