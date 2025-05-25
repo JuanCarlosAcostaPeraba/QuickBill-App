@@ -10,7 +10,7 @@ import SwiftUI
 struct SettingsView: View {
     @EnvironmentObject var auth: AuthViewModel
     @StateObject private var viewModel = SettingsViewModel()
-    @AppStorage("appLanguage") private var appLanguage: String = AppLanguage.english.rawValue   // ← nuevo
+    @AppStorage("appLanguage") private var appLanguage: String = AppLanguage.english.rawValue
     
     var body: some View {
         NavigationStack {
@@ -27,8 +27,8 @@ struct SettingsView: View {
                             Text(lang.nativeName).tag(lang.rawValue)
                         }
                     }
-                    .pickerStyle(.menu)          // dropdown‑style picker
-                    .labelsHidden()              // hide default label to look like a select
+                    .pickerStyle(.menu)
+                    .labelsHidden()
                     .frame(maxWidth: .infinity, alignment: .leading)
                 }
                 
