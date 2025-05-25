@@ -19,6 +19,8 @@ final class InvoiceDetailViewModel: ObservableObject {
     @Published var products: [Product] = []          // catálogo completo (para resolver nombres)
     /// Current status of the invoice (updates independently for UI bindings)
     @Published var status: InvoiceStatus = .pending
+    /// Name of the business issuing the invoice (for PDF generation)
+    @Published var businessName: String = "—"
     
     // MARK: - Private
     private let invoiceId: String
@@ -41,6 +43,13 @@ final class InvoiceDetailViewModel: ObservableObject {
             let empDoc     = empSnap?.documents.first,
             let businessRef = empDoc.reference.parent.parent
         else { return }
+        
+        // Nombre del negocio (para PDF)
+        if let bizDoc = try? await businessRef.getDocument(),
+           let bizData = bizDoc.data(),
+           let bizName = bizData["name"] as? String {
+            self.businessName = bizName
+        }
         
         // 2) Descargar la factura
         let invDoc = try? await businessRef.collection("invoices")

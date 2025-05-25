@@ -48,6 +48,7 @@ struct InvoiceDetailView: View {
                             
                             let url = try InvoicePDFBuilder.createPDF(
                                 for: inv,
+                                businessName: vm.businessName,
                                 clientName: vm.clientName,
                                 products: inv.productsStack,
                                 productNames: nameDict

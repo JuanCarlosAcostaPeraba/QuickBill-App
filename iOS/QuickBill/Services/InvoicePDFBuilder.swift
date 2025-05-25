@@ -12,6 +12,7 @@ struct InvoicePDFBuilder {
     
     /// Devuelve la URL del PDF generado en el directorio *Documents*
     static func createPDF(for invoice: Invoice,
+                          businessName: String,
                           clientName: String,
                           products: [ProductStack],
                           productNames: [String: String]) throws -> URL {
@@ -30,6 +31,7 @@ struct InvoicePDFBuilder {
         let data = renderer.pdfData { ctx in
             ctx.beginPage()
             drawInvoice(invoice,
+                        businessName: businessName,
                         clientName: clientName,
                         products: products,
                         productNames: productNames,
@@ -46,6 +48,7 @@ struct InvoicePDFBuilder {
     
     // MARK: - Drawing helpers
     private static func drawInvoice(_ inv: Invoice,
+                                    businessName: String,
                                     clientName: String,
                                     products: [ProductStack],
                                     productNames: [String: String],
@@ -77,7 +80,7 @@ struct InvoicePDFBuilder {
         }
         
         drawBlock(label: "Your company",
-                  lines: [inv.companyName]) // TODO: Replace with own company name
+                  lines: [businessName])
         drawBlock(label: "Bill to",
                   lines: [clientName])
         
