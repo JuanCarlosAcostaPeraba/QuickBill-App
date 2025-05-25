@@ -15,7 +15,6 @@ struct SignInView: View {
         NavigationStack {
             
             VStack(alignment: .leading, spacing: 16) {
-                // App title (toolbar handles this, but keep if needed)
                 Text("QuickBill")
                     .font(.largeTitle)
                     .fontWeight(.bold)
@@ -23,7 +22,6 @@ struct SignInView: View {
                 
                 Spacer()
                 
-                // Header
                 VStack(alignment: .leading, spacing: 0) {
                     Text("Sign in")
                         .font(.largeTitle)
@@ -39,7 +37,6 @@ struct SignInView: View {
                     }
                 }
                 
-                // Email field
                 TextField("Email", text: $viewModel.email)
                     .keyboardType(.emailAddress)
                     .textContentType(.emailAddress)
@@ -48,7 +45,6 @@ struct SignInView: View {
                     .background(Color.gray.opacity(0.1))
                     .cornerRadius(16)
                 
-                // Password field with toggle
                 ZStack {
                     if viewModel.showPassword {
                         TextField("Password", text: $viewModel.password)
@@ -71,7 +67,6 @@ struct SignInView: View {
                     alignment: .trailing
                 )
                 
-                // Forgot password link
                 NavigationLink(destination: ForgotPasswordView()) {
                     Text("Forgot password?")
                         .foregroundColor(.blue)
@@ -81,7 +76,6 @@ struct SignInView: View {
                 
                 Spacer()
                 
-                // Sign in button
                 Button(action: {
                     Task {
                         await viewModel.signIn()

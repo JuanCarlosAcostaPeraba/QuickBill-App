@@ -62,7 +62,6 @@ struct AddInvoiceView: View {
     }
     
     // MARK: - Form Sections
-    
     private var dateSection: some View {
         Section(header: Text("Dates")) {
             DatePicker("Issued At", selection: $viewModel.issuedAt, displayedComponents: .date)

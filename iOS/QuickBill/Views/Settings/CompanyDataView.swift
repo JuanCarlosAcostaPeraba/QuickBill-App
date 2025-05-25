@@ -56,7 +56,3 @@ struct CompanyDataView: View {
         }
     }
 }
-
-#Preview {
-    CompanyDataView()
-}

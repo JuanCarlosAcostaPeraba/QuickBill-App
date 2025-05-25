@@ -13,7 +13,6 @@ struct ForgotPasswordView: View {
     
     var body: some View {
         VStack(spacing: 24) {
-            // Back button
             HStack {
                 Button { dismiss() } label: {
                     Image(systemName: "chevron.backward")
@@ -23,7 +22,6 @@ struct ForgotPasswordView: View {
             }
             .padding(.horizontal)
             
-            // Title and subtitle
             VStack(spacing: 8) {
                 Text("Did you forget your Password?")
                     .font(.title2)
@@ -35,7 +33,6 @@ struct ForgotPasswordView: View {
                     .padding(.horizontal)
             }
             
-            // Email field
             TextField("Email", text: $viewModel.email)
                 .keyboardType(.emailAddress)
                 .textContentType(.emailAddress)
@@ -45,7 +42,6 @@ struct ForgotPasswordView: View {
                 .cornerRadius(16)
                 .padding(.horizontal)
             
-            // Recover button
             Button {
                 Task {
                     await viewModel.resetPassword()

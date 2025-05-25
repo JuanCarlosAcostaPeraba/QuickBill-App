@@ -12,7 +12,6 @@ struct ProductsView: View {
     @State private var showAddProduct = false
     @State private var productToEdit: Product? = nil
     
-    // Filtered list based on search text
     private var filtered: [Product] {
         if viewModel.searchText.isEmpty {
             return viewModel.products
@@ -47,8 +46,7 @@ struct ProductsView: View {
                                 Label("Edit", systemImage: "pencil")
                             }
                             .tint(.blue)
-
-                            // Delete button
+                            
                             Button(role: .destructive) {
                                 viewModel.deleteProduct(product)
                             } label: {

@@ -10,10 +10,10 @@ import SwiftUI
 struct AddProductView: View {
     @Binding var isPresented: Bool
     @ObservedObject var viewModel: ProductsViewModel
-
+    
     @State private var descriptionText: String = ""
     @State private var unitPriceText: String = ""
-
+    
     var body: some View {
         NavigationStack {
             Form {

@@ -11,17 +11,17 @@ struct EditProductView: View {
     let product: Product
     @ObservedObject var viewModel: ProductsViewModel
     @Environment(\.dismiss) private var dismiss
-
+    
     @State private var descriptionText: String
     @State private var unitPriceText: String
-
+    
     init(product: Product, viewModel: ProductsViewModel) {
         self.product = product
         self.viewModel = viewModel
         _descriptionText = State(initialValue: product.description)
         _unitPriceText = State(initialValue: String(format: "%.2f", product.unitPrice))
     }
-
+    
     var body: some View {
         NavigationStack {
             Form {
