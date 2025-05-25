@@ -163,6 +163,26 @@
         }
       }
     },
+    "All" : {
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Todos"
+          }
+        }
+      }
+    },
+    "Amount" : {
+      "localizations" : {
+        "es" : { "stringUnit" : { "state" : "translated", "value" : "Importe" } }
+      }
+    },
+    "Any" : {
+      "localizations" : {
+        "es" : { "stringUnit" : { "state" : "translated", "value" : "Cualquiera" } }
+      }
+    },
     "Cancel" : {
       "localizations" : {
         "es" : {
@@ -353,6 +373,16 @@
         }
       }
     },
+    "Done" : {
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Hecho"
+          }
+        }
+      }
+    },
     "Due Date" : {
       "localizations" : {
         "es" : {
@@ -463,6 +493,11 @@
         }
       }
     },
+    "Enable range" : {
+      "localizations" : {
+        "es" : { "stringUnit" : { "state" : "translated", "value" : "Activar rango" } }
+      }
+    },
     "Enter your email" : {
       "localizations" : {
         "es" : {
@@ -503,12 +538,32 @@
         }
       }
     },
+    "Filters" : {
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Filtros"
+          }
+        }
+      }
+    },
     "Forgot password?" : {
       "localizations" : {
         "es" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "¿Olvidaste tu contraseña?"
+          }
+        }
+      }
+    },
+    "From" : {
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Desde"
           }
         }
       }
@@ -609,6 +664,26 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Marcar como pagada"
+          }
+        }
+      }
+    },
+    "Max" : {
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Max"
+          }
+        }
+      }
+    },
+    "Min" : {
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Min"
           }
         }
       }
@@ -983,6 +1058,16 @@
         }
       }
     },
+    "Status" : {
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Estado"
+          }
+        }
+      }
+    },
     "Tagline" : {
       "localizations" : {
         "es" : {
@@ -1029,6 +1114,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Impuestos (%)"
+          }
+        }
+      }
+    },
+    "To" : {
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Hasta"
           }
         }
       }
