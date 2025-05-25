@@ -13,7 +13,8 @@ struct InvoicePDFBuilder {
     /// Devuelve la URL del PDF generado en el directorio *Documents*
     static func createPDF(for invoice: Invoice,
                           clientName: String,
-                          products: [ProductStack]) throws -> URL {
+                          products: [ProductStack],
+                          productNames: [String: String]) throws -> URL {
         
         // 1) Canvas A4
         let pdfMetaData = [
@@ -31,6 +32,7 @@ struct InvoicePDFBuilder {
             drawInvoice(invoice,
                         clientName: clientName,
                         products: products,
+                        productNames: productNames,
                         in: pageRect)
         }
         
@@ -46,6 +48,7 @@ struct InvoicePDFBuilder {
     private static func drawInvoice(_ inv: Invoice,
                                     clientName: String,
                                     products: [ProductStack],
+                                    productNames: [String: String],
                                     in rect: CGRect) {
         // Fuentes
         let titleFont   = UIFont.boldSystemFont(ofSize: 24)
@@ -74,7 +77,7 @@ struct InvoicePDFBuilder {
         }
         
         drawBlock(label: "Your company",
-                  lines: [inv.companyName])
+                  lines: [inv.companyName]) // TODO: Replace with own company name
         drawBlock(label: "Bill to",
                   lines: [clientName])
         
@@ -100,10 +103,11 @@ struct InvoicePDFBuilder {
         
         // Table rows
         products.forEach { p in
+            let description = productNames[p.productId] ?? p.productId
             let total = String(format: "%.2f", p.amount)
             let unit  = String(format: "%.2f", p.amount / Double(p.quantity))
             let cols = [
-                p.productId,
+                description,
                 date(p.supplyDate),
                 "\(p.quantity)",
                 unit,

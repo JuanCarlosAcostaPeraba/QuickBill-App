@@ -42,7 +42,22 @@ struct InvoiceDetailView: View {
             ToolbarItem(placement: .primaryAction) {
                 Button {
                     if let inv = vm.invoice {
-                        Task { await exportPDF(inv) }
+                        Task {
+                            let nameDict = Dictionary(uniqueKeysWithValues:
+                                vm.products.map { ($0.id, $0.description) })
+                            
+                            let url = try InvoicePDFBuilder.createPDF(
+                                for: inv,
+                                clientName: vm.clientName,
+                                products: inv.productsStack,
+                                productNames: nameDict
+                            )
+                            let av = UIActivityViewController(activityItems: [url], applicationActivities: nil)
+                            if let scene = UIApplication.shared.connectedScenes.first as? UIWindowScene,
+                               let root = scene.windows.first?.rootViewController {
+                                root.present(av, animated: true)
+                            }
+                        }
                     }
                 } label: {
                     Image(systemName: "square.and.arrow.down")
@@ -131,24 +146,6 @@ struct InvoiceDetailView: View {
             Spacer()
             Text(String(format: "%.2f %@", value, currency))
                 .fontWeight(isBold ? .bold : .regular)
-        }
-    }
-    
-    @MainActor
-    private func exportPDF(_ invoice: Invoice) async {
-        do {
-            let url = try InvoicePDFBuilder.createPDF(
-                for: invoice,
-                clientName: vm.clientName,
-                products: invoice.productsStack
-            )
-            let av = UIActivityViewController(activityItems: [url], applicationActivities: nil)
-            if let scene = UIApplication.shared.connectedScenes.first as? UIWindowScene,
-               let root = scene.windows.first?.rootViewController {
-                root.present(av, animated: true)
-            }
-        } catch {
-            print("PDF generation error: \(error)")
         }
     }
 }
