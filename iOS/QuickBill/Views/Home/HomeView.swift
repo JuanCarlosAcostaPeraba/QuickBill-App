@@ -9,6 +9,8 @@ import SwiftUI
 
 struct HomeView: View {
     @StateObject private var viewModel = InvoiceListViewModel()
+    @State private var showFiltersSheet = false
+    @State private var compactMode = false
     
     var body: some View {
         NavigationStack {
@@ -20,7 +22,24 @@ struct HomeView: View {
                             .background(Color.gray.opacity(0.1))
                             .cornerRadius(8)
                     } else {
-                        // TODO: Add button to change to compact mode or card mode (card mode is default)
+                        // Botón filtros avanzados
+                        Button {
+                            showFiltersSheet = true
+                        } label: {
+                            Image(systemName: "slider.horizontal.3")
+                                .font(.title2)
+                                .foregroundColor(.blue)
+                                .padding(.vertical, 6.5)
+                        }
+                        // Botón modo compacto / tarjetas
+                        Button {
+                            withAnimation { compactMode.toggle() }
+                        } label: {
+                            Image(systemName: compactMode ? "list.bullet" : "square.grid.2x2")
+                                .font(.title2)
+                                .foregroundColor(.blue)
+                                .padding(.vertical, 6.5)
+                        }
                     }
                     Spacer()
                     Button(action: {
@@ -74,7 +93,9 @@ struct HomeView: View {
                         .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .center)
                 } else {
                     ScrollView {
-                        LazyVGrid(columns: [GridItem(.flexible()), GridItem(.flexible())], spacing: 16) {
+                        let cols = compactMode ? [GridItem(.flexible())]
+                                               : [GridItem(.flexible()), GridItem(.flexible())]
+                        LazyVGrid(columns: cols, spacing: 16) {
                             ForEach(viewModel.filteredInvoices) { invoice in
                                 NavigationLink {
                                     InvoiceDetailView(invoiceId: invoice.id)
@@ -92,9 +113,45 @@ struct HomeView: View {
                 
                 Spacer()
             }
+            .sheet(isPresented: $showFiltersSheet) {
+                InvoiceAdvancedFilterSheet(viewModel: viewModel)
+            }
             .onAppear {
                 viewModel.fetchInvoices()
             }
+        }
+    }
+}
+
+struct InvoiceAdvancedFilterSheet: View {
+    @ObservedObject var viewModel: InvoiceListViewModel
+    @Environment(\.dismiss) private var dismiss
+    
+    var body: some View {
+        NavigationStack {
+            formContent
+                .navigationTitle("Filters")
+                .toolbar {
+                    ToolbarItem(placement: .confirmationAction) {
+                        Button("Done") { dismiss() }
+                    }
+                }
+        }
+    }
+    
+    /// Extracted form to help the compiler type‑check faster
+    private var formContent: some View {
+        Form {
+            Section(header: Text("Status")) {
+                Picker("Status", selection: $viewModel.selectedStatus) {
+                    Text("All").tag(InvoiceStatus.all)
+                    ForEach(InvoiceStatus.allCases.filter { $0 != .all }, id: \.self) { status in
+                        Text(status.rawValue).tag(status)
+                    }
+                }
+                .pickerStyle(.segmented)
+            }
+            // TODO: Add more filters (date, amount)
         }
     }
 }
