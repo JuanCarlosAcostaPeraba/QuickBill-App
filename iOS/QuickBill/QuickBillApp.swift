@@ -11,6 +11,7 @@ import FirebaseCore
 @main
 struct QuickBillApp: App {
     @StateObject private var auth = AuthViewModel()
+    @AppStorage("appLanguage") private var appLanguage: String = AppLanguage.english.rawValue
     
     init() {
         FirebaseApp.configure()
@@ -25,5 +26,6 @@ struct QuickBillApp: App {
             }
         }
         .environmentObject(auth)
+        .environment(\.locale, Locale(identifier: appLanguage))
     }
 }
