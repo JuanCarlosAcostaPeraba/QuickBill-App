@@ -151,7 +151,79 @@ struct InvoiceAdvancedFilterSheet: View {
                 }
                 .pickerStyle(.segmented)
             }
-            // TODO: Add more filters (date, amount)
+            // MARK: - Date range
+            Section(header: Text("Dates")) {
+                Toggle("Enable range", isOn: $viewModel.enableDateFilter)
+                if viewModel.enableDateFilter {
+                    DatePicker("From",
+                               selection: Binding(
+                                   get: { viewModel.dateFrom ?? Date() },
+                                   set: { viewModel.dateFrom = $0 }),
+                               displayedComponents: .date)
+
+                    DatePicker("To",
+                               selection: Binding(
+                                   get: { viewModel.dateTo ?? Date() },
+                                   set: { viewModel.dateTo = $0 }),
+                               displayedComponents: .date)
+                }
+            }
+
+            // MARK: - Amount range
+            Section(header: Text("Amount")) {
+                Toggle("Enable range", isOn: $viewModel.enableAmountFilter)
+                if viewModel.enableAmountFilter {
+                    TextField("Min",
+                              text: Binding(
+                                  get: { viewModel.minTotal.map { String($0) } ?? "" },
+                                  set: { viewModel.minTotal = Double($0) }))
+                        .keyboardType(.decimalPad)
+
+                    TextField("Max",
+                              text: Binding(
+                                  get: { viewModel.maxTotal.map { String($0) } ?? "" },
+                                  set: { viewModel.maxTotal = Double($0) }))
+                        .keyboardType(.decimalPad)
+                }
+            }
+
+            // MARK: - Client
+            Section(header: Text("Client")) {
+                NavigationLink(destination: ClientPicker(viewModel: viewModel)) {
+                    Text(viewModel.selectedClientName ?? "Any")
+                        .foregroundColor(viewModel.selectedClientName == nil ? .gray : .primary)
+                }
+            }
         }
+    }
+}
+
+// MARK: - ClientPicker
+struct ClientPicker: View {
+    @ObservedObject var viewModel: InvoiceListViewModel
+    @Environment(\.dismiss) private var dismiss
+    
+    var body: some View {
+        List {
+            Button("Any") {
+                viewModel.selectedClientId = nil
+                dismiss()
+            }
+            ForEach(viewModel.clientNameById.sorted(by: { $0.value < $1.value }), id: \.key) { id, name in
+                Button {
+                    viewModel.selectedClientId = id
+                    dismiss()
+                } label: {
+                    HStack {
+                        Text(name)
+                        if viewModel.selectedClientId == id {
+                            Spacer()
+                            Image(systemName: "checkmark")
+                        }
+                    }
+                }
+            }
+        }
+        .navigationTitle("Clients")
     }
 }

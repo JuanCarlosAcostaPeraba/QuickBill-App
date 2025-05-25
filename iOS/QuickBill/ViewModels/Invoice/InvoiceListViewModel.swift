@@ -22,6 +22,20 @@ class InvoiceListViewModel: ObservableObject {
         return df
     }()
     
+    // Flags
+    @Published var enableDateFilter   = false
+    @Published var enableAmountFilter = false
+    
+    // Valores
+    @Published var dateFrom: Date? = nil
+    @Published var dateTo:   Date? = nil
+    @Published var minTotal: Double? = nil
+    @Published var maxTotal: Double? = nil
+    @Published var selectedClientId: String? = nil
+    var selectedClientName: String? {
+        selectedClientId.flatMap { clientNameById[$0] }
+    }
+    
     @Published var invoices: [Invoice] = []
     @Published var clientNameById: [String: String] = [:]
     @Published var selectedStatus: InvoiceStatus = .all
@@ -36,7 +50,14 @@ class InvoiceListViewModel: ObservableObject {
              inv.companyName.lowercased().contains(searchText.lowercased()) ||
              dateFormatter.string(from: inv.issuedAt).contains(searchText) ||
              String(format: "%.2f", inv.totalAmount).contains(searchText)
-            )
+            ) &&
+            (!enableDateFilter ||
+             ((dateFrom == nil || inv.issuedAt >= dateFrom!) &&
+              (dateTo   == nil || inv.issuedAt <= dateTo!))) &&
+            (!enableAmountFilter ||
+             ((minTotal == nil || inv.totalAmount >= minTotal!) &&
+              (maxTotal == nil || inv.totalAmount <= maxTotal!))) &&
+            (selectedClientId == nil || inv.clientId == selectedClientId)
         }
     }
     
