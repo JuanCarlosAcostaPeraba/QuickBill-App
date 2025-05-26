@@ -1,14 +1,16 @@
 %----------------------------------------------------------
 % Capítulo 1 – Introducción
 %----------------------------------------------------------
-\begin{large}
 \epigraph{Si enciendes una lámpara para alguien, iluminas también tu propio camino.}{Buda}
 
+\begin{large}
+  
 La facturación es uno de los pilares esenciales de la actividad económica: certifica las transacciones comerciales, sustenta la trazabilidad fiscal y salvaguarda los derechos de las partes involucradas. A lo largo de la historia, desde las tablillas mesopotámicas hasta las facturas digitales que circulan hoy día, la tecnología ha perfeccionado este proceso para garantizar disponibilidad, autenticidad e integridad de la información \cite{origen_facturas}.
 
 En España, la \textbf{Ley 18/2022 de Creación y Crecimiento Empresarial} ha acelerado esta transición al imponer la factura electrónica en todas las operaciones \gls{b2b}. Las grandes empresas ya la aplican de forma obligatoria y, para pymes y autónomos, la exigencia será plena a lo largo de 2025 \cite{ley18_2022}. Paralelamente, la expansión del trabajo remoto y la omnipresencia de los teléfonos móviles han evidenciado la brecha entre los programas de escritorio tradicionales y las necesidades de movilidad. Muchas soluciones \gls{saas} dependen de conectividad permanente o licencias costosas, generando fricciones en negocios que operan fuera de la oficina y en clientes que desean consultar sus facturas desde el móvil.
 
 En este trabajo se aborda ese desafío mediante un sistema de facturación centrado en aplicaciones móviles nativas (iOS y Android) complementadas con un portal web administrativo.
+
 \end{large}
 
 %----------------------------------------------------------
@@ -16,24 +18,33 @@ En este trabajo se aborda ese desafío mediante un sistema de facturación centr
 %----------------------------------------------------------
 
 \begin{large}
+
 La gestión de facturas en la pequeña y mediana empresa sigue apoyándose, en gran medida, en un conjunto de soluciones aisladas: sistemas \gls{erp} de sobremesa, hojas de cálculo improvisadas y repositorios documentales que raramente se comunican entre sí. Esta fragmentación provoca duplicidades de datos y dificulta la colaboración fluida entre empresario, personal interno y cliente final.
 
 Al mismo tiempo, el auge de los servicios \gls{saas} ha desplazado el trabajo contable a la nube; sin embargo, muchos de estos portales exigen conectividad permanente para funcionar. En zonas con cobertura deficiente, la emisión o actualización de facturas se retrasa, lo que genera cuellos de botella y pone en riesgo la puntualidad de la información.
 
 La \textbf{Ley 18/2022 de Creación y Crecimiento Empresarial} convierte la factura electrónica en un requisito obligatorio para todas las transacciones \gls{b2b}. Este cambio ya se aplica a las grandes corporaciones y entrará en vigor para pymes y autónomos a lo largo de 2025, lo que obliga a las organizaciones a modernizar sus flujos de trabajo y garantizar la trazabilidad completa del documento \cite{ley18_2022}.
 
-Por último, la movilidad se ha consolidado como requisito operativo. Según el “2023 Mid-market Technology Trends Report” de Deloitte, la mayoría de las empresas de tamaño medio ofrece hoy acceso a sus plataformas de gestión desde dispositivos móviles, aunque con frecuencia esas aplicaciones replican solo las funciones básicas de escritorio \cite{estudio_movilidad}.
+Por último, la movilidad se ha consolidado como requisito operativo. Según el \enquote{2023 Mid‐market Technology Trends Report} de Deloitte, la mayoría de las empresas de tamaño medio ofrece hoy acceso a sus plataformas de gestión desde dispositivos móviles, aunque con frecuencia esas aplicaciones replican solo las funciones básicas de escritorio \cite{estudio_movilidad}.
+
 \end{large}
 
 %----------------------------------------------------------
 \section{Objetivos}
 %----------------------------------------------------------
-\begin{large}
 
 \subsection{Objetivo general}
+
+\begin{large}
+
 El proyecto persigue la creación de una plataforma de facturación integral formada por aplicaciones móviles nativas para iOS y Android y por un portal web administrativo. La solución debe operar sin interrupciones, incluso en ausencia de conexión, y ofrecer una experiencia de uso clara, accesible y satisfactoria.
 
+\end{large}
+
 \subsection{Objetivos específicos}
+
+\begin{large}
+
 En primer lugar se plantea el diseño de una arquitectura de datos sólida que represente con precisión las entidades del dominio, es decir, empresas, usuarios y facturas, y permita la evolución y el mantenimiento del sistema sin inconsistencias.
 
 El segundo objetivo establece la implantación de un mecanismo de autenticación y autorización que gestione roles y permisos con rigor, de manera que cada perfil acceda únicamente a las funciones que le correspondan.
@@ -42,35 +53,48 @@ El tercer objetivo se centra en desarrollar la lógica de generación automátic
 
 El cuarto objetivo persigue proporcionar a la plataforma un modo de funcionamiento sin conexión que posibilite crear o modificar facturas en entornos offline y sincronizar los cambios en cuanto se restablezca la conectividad.
 
-\pagebreak
-
 El quinto objetivo aborda la construcción de un portal web administrativo con cuadros de mando y métricas financieras detalladas, cuyo propósito es facilitar el seguimiento de ingresos, gastos y morosidad y respaldar la toma de decisiones.
 
 Por último, el sexto objetivo apunta a proteger la confidencialidad e integridad de la información mediante cifrado tanto en tránsito como en reposo, garantizando el cumplimiento de los requisitos establecidos por el \gls{rgpd}.
+
 \end{large}
 
 %----------------------------------------------------------
 \section{Competencias específicas}
 %----------------------------------------------------------
+
 \begin{large}
-El desarrollo de este proyecto ha exigido movilizar un conjunto de competencias técnicas directamente relacionadas con el diseño, implementación y evaluación de sistemas de información avanzados. A continuación se detallan las competencias específicas que se han puesto en práctica a lo largo de la realización de este trabajo:
+
+El desarrollo de este proyecto ha requerido poner en práctica un conjunto de competencias técnicas directamente relacionadas con el diseño, implementación y evaluación de sistemas de información avanzados. A continuación se detallan las competencias específicas que se han puesto en práctica a lo largo de la realización de este trabajo:
 
 \begin{itemize}[label=\raisebox{0.15ex}{\scriptsize$\blacksquare$}]
-  \item \textbf{CI8.} Capacidad para analizar, diseñar, construir y mantener aplicaciones de forma robusta, segura y eficiente, seleccionando el paradigma y los lenguajes de programación más adecuados.  
-  \item \textbf{CI12.} Conocimiento y aplicación de las características, funcionalidades y estructura de las bases de datos, que permitan su diseño, análisis e implementación de soluciones de almacenamiento de información.  
-  \item \textbf{CI13.} Conocimiento y aplicación de las herramientas necesarias para el almacenamiento, procesamiento y acceso a los sistemas de información, incluidos los basados en web.  
-  \item \textbf{CI16.} Conocimiento y aplicación de los principios, metodologías y ciclos de vida de la ingeniería del software, para asegurar procesos ordenados de desarrollo y mantenimiento.  
-  \item \textbf{CI17.} Capacidad para diseñar y evaluar interfaces persona–computador que garanticen la accesibilidad y usabilidad de los sistemas, servicios y aplicaciones informáticas.  
-  \item \textbf{TI3.} Capacidad para emplear metodologías centradas en el usuario y la organización en el desarrollo, evaluación y gestión de aplicaciones, asegurando la ergonomía y la adopción de las soluciones.  
-  \item \textbf{TI6.} Capacidad de concebir sistemas, aplicaciones y servicios basados en tecnologías de red, incluyendo entornos web, comercio electrónico y computación móvil.
+  \item \textbf{CI1.} Capacidad para diseñar, desarrollar, seleccionar y evaluar aplicaciones y sistemas informáticos, asegurando su fiabilidad y calidad.
+  \item \textbf{CI2.} Aptitud para planificar, concebir y dirigir proyectos y servicios informáticos a lo largo de todo su ciclo de vida.
+  \item \textbf{CI3.} Conocimiento de las métricas de calidad y los procesos de mejora continua aplicados al software.
+  \item \textbf{CI5.} Capacidad para comprender, aplicar y mantener los principios de ingeniería de requisitos.
+  \item \textbf{CI6.} Habilidad para diseñar y gestionar bases de datos y servicios en la nube, garantizando integridad y disponibilidad de la información.
+  \item \textbf{CI8.} Competencia para analizar, construir y mantener aplicaciones robustas y eficientes, eligiendo los lenguajes y paradigmas más adecuados.
+  \item \textbf{CI12.} Conocimiento y aplicación de las estructuras de datos y su impacto en el rendimiento del sistema.
+  \item \textbf{CI16.} Aplicación de los principios y metodologías de la ingeniería del software para asegurar procesos ordenados de desarrollo y mantenimiento.
+  \item \textbf{CI17.} Capacidad para diseñar y evaluar interfaces persona–computador que garanticen accesibilidad y usabilidad.
+  \item \textbf{TI1.} Comprensión del entorno de una organización y de sus necesidades en materia de tecnologías de la información.
+  \item \textbf{TI2.} Capacidad para seleccionar, desplegar e integrar tecnologías de hardware, software y redes dentro de los parámetros de calidad adecuados.
+  \item \textbf{TI3.} Uso de metodologías centradas en el usuario y la organización para el desarrollo y la evaluación de aplicaciones.
+  \item \textbf{TI5.} Capacidad para seleccionar, integrar y gestionar sistemas de información que satisfagan los requisitos de la organización.
+  \item \textbf{TI6.} Capacidad para concebir sistemas, aplicaciones y servicios basados en tecnologías de red, incluidos entornos web y móviles.
+  \item \textbf{TI7.} Aptitud para aplicar y gestionar la garantía y la seguridad de los sistemas de información.
 \end{itemize}
 
 Estos conocimientos y habilidades, extraídos directamente del plan de estudios oficial, han sido fundamentales para llevar a cabo el análisis, diseño e implementación de la plataforma de facturación propuesta \cite{grado2024ulpgc}.
+
 \end{large}
 
 %----------------------------------------------------------
 \section{Alineamiento con los Objetivos de Desarrollo Sostenible}
 %----------------------------------------------------------
+
+\begin{large}
+
 \begin{table}[H]
 \caption{Grado de relación del TFT con los objetivos de desarrollo sostenible.}
 \label{tab:ODS}
@@ -99,7 +123,6 @@ ODS & 0 No procede & 1 Bajo & 2 Medio & 3 Alto \\ \cline{1-5}
 \end{tabular}
 \end{table}
 
-\begin{large}
 En primer lugar, en relación con el \textbf{ODS 9 – Industria, innovación e infraestructuras}, la aplicación propone una infraestructura digital accesible, capaz de operar sin conexión para garantizar la continuidad del negocio en entornos con conectividad limitada. Además, sus funciones de generación y exportación de facturas en PDF modernizan los procesos administrativos. 
 
 Respecto al \textbf{ODS 10 – Reducción de las desigualdades}, el diseño centrado en la usabilidad del teléfono móvil facilita que microempresas y autónomos, con recursos más reducidos, puedan adoptar tecnología avanzada de facturación, reduciendo la brecha digital frente a grandes organizaciones. 
@@ -109,4 +132,5 @@ En cuanto al \textbf{ODS 11 – Ciudades y comunidades sostenibles}, la eliminac
 El \textbf{ODS 12 – Producción y consumo responsables} se ve favorecido al sustituir procesos basados en facturas impresas por archivos cifrados en la nube, promoviendo prácticas \textit{paper-less} y un uso más eficiente de los recursos materiales y energéticos. 
 
 Finalmente, el \textbf{ODS 13 – Acción por el clima} recibe un impulso gracias a la reducción del consumo de papel y de envíos postales, lo que disminuye la huella de carbono administrativa. Aunque el uso de dispositivos móviles y servicios en la nube conlleva consumo energético, el balance de emisiones es muy inferior al de los métodos tradicionales, siempre que se adopten buenas prácticas de eficiencia energética.
+
 \end{large}
