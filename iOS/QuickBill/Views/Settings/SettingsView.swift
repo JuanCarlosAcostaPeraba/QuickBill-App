@@ -22,14 +22,32 @@ struct SettingsView: View {
                 }
                 
                 Section(header: Text("Language")) {
-                    Picker("Language", selection: $appLanguage) {
-                        ForEach(AppLanguage.allCases) { lang in
-                            Text(lang.nativeName).tag(lang.rawValue)
+                    NavigationLink {
+                        List {
+                            ForEach(AppLanguage.allCases) { lang in
+                                Button {
+                                    appLanguage = lang.rawValue
+                                } label: {
+                                    HStack {
+                                        Text(lang.nativeName)
+                                        if appLanguage == lang.rawValue {
+                                            Spacer()
+                                            Image(systemName: "checkmark")
+                                                .foregroundColor(.blue)
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                        .navigationTitle("Language")
+                    } label: {
+                        HStack {
+                            Text("Language")
+                            Spacer()
+                            Text(AppLanguage(rawValue: appLanguage)?.nativeName ?? "")
+                                .foregroundColor(.gray)
                         }
                     }
-                    .pickerStyle(.menu)
-                    .labelsHidden()
-                    .frame(maxWidth: .infinity, alignment: .leading)
                 }
                 
                 Section {
