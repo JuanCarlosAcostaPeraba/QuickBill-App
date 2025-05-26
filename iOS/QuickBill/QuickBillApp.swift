@@ -6,12 +6,26 @@
 //
 
 import SwiftUI
+import FirebaseCore
 
 @main
 struct QuickBillApp: App {
+    @StateObject private var auth = AuthViewModel()
+    @AppStorage("appLanguage") private var appLanguage: String = AppLanguage.english.rawValue
+    
+    init() {
+        FirebaseApp.configure()
+    }
+    
     var body: some Scene {
         WindowGroup {
-            MainView()
+            if auth.isSignedIn {
+                MainTabView()
+            } else {
+                StartView()
+            }
         }
+        .environmentObject(auth)
+        .environment(\.locale, Locale(identifier: appLanguage))
     }
 }

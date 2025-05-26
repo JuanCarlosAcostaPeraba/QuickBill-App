@@ -1,0 +1,108 @@
+\documentclass[oneside,12pt]{book}
+\usepackage[utf8]{inputenc}
+\usepackage{standalone}
+\usepackage[margin=2.5cm]{geometry}
+\usepackage{graphicx}
+\usepackage{hyperref}
+\usepackage{lmodern}
+\usepackage{float}
+\usepackage[spanish]{babel}
+\usepackage{csquotes}
+\usepackage[figurename=Ilustración]{caption}
+\usepackage{enumitem}
+\usepackage[numbers]{natbib}
+\usepackage{ragged2e}
+\usepackage{array}
+\usepackage{multirow}
+\usepackage{parskip}
+\usepackage{listings}
+\usepackage{epigraph}
+\usepackage{booktabs}
+\usepackage{longtable}
+
+\usepackage{algorithm}
+\usepackage{algpseudocode}
+
+% Glosario de términos
+\usepackage[acronym,nonumberlist]{glossaries}
+\makeglossaries
+
+% Viñetas cuadradas en todas las listas itemize
+\usepackage{amssymb}
+\renewcommand\labelitemi{$\blacksquare$}
+
+% Otros paquetes y ajustes
+\usepackage{geometry}
+\usepackage{xcolor}
+
+\renewcommand{\lstlistingname}{Algoritmo}
+\floatname{algorithm}{Algoritmo}
+\renewcommand{\listalgorithmname}{Índice de~\lstlistingname s}
+
+\lstset{
+        basicstyle=\fontsize{7}{11}\ttfamily,
+        language=Java,
+        captionpos=b,
+}
+
+\usepackage{titlesec}
+\setcounter{secnumdepth}{3}
+\titleformat{\chapter}[display]
+{\normalfont\huge\bfseries}{\chaptertitlename\ \thechapter}{20pt}{\Huge}
+
+\urlstyle{same}
+\title{Sistema de Facturación: Aplicación Móvil Nativa para la Generación y Gestión de Facturas con Funcionalidades Avanzadas}
+\author{Juan Carlos Acosta Perabá}
+\date{Curso 20XX -- 20XX}
+\renewcommand{\contentsname}{Contenido}
+\renewcommand{\figurename}{Ilustración}
+
+\begin{document}
+%\maketitle
+\input{Portada.tex}
+
+\input{TFT04C.tex}
+
+\newpage
+\pagenumbering{roman}
+{\Large{\textbf{Agradecimientos}}}
+\input{Agradecimientos.tex}
+
+\clearpage
+\input{Resumen.tex}
+\tableofcontents
+
+\listofalgorithms 
+\listoffigures
+\listoftables
+
+\clearpage
+\pagenumbering{arabic}
+
+% 1. Introducción
+\chapter{Introducción}
+\input{Introduccion.tex}
+
+% 2. Análisis
+\chapter{Análisis}
+\input{Analisis.tex}
+
+% 3. Desarrollo
+\chapter{Desarrollo}
+\input{Desarrollo.tex}
+
+% 4. Resultados y trabajo futuro
+\chapter{Resultados y trabajo futuro}
+\input{Resultados.tex}
+
+\vspace{1cm}
+
+\bibliography{ref}
+\bibliographystyle{unsrtnat}
+\clearpage
+
+\input{glosario.tex}
+\printglossary[type=\acronymtype,title={Lista de acrónimos}]
+\printglossary[title={Glosario de términos}]
+
+\end{document}

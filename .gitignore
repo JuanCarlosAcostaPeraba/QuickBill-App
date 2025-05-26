@@ -17,27 +17,28 @@ Icon?
 # iOS (Swift / Xcode)
 iOS/QuickBill/DerivedData/
 iOS/QuickBill/build/
-iOS/QuickBill/*.xcworkspace
 iOS/QuickBill/xcuserdata/
-iOS/QuickBill/*.xcuserstate
+iOS/QuickBill/.swiftpm/
 iOS/QuickBill/*.xcodeproj/xcuserdata/
 iOS/QuickBill/*.xcodeproj/project.xcworkspace/
-iOS/QuickBill/*.moved-aside
-iOS/QuickBill/*.xcscmblueprint
-iOS/QuickBill/*.xcuserdatad
-iOS/QuickBill/.swiftpm/
 iOS/QuickBill/Package.resolved
+*.xcscmblueprint
+*.xcuserdatad
+*.xcuserstate
+*.xcworkspace
+*.moved-aside
+GoogleService-Info.plist
 
 # Android (Kotlin / Android Studio)
-Android/QuickBill/.gradle/
-Android/QuickBill/.idea/
-Android/QuickBill/*.iml
-Android/QuickBill/local.properties
-Android/QuickBill/captures/
-Android/QuickBill/build/
-Android/QuickBill/.cxx/
-Android/QuickBill/.externalNativeBuild/
-Android/QuickBill/obj/
+Android/.gradle/
+Android/.idea/
+Android/*.iml
+Android/local.properties
+Android/captures/
+Android/build/
+Android/.cxx/
+Android/.externalNativeBuild/
+Android/obj/
 
 # Temporary files and logs
 *.log
