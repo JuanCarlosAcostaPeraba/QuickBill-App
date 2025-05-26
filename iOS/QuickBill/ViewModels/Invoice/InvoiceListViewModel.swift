@@ -46,17 +46,24 @@ class InvoiceListViewModel: ObservableObject {
     var filteredInvoices: [Invoice] {
         invoices.filter { inv in
             (selectedStatus == .all || inv.status == selectedStatus) &&
-            (searchText.isEmpty ||
-             inv.companyName.lowercased().contains(searchText.lowercased()) ||
-             dateFormatter.string(from: inv.issuedAt).contains(searchText) ||
-             String(format: "%.2f", inv.totalAmount).contains(searchText)
+            (
+                searchText.isEmpty ||
+                inv.companyName.lowercased().contains(searchText.lowercased()) ||
+                dateFormatter.string(from: inv.issuedAt).contains(searchText) ||
+                String(format: "%.2f", inv.totalAmount).contains(searchText)
+            ) && (
+                !enableDateFilter ||
+                (
+                    (dateFrom == nil || inv.issuedAt >= dateFrom!) &&
+                    (dateTo   == nil || inv.issuedAt <= dateTo!)
+                )
+            ) && (
+                !enableAmountFilter ||
+                (
+                    (minTotal == nil || inv.totalAmount >= minTotal!) &&
+                    (maxTotal == nil || inv.totalAmount <= maxTotal!)
+                )
             ) &&
-            (!enableDateFilter ||
-             ((dateFrom == nil || inv.issuedAt >= dateFrom!) &&
-              (dateTo   == nil || inv.issuedAt <= dateTo!))) &&
-            (!enableAmountFilter ||
-             ((minTotal == nil || inv.totalAmount >= minTotal!) &&
-              (maxTotal == nil || inv.totalAmount <= maxTotal!))) &&
             (selectedClientId == nil || inv.clientId == selectedClientId)
         }
     }
