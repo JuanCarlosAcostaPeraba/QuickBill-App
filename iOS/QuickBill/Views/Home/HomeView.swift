@@ -175,14 +175,26 @@ struct InvoiceAdvancedFilterSheet: View {
                 if viewModel.enableAmountFilter {
                     TextField("Min",
                               text: Binding(
-                                  get: { viewModel.minTotal.map { String($0) } ?? "" },
-                                  set: { viewModel.minTotal = Double($0) }))
+                                  get: {
+                                      guard let v = viewModel.minTotal else { return "" }
+                                      return v.truncatingRemainder(dividingBy: 1) == 0
+                                          ? String(Int(v))
+                                          : String(v)
+                                  },
+                                  set: { viewModel.minTotal = Double($0) }
+                              ))
                         .keyboardType(.decimalPad)
 
                     TextField("Max",
                               text: Binding(
-                                  get: { viewModel.maxTotal.map { String($0) } ?? "" },
-                                  set: { viewModel.maxTotal = Double($0) }))
+                                  get: {
+                                      guard let v = viewModel.maxTotal else { return "" }
+                                      return v.truncatingRemainder(dividingBy: 1) == 0
+                                          ? String(Int(v))
+                                          : String(v)
+                                  },
+                                  set: { viewModel.maxTotal = Double($0) }
+                              ))
                         .keyboardType(.decimalPad)
                 }
             }
