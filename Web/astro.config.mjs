@@ -8,6 +8,11 @@ import vercel from '@astrojs/vercel'
 export default defineConfig({
 	vite: {
 		plugins: [tailwindcss()],
+		build: {
+			rollupOptions: {
+				external: ['firebase-admin', 'firebase-admin/app', 'firebase-admin/auth']
+			}
+		}
 	},
 	output: 'server',
 	adapter: vercel(),
