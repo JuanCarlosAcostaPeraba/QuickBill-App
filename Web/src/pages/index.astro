@@ -1,8 +1,6 @@
 ---
 import Layout from '@/layouts/Layout.astro'
 
-import Header from '@/components/Header.astro'
-
 import DashboardSection from '@/section/DashboardSection.astro'
 import InvoiceTableSection from '@/section/InvoiceTableSection.astro'
 import OverdueListSection from '@/section/OverdueListSection.astro'
@@ -10,12 +8,57 @@ import OverdueListSection from '@/section/OverdueListSection.astro'
 if (!Astro.cookies.get('qid')) {
 	return Astro.redirect('/login')
 }
+
+if (Astro.request.method === 'POST') {
+	try {
+		Astro.cookies.delete('qid')
+		return Astro.redirect('/login')
+	} catch (error) {
+		console.error('Error signing out:', error)
+	}
+}
 ---
 
 <Layout
 	title="QuickBill | Dashboard"
 	description="Your QuickBill admin dashboard.">
-	<Header />
+	<header
+		class="shadow-sm w-full bg-white flex items-center justify-between p-4 sm:px-6 lg:px-8">
+		<a href="/" class="flex items-center space-x-2">
+			<img
+				src="/favicon.svg"
+				alt="QuickBill logo"
+				class="h-8 w-8 object-contain"
+			/>
+			<h1 class="font-semibold text-lg text-gray-800">QuickBill</h1>
+		</a>
+
+		<nav>
+			<ul class="flex items-center space-x-6">
+				<li>
+					<a href="#Dashboard" class="text-gray-600 hover:text-indigo-600"
+						>Dashboard</a
+					>
+				</li>
+				<li>
+					<a href="#Overdue" class="text-gray-600 hover:text-indigo-600"
+						>Overdue</a
+					>
+				</li>
+				<li>
+					<a href="#Invoices" class="text-gray-600 hover:text-indigo-600"
+						>Invoices</a
+					>
+				</li>
+			</ul>
+		</nav>
+
+		<form method="POST">
+			<button id="sign-out-button" class="text-red-600 hover:text-red-800">
+				Sign Out
+			</button>
+		</form>
+	</header>
 	<main class="container mx-auto px-4 py-8 space-y-8">
 		<DashboardSection />
 		<OverdueListSection />
