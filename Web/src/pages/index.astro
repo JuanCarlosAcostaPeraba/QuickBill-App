@@ -23,30 +23,30 @@ if (Astro.request.method === 'POST') {
 	title="QuickBill | Dashboard"
 	description="Your QuickBill admin dashboard.">
 	<header
-		class="shadow-sm w-full bg-white flex items-center justify-between p-4 sm:px-6 lg:px-8">
+		class="shadow-sm w-full bg-white flex items-center justify-between p-4 sm:px-6 lg:px-8 dark:bg-gray-800">
 		<a href="/" class="flex items-center space-x-2">
 			<img
 				src="/favicon.svg"
 				alt="QuickBill logo"
 				class="h-8 w-8 object-contain"
 			/>
-			<h1 class="font-semibold text-lg text-gray-800">QuickBill</h1>
+			<h1 class="font-semibold text-lg text-gray-800 dark:text-neutral-200">QuickBill</h1>
 		</a>
 
 		<nav>
 			<ul class="flex items-center space-x-6">
 				<li>
-					<a href="#Dashboard" class="text-gray-600 hover:text-indigo-600"
+					<a href="#Dashboard" class="text-gray-600 hover:text-indigo-600 dark:text-neutral-200 dark:hover:text-indigo-400"
 						>Dashboard</a
 					>
 				</li>
 				<li>
-					<a href="#Overdue" class="text-gray-600 hover:text-indigo-600"
+					<a href="#Overdue" class="text-gray-600 hover:text-indigo-600 dark:text-neutral-200 dark:hover:text-indigo-400"
 						>Overdue</a
 					>
 				</li>
 				<li>
-					<a href="#Invoices" class="text-gray-600 hover:text-indigo-600"
+					<a href="#Invoices" class="text-gray-600 hover:text-indigo-600 dark:text-neutral-200 dark:hover:text-indigo-400"
 						>Invoices</a
 					>
 				</li>
@@ -54,7 +54,7 @@ if (Astro.request.method === 'POST') {
 		</nav>
 
 		<form method="POST">
-			<button id="sign-out-button" class="text-red-600 hover:text-red-800">
+			<button id="sign-out-button" class="text-red-600 hover:text-red-800 dark:text-red-300 dark:hover:text-red-500 cursor-pointer">
 				Sign Out
 			</button>
 		</form>
