@@ -1,15 +1,30 @@
 ---
 import Layout from '@/layouts/Layout.astro'
+
+const firebaseConfig = {
+	apiKey: import.meta.env.apiKey,
+	authDomain: import.meta.env.authDomain,
+	projectId: import.meta.env.projectId,
+	storageBucket: import.meta.env.storageBucket,
+	messagingSenderId: import.meta.env.messagingSenderId,
+	appId: import.meta.env.appId,
+	measurementId: import.meta.env.measurementId,
+}
 ---
 
 <Layout
 	title="QuickBill | Dashboard"
 	description="Your QuickBill admin dashboard.">
+	<script
+		type="application/json"
+		id="firebase-config"
+		set:html={JSON.stringify(firebaseConfig)}
+	/>
 	<!-- Login Section -->
-	<section
+	<main
 		id="login-section"
 		class="min-h-screen flex items-center justify-center bg-gray-50 py-12 px-4 sm:px-6 lg:px-8 dark:bg-gray-800">
-		<div class="w-full max-w-md space-y-8">
+		<section class="w-full max-w-md space-y-8">
 			<div>
 				<h1
 					class="text-center text-3xl font-extrabold text-gray-900 dark:text-gray-200">
@@ -59,8 +74,8 @@ import Layout from '@/layouts/Layout.astro'
 				</button>
 				<p id="login-error" class="mt-4 text-sm text-red-600"></p>
 			</form>
-		</div>
-	</section>
+		</section>
+	</main>
 
 	<header
 		id="dashboard-section"
@@ -127,15 +142,8 @@ import Layout from '@/layouts/Layout.astro'
 		} from 'https://www.gstatic.com/firebasejs/10.11.0/firebase-firestore.js'
 
 		// For Firebase JS SDK v7.20.0 and later, measurementId is optional
-		const firebaseConfig = {
-			apiKey: 'AIzaSyAy-ESL3sPmKpH3pM73QuT7PLi5dx8_ejo',
-			authDomain: 'quickbill-7d2bf.firebaseapp.com',
-			projectId: 'quickbill-7d2bf',
-			storageBucket: 'quickbill-7d2bf.firebasestorage.app',
-			messagingSenderId: '766130561547',
-			appId: '1:766130561547:web:7d727576ab6a17712d9d0e',
-			measurementId: 'G-SZZMSJTH27',
-		}
+		const configScript = document.getElementById('firebase-config')
+		const firebaseConfig = JSON.parse(configScript.textContent)
 
 		const app = initializeApp(firebaseConfig)
 		initializeFirestore(app, { experimentalForceLongPolling: true })
