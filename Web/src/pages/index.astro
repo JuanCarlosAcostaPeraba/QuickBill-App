@@ -199,33 +199,42 @@ const firebaseConfig = {
 				grid.setAttribute('loading', '')
 
 				try {
-					const snap = await getDocs(collectionGroup(db, 'invoices'))
-					if (snap.empty) {
-						grid.setData([])
-						grid.removeAttribute('loading')
-						return
+					// 1️⃣  Fetch all clients once and build a lookup map
+					const clientSnap = await getDocs(collectionGroup(db, 'clients'));
+					const clientMap = {};
+					clientSnap.forEach((c) => {
+						const data = c.data();
+						// prefer companyName, fallback to clientName, else ID
+						clientMap[c.id] = data.companyName || data.clientName || c.id;
+					});
+
+					// 2️⃣  Fetch invoices
+					const invSnap = await getDocs(collectionGroup(db, 'invoices'));
+					if (invSnap.empty) {
+						grid.setData([]);
+						return;
 					}
 
-					const rows = []
-					snap.forEach((doc) => {
-						const d = doc.data()
+					const rows = [];
+					invSnap.forEach((doc) => {
+						const d = doc.data();
 						rows.push({
-							client: d.clientId ?? '-',
+							client: clientMap[d.clientId] ?? d.clientId ?? '-',
 							issued:
-								d.issuedAt instanceof Timestamp ?
-									d.issuedAt.toDate().toISOString().slice(0, 10)
-								:	'',
+								d.issuedAt instanceof Timestamp
+									? d.issuedAt.toDate().toISOString().slice(0, 10)
+									: '',
 							total: (d.totalAmount ?? 0).toFixed(2),
 							status: d.status ?? '-',
-						})
-					})
+						});
+					});
 
-					grid.setData(rows)
+					grid.setData(rows);
 				} catch (err) {
-					console.error('Firestore fetch error', err)
-					grid.setData([])
+					console.error('Firestore fetch error', err);
+					grid.setData([]);
 				} finally {
-					grid.removeAttribute('loading')
+					grid.removeAttribute('loading');
 				}
 			} else {
 				// show login
