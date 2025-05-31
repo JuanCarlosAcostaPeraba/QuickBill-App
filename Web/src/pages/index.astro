@@ -230,6 +230,81 @@ const firebaseConfig = {
 					})
 
 					grid.setData(rows)
+
+				// 3️⃣  Build monthly sums (paid & pending)
+				const monthly = {}; // { 'YYYY-MM': { paid, pending } }
+				rows.forEach((r) => {
+					const [y, m] = r.issued.split('-');
+					if (!y) return;
+					const key = `${y}-${m}`;
+					if (!monthly[key]) monthly[key] = { paid: 0, pending: 0 };
+					if (r.status.toLowerCase() === 'paid') {
+						monthly[key].paid += parseFloat(r.total);
+					} else if (r.status.toLowerCase() === 'pending') {
+						monthly[key].pending += parseFloat(r.total);
+					}
+				});
+
+				// 4️⃣  Convert to two adjacent bars per month
+				const ms12h = 12 * 60 * 60 * 1000;
+				const paidData = [];
+				const pendingData = [];
+
+				Object.keys(monthly)
+					.sort()
+					.forEach((key) => {
+						const [yyyy, mm] = key.split('-');
+						const base = new Date(`${yyyy}-${mm}-01T00:00:00Z`).getTime(); // UTC
+						// Lightweight accepts numeric seconds since epoch
+						const baseSec = Math.floor(base / 1000);
+
+						// Pending bar (left)
+						pendingData.push({
+							time: baseSec,
+							value: monthly[key].pending,
+							color: '#facc15',
+						});
+						// Paid bar (right, +12h)
+						paidData.push({
+							time: Math.floor((base + ms12h) / 1000),
+							value: monthly[key].paid,
+							color: '#16a34a',
+						});
+					});
+
+				// 5️⃣  Render / update chart
+				const container = document.getElementById('moneyChart');
+				if (!container.__chart__) {
+					const { createChart, HistogramSeries } = await import(
+						'https://cdn.jsdelivr.net/npm/lightweight-charts@5.0.7/+esm'
+					);
+					const chart = createChart(container, {
+						layout: {
+							textColor: '#374151',
+							background: { type: 'solid', color: 'white' },
+						},
+						height: 250,
+						timeScale: {
+							tickMarkFormatter: (time) => {
+								// time is seconds since epoch (numeric)
+								const date = new Date(time * 1000);
+								return date.toLocaleString('default', { month: 'short' }); // e.g., Jan, Feb...
+							},
+						},
+					});
+					const pendSeries = chart.addSeries(HistogramSeries, { color: '#facc15' });
+					const paidSeries = chart.addSeries(HistogramSeries, { color: '#16a34a' });
+					pendSeries.setData(pendingData);
+					paidSeries.setData(paidData);
+					chart.timeScale().fitContent();
+					container.__chart__ = { chart, paidSeries, pendSeries };
+				} else {
+					const { paidSeries, pendSeries, chart } = container.__chart__;
+					pendSeries.setData(pendingData);
+					paidSeries.setData(paidData);
+					chart.timeScale().fitContent();
+				}
+
 				} catch (err) {
 					console.error('Firestore fetch error', err)
 					grid.setData([])
@@ -247,18 +322,30 @@ const firebaseConfig = {
 	<main
 		id="dashboard-main"
 		class="hidden container mx-auto px-4 py-8 space-y-8">
-		<h2 class="text-2xl font-bold mb-6 dark:text-white">Invoices</h2>
+		<section id="Dashboard">
+			<h1 class="text-3xl font-bold text-gray-800 mb-6 dark:text-white">
+				Dashboard
+			</h1>
 
-		<zing-grid
-			id="invoiceGrid"
-			columns="client,issued,total,status"
-			sort
-			filter
-			pager
-			page-size="10"
-			class="w-full h-auto"
-			loading-text="Loading invoices..."
-			empty-text="No invoices found.">
-		</zing-grid>
+			<!-- One Histogram Chart with two colors [green for paid, yellow for pending] -->
+			<div id="moneyChart" class="w-full h-64 p-4"></div>
+
+		</section>
+
+		<section id="Invoices">
+			<h1 class="text-3xl font-bold text-gray-800 mb-6 dark:text-white">Invoices</h1>
+
+			<zing-grid
+				id="invoiceGrid"
+				columns="client,issued,total,status"
+				sort
+				filter
+				pager
+				page-size="10"
+				class="w-full h-auto"
+				loading-text="Loading invoices..."
+				empty-text="No invoices found.">
+			</zing-grid>
+		</section>
 	</main>
 </Layout>
