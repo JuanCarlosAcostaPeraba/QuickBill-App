@@ -1,67 +1,268 @@
 ---
 import Layout from '@/layouts/Layout.astro'
-
-import DashboardSection from '@/section/DashboardSection.astro'
-import InvoiceTableSection from '@/section/InvoiceTableSection.astro'
-import OverdueListSection from '@/section/OverdueListSection.astro'
-
-if (!Astro.cookies.get('qid')) {
-	return Astro.redirect('/login')
-}
-
-if (Astro.request.method === 'POST') {
-	try {
-		Astro.cookies.delete('qid')
-		return Astro.redirect('/login')
-	} catch (error) {
-		console.error('Error signing out:', error)
-	}
-}
 ---
 
 <Layout
 	title="QuickBill | Dashboard"
 	description="Your QuickBill admin dashboard.">
+	<!-- Login Section -->
+	<section
+		id="login-section"
+		class="min-h-screen flex items-center justify-center bg-gray-50 py-12 px-4 sm:px-6 lg:px-8 dark:bg-gray-800">
+		<div class="w-full max-w-md space-y-8">
+			<div>
+				<h1
+					class="text-center text-3xl font-extrabold text-gray-900 dark:text-gray-200">
+					QuickBill
+				</h1>
+				<h2
+					class="mt-6 text-center text-xl font-semibold text-gray-700 dark:text-gray-400">
+					Sign in to your account
+				</h2>
+			</div>
+
+			<form id="login-form" class="mt-8 space-y-6">
+				<div class="rounded-md shadow-sm -space-y-px">
+					<div>
+						<label for="email-address" class="sr-only">Email address</label>
+						<input
+							id="email-address"
+							name="email"
+							type="email"
+							autocomplete="email"
+							class="appearance-none dark:text-white rounded-none relative block w-full px-3 py-2 border
+                                   border-gray-300 placeholder-gray-500 text-gray-900 rounded-t-md focus:outline-none
+                                   focus:ring-indigo-500 focus:border-indigo-500 focus:z-10 sm:text-sm"
+							placeholder="Email address"
+						/>
+					</div>
+					<div>
+						<label for="password" class="sr-only">Password</label>
+						<input
+							id="password"
+							name="password"
+							type="password"
+							autocomplete="current-password"
+							class="appearance-none dark:text-white rounded-none relative block w-full px-3 py-2 border
+                                   border-gray-300 placeholder-gray-500 text-gray-900 rounded-b-md focus:outline-none
+                                   focus:ring-indigo-500 focus:border-indigo-500 focus:z-10 sm:text-sm"
+							placeholder="Password"
+						/>
+					</div>
+				</div>
+				<button
+					type="submit"
+					class="group relative w-full flex justify-center py-2 px-4 border border-transparent text-sm font-medium
+                           rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2
+                           focus:ring-offset-2 focus:ring-indigo-500">
+					Sign in
+				</button>
+				<p id="login-error" class="mt-4 text-sm text-red-600"></p>
+			</form>
+		</div>
+	</section>
+
 	<header
-		class="shadow-sm w-full bg-white flex items-center justify-between p-4 sm:px-6 lg:px-8 dark:bg-gray-800">
+		id="dashboard-section"
+		class="hidden shadow-sm w-full bg-white flex items-center justify-between p-4 sm:px-6 lg:px-8 dark:bg-gray-800">
 		<a href="/" class="flex items-center space-x-2">
 			<img
 				src="/favicon.svg"
 				alt="QuickBill logo"
 				class="h-8 w-8 object-contain"
 			/>
-			<h1 class="font-semibold text-lg text-gray-800 dark:text-neutral-200">QuickBill</h1>
+			<h1 class="font-semibold text-lg text-gray-800 dark:text-neutral-200">
+				QuickBill
+			</h1>
 		</a>
 
 		<nav>
 			<ul class="flex items-center space-x-6">
 				<li>
-					<a href="#Dashboard" class="text-gray-600 hover:text-indigo-600 dark:text-neutral-200 dark:hover:text-indigo-400"
+					<a
+						href="#Dashboard"
+						class="text-gray-600 hover:text-indigo-600 dark:text-neutral-200 dark:hover:text-indigo-400"
 						>Dashboard</a
 					>
 				</li>
 				<li>
-					<a href="#Overdue" class="text-gray-600 hover:text-indigo-600 dark:text-neutral-200 dark:hover:text-indigo-400"
+					<a
+						href="#Overdue"
+						class="text-gray-600 hover:text-indigo-600 dark:text-neutral-200 dark:hover:text-indigo-400"
 						>Overdue</a
 					>
 				</li>
 				<li>
-					<a href="#Invoices" class="text-gray-600 hover:text-indigo-600 dark:text-neutral-200 dark:hover:text-indigo-400"
+					<a
+						href="#Invoices"
+						class="text-gray-600 hover:text-indigo-600 dark:text-neutral-200 dark:hover:text-indigo-400"
 						>Invoices</a
 					>
 				</li>
 			</ul>
 		</nav>
 
-		<form method="POST">
-			<button id="sign-out-button" class="text-red-600 hover:text-red-800 dark:text-red-300 dark:hover:text-red-500 cursor-pointer">
-				Sign Out
-			</button>
-		</form>
+		<button
+			id="sign-out-btn"
+			class="text-red-600 hover:text-red-800 dark:text-red-300 dark:hover:text-red-500">
+			Sign&nbsp;Out
+		</button>
 	</header>
-	<main class="container mx-auto px-4 py-8 space-y-8">
-		<DashboardSection />
-		<OverdueListSection />
-		<InvoiceTableSection />
+	<script is:inline type="module">
+		import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.11.0/firebase-app.js'
+		import {
+			getAuth,
+			signOut,
+			onAuthStateChanged,
+			browserLocalPersistence,
+			setPersistence,
+			signInWithEmailAndPassword,
+		} from 'https://www.gstatic.com/firebasejs/10.11.0/firebase-auth.js'
+		import {
+			getFirestore,
+			collectionGroup,
+			getDocs,
+			Timestamp,
+			initializeFirestore,
+		} from 'https://www.gstatic.com/firebasejs/10.11.0/firebase-firestore.js'
+
+		// For Firebase JS SDK v7.20.0 and later, measurementId is optional
+		const firebaseConfig = {
+			apiKey: 'AIzaSyAy-ESL3sPmKpH3pM73QuT7PLi5dx8_ejo',
+			authDomain: 'quickbill-7d2bf.firebaseapp.com',
+			projectId: 'quickbill-7d2bf',
+			storageBucket: 'quickbill-7d2bf.firebasestorage.app',
+			messagingSenderId: '766130561547',
+			appId: '1:766130561547:web:7d727576ab6a17712d9d0e',
+			measurementId: 'G-SZZMSJTH27',
+		}
+
+		const app = initializeApp(firebaseConfig)
+		initializeFirestore(app, { experimentalForceLongPolling: true })
+
+		const auth = getAuth(app)
+		const db = getFirestore(app)
+
+		const loginSection = document.getElementById('login-section')
+		const dashboardHeader = document.getElementById('dashboard-section')
+		const dashboardMain = document.getElementById('dashboard-main')
+		const signOutBtn = document.getElementById('sign-out-btn')
+		const tbody = document.getElementById('invoiceTBody')
+		const errorBox = document.getElementById('login-error')
+		const loginForm = document.getElementById('login-form')
+
+		// ---------- Login form ----------
+		loginForm.addEventListener('submit', async (e) => {
+			e.preventDefault()
+			errorBox.textContent = ''
+
+			const email = loginForm.email.value.trim()
+			const password = loginForm.password.value.trim()
+
+			if (!email || !password) {
+				errorBox.textContent = 'Email and password are required.'
+				return
+			}
+			try {
+				await signInWithEmailAndPassword(auth, email, password)
+				// UI switch occurs in onAuthStateChanged
+			} catch (err) {
+				errorBox.textContent = err.message ?? 'Authentication failed.'
+			}
+		})
+
+		// ---------- Sign‑out ----------
+		signOutBtn.addEventListener('click', async () => {
+			try {
+				await signOut(auth)
+			} catch {}
+		})
+
+		// ---------- Auth listener ----------
+		onAuthStateChanged(auth, async (user) => {
+			if (user) {
+				// show dashboard
+				loginSection.classList.add('hidden')
+				dashboardHeader.classList.remove('hidden')
+				dashboardMain.classList.remove('hidden')
+
+				tbody.innerHTML = '<tr><td class="p-4" colspan="5">Loading…</td></tr>'
+
+				try {
+					const snap = await getDocs(collectionGroup(db, 'invoices'))
+					if (snap.empty) {
+						tbody.innerHTML =
+							'<tr><td class="p-4 text-center" colspan="5">No invoices found</td></tr>'
+						return
+					}
+					tbody.innerHTML = ''
+					snap.forEach((doc) => {
+						const d = doc.data()
+						const issued =
+							d.issuedAt instanceof Timestamp ?
+								d.issuedAt.toDate().toISOString().slice(0, 10)
+							:	''
+						tbody.insertAdjacentHTML(
+							'beforeend',
+							`
+							<tr>
+								<td class="px-4 py-2 text-sm">${doc.id}</td>
+								<td class="px-4 py-2 text-sm">${d.clientId ?? '-'}</td>
+								<td class="px-4 py-2 text-sm">${issued}</td>
+								<td class="px-4 py-2 text-sm">€${(d.totalAmount ?? 0).toFixed(2)}</td>
+								<td class="px-4 py-2 text-sm">${d.status ?? '-'}</td>
+							</tr>
+						`
+						)
+					})
+				} catch (err) {
+					console.error('Firestore fetch error', err)
+					tbody.innerHTML =
+						'<tr><td class="p-4 text-red-600" colspan="5">Failed to load invoices.</td></tr>'
+				}
+			} else {
+				// show login
+				loginSection.classList.remove('hidden')
+				dashboardHeader.classList.add('hidden')
+				dashboardMain.classList.add('hidden')
+			}
+		})
+	</script>
+	<main
+		id="dashboard-main"
+		class="hidden container mx-auto px-4 py-8 space-y-8">
+		<h2 class="text-2xl font-bold mb-6 dark:text-white">Invoices</h2>
+
+		<table
+			class="min-w-full divide-y divide-gray-200 dark:divide-gray-700 rounded shadow">
+			<thead class="bg-gray-50 dark:bg-gray-900">
+				<tr>
+					<th
+						class="px-4 py-2 text-left text-xs font-medium text-gray-600 dark:text-gray-300 uppercase"
+						>ID</th
+					>
+					<th
+						class="px-4 py-2 text-left text-xs font-medium text-gray-600 dark:text-gray-300 uppercase"
+						>Client</th
+					>
+					<th
+						class="px-4 py-2 text-left text-xs font-medium text-gray-600 dark:text-gray-300 uppercase"
+						>Issued</th
+					>
+					<th
+						class="px-4 py-2 text-left text-xs font-medium text-gray-600 dark:text-gray-300 uppercase"
+						>Total</th
+					>
+					<th
+						class="px-4 py-2 text-left text-xs font-medium text-gray-600 dark:text-gray-300 uppercase"
+						>Status</th
+					>
+				</tr>
+			</thead>
+			<tbody
+				id="invoiceTBody"
+				class="bg-white divide-y divide-gray-200 dark:bg-gray-800 dark:divide-gray-700"
+			></tbody>
+		</table>
 	</main>
 </Layout>

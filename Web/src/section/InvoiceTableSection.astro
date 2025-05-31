@@ -1,0 +1,89 @@
+---
+---
+<section id="LastInvoices" class="py-12">
+	<h2 class="text-2xl font-bold mb-6 dark:text-white">Last invoices</h2>
+
+	<table class="min-w-full divide-y divide-gray-200 dark:divide-gray-700 rounded shadow">
+		<thead class="bg-gray-50 dark:bg-gray-900">
+			<tr>
+				<th class="px-4 py-2 text-left text-xs font-medium text-gray-600 dark:text-gray-300 uppercase">ID</th>
+				<th class="px-4 py-2 text-left text-xs font-medium text-gray-600 dark:text-gray-300 uppercase">Client</th>
+				<th class="px-4 py-2 text-left text-xs font-medium text-gray-600 dark:text-gray-300 uppercase">Issued</th>
+				<th class="px-4 py-2 text-left text-xs font-medium text-gray-600 dark:text-gray-300 uppercase">Total</th>
+				<th class="px-4 py-2 text-left text-xs font-medium text-gray-600 dark:text-gray-300 uppercase">Status</th>
+			</tr>
+		</thead>
+
+		<tbody id="invoiceTBody" class="bg-white divide-y divide-gray-200 dark:bg-gray-800 dark:divide-gray-700"></tbody>
+	</table>
+</section>
+
+<!-- Client‑side fetch of invoices -->
+<script is:inline type="module">
+	import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.11.0/firebase-app.js';
+	import { getAuth, onAuthStateChanged } from 'https://www.gstatic.com/firebasejs/10.11.0/firebase-auth.js';
+	import { initializeFirestore, getFirestore, collectionGroup, getDocs, Timestamp } from 'https://www.gstatic.com/firebasejs/10.11.0/firebase-firestore.js';
+
+	// ⚠️ Values embebidos en tiempo de build por Astro
+	const firebaseConfig = {
+		apiKey:      '${import.meta.env.PUBLIC_FIREBASE_API_KEY}',
+		authDomain:  '${import.meta.env.PUBLIC_FIREBASE_AUTH_DOMAIN}',
+		projectId:   '${import.meta.env.PUBLIC_FIREBASE_PROJECT_ID}',
+	};
+
+	const app  = initializeApp(firebaseConfig);
+	initializeFirestore(app, { experimentalForceLongPolling: true });
+	const auth = getAuth(app);
+	const db   = getFirestore(app);
+
+	const tbody = document.getElementById('invoiceTBody');
+
+	function renderRow(inv) {
+		const tr = document.createElement('tr');
+		tr.innerHTML = `
+			<td class="px-4 py-2 text-sm">${inv.id}</td>
+			<td class="px-4 py-2 text-sm">${inv.clientId ?? '-'}</td>
+			<td class="px-4 py-2 text-sm">${inv.issuedAt}</td>
+			<td class="px-4 py-2 text-sm">€${inv.total.toFixed(2)}</td>
+			<td class="px-4 py-2 text-sm">${inv.status}</td>`;
+		tbody.appendChild(tr);
+	}
+
+	onAuthStateChanged(auth, async (user) => {
+		if (!user) {
+			console.warn('No user in onAuthStateChanged');
+			return;
+		}
+		try {
+			// ▼ Ajusta esta consulta a tu estructura real
+			const snap = await getDocs(collectionGroup(db, 'invoices'));
+
+			console.log(`📄 invoices fetched: ${snap.size}`);
+
+			if (snap.empty) {
+				tbody.innerHTML = `
+					<tr>
+						<td colspan="5" class="px-4 py-6 text-center text-gray-500 dark:text-gray-400">
+							No invoices found.
+						</td>
+					</tr>`;
+				return;
+			}
+
+			snap.forEach((doc) => {
+				const d = doc.data();
+				renderRow({
+					id: doc.id,
+					clientId: d.clientId,
+					issuedAt: (d.issuedAt instanceof Timestamp)
+						? d.issuedAt.toDate().toISOString().slice(0, 10)
+						: '',
+					total: d.totalAmount ?? 0,
+					status: d.status ?? '-',
+				});
+			});
+		} catch (err) {
+			console.error('Error fetching invoices:', err);
+		}
+	});
+</script>
