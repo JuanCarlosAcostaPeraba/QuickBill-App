@@ -210,7 +210,6 @@ const firebaseConfig = {
 					snap.forEach((doc) => {
 						const d = doc.data()
 						rows.push({
-							id: doc.id,
 							client: d.clientId ?? '-',
 							issued:
 								d.issuedAt instanceof Timestamp ?
@@ -244,12 +243,13 @@ const firebaseConfig = {
 		<zing-grid
 			id="invoiceGrid"
 			caption="Invoices"
+			columns="client,issued,total,status"
 			sort
 			filter
 			zebra
 			pager
 			page-size="10"
-			class="w-full h-auto dark:bg-gray-800">
+			class="w-full h-auto">
 		</zing-grid>
 	</main>
 </Layout>
