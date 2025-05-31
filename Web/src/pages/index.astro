@@ -200,41 +200,41 @@ const firebaseConfig = {
 
 				try {
 					// 1️⃣  Fetch all clients once and build a lookup map
-					const clientSnap = await getDocs(collectionGroup(db, 'clients'));
-					const clientMap = {};
+					const clientSnap = await getDocs(collectionGroup(db, 'clients'))
+					const clientMap = {}
 					clientSnap.forEach((c) => {
-						const data = c.data();
+						const data = c.data()
 						// prefer companyName, fallback to clientName, else ID
-						clientMap[c.id] = data.companyName || data.clientName || c.id;
-					});
+						clientMap[c.id] = data.companyName || data.clientName || c.id
+					})
 
 					// 2️⃣  Fetch invoices
-					const invSnap = await getDocs(collectionGroup(db, 'invoices'));
+					const invSnap = await getDocs(collectionGroup(db, 'invoices'))
 					if (invSnap.empty) {
-						grid.setData([]);
-						return;
+						grid.setData([])
+						return
 					}
 
-					const rows = [];
+					const rows = []
 					invSnap.forEach((doc) => {
-						const d = doc.data();
+						const d = doc.data()
 						rows.push({
 							client: clientMap[d.clientId] ?? d.clientId ?? '-',
 							issued:
-								d.issuedAt instanceof Timestamp
-									? d.issuedAt.toDate().toISOString().slice(0, 10)
-									: '',
+								d.issuedAt instanceof Timestamp ?
+									d.issuedAt.toDate().toISOString().slice(0, 10)
+								:	'',
 							total: (d.totalAmount ?? 0).toFixed(2),
-							status: d.status ?? '-',
-						});
-					});
+							status: (d.status ?? '-').replace(/^./, (c) => c.toUpperCase()),
+						})
+					})
 
-					grid.setData(rows);
+					grid.setData(rows)
 				} catch (err) {
-					console.error('Firestore fetch error', err);
-					grid.setData([]);
+					console.error('Firestore fetch error', err)
+					grid.setData([])
 				} finally {
-					grid.removeAttribute('loading');
+					grid.removeAttribute('loading')
 				}
 			} else {
 				// show login
@@ -251,14 +251,14 @@ const firebaseConfig = {
 
 		<zing-grid
 			id="invoiceGrid"
-			caption="Invoices"
 			columns="client,issued,total,status"
 			sort
 			filter
-			zebra
 			pager
 			page-size="10"
-			class="w-full h-auto">
+			class="w-full h-auto"
+			loading-text="Loading invoices..."
+			empty-text="No invoices found.">
 		</zing-grid>
 	</main>
 </Layout>
