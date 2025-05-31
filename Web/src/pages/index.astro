@@ -206,11 +206,11 @@ import Layout from '@/layouts/Layout.astro'
 							'beforeend',
 							`
 							<tr>
-								<td class="px-4 py-2 text-sm">${doc.id}</td>
-								<td class="px-4 py-2 text-sm">${d.clientId ?? '-'}</td>
-								<td class="px-4 py-2 text-sm">${issued}</td>
-								<td class="px-4 py-2 text-sm">€${(d.totalAmount ?? 0).toFixed(2)}</td>
-								<td class="px-4 py-2 text-sm">${d.status ?? '-'}</td>
+								<td class="px-4 py-2 text-sm dark:text-white">${doc.id}</td>
+								<td class="px-4 py-2 text-sm dark:text-white">${d.clientId ?? '-'}</td>
+								<td class="px-4 py-2 text-sm dark:text-white">${issued}</td>
+								<td class="px-4 py-2 text-sm dark:text-white">€${(d.totalAmount ?? 0).toFixed(2)}</td>
+								<td class="px-4 py-2 text-sm dark:text-white">${d.status ?? '-'}</td>
 							</tr>
 						`
 						)
