@@ -4,16 +4,14 @@ import { defineConfig } from 'astro/config'
 import tailwindcss from '@tailwindcss/vite'
 import vercel from '@astrojs/vercel'
 
+import icon from 'astro-icon'
+
 // https://astro.build/config
 export default defineConfig({
 	vite: {
-		plugins: [tailwindcss()],
-		build: {
-			rollupOptions: {
-				external: ['firebase-admin', 'firebase-admin/app', 'firebase-admin/auth']
-			}
-		}
+		plugins: [tailwindcss(), icon()],
 	},
+	trailingSlash: 'never',
 	output: 'server',
 	adapter: vercel(),
 })
