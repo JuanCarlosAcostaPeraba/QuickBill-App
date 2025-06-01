@@ -1,9 +1,8 @@
 import { defineAction } from 'astro:actions'
 import { z } from 'astro:schema'
 
-import { signInWithEmailAndPassword } from 'firebase/auth'
-
 import { auth } from '@/firebase/config'
+import { signInWithEmailAndPassword } from 'firebase/auth'
 
 export const loginAccount = defineAction({
 	accept: 'form',
