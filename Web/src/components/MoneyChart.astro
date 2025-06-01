@@ -1,22 +1,16 @@
 ---
-// TODO: Get the data from firestore and pass it to the chart
+
 ---
 
 <div id="container" class="w-full h-64 p-4"></div>
 
 <script>
-	import {
-		createChart,
-		HistogramSeries,
-	} from '../../node_modules/lightweight-charts/dist/lightweight-charts.standalone.production.mjs'
-
 	const chartOptions = {
 		layout: {
 			textColor: 'black',
 			background: { type: 'solid', color: 'white' },
 		},
 	}
-
 	const chart = createChart(document.getElementById('container'), chartOptions)
 	const histogramSeries = chart.addSeries(HistogramSeries, { color: '#26a69a' })
 
@@ -32,6 +26,40 @@
 		{ value: 56, time: 1643116522 },
 		{ value: 46, time: 1643202922, color: 'red' },
 	]
+
+	histogramSeries.setData(data)
+
+	chart.timeScale().fitContent()
+</script>
+
+<script type="module">
+	import {
+		createChart,
+		HistogramSeries,
+	} from 'https://cdn.jsdelivr.net/npm/lightweight-charts@5.0.7/+esm'
+
+	const chartOptions = {
+		layout: {
+			textColor: 'black',
+			background: { type: 'solid', color: 'white' },
+		},
+	}
+
+	const chart = createChart(document.getElementById('container'), chartOptions)
+	const histogramSeries = chart.addSeries(HistogramSeries, { color: '#26a69a' })
+
+	// const data = [
+	// 	{ value: 1, time: 1642425322 },
+	// 	{ value: 8, time: 1642511722 },
+	// 	{ value: 10, time: 1642598122 },
+	// 	{ value: 20, time: 1642684522 },
+	// 	{ value: 3, time: 1642770922, color: 'red' },
+	// 	{ value: 43, time: 1642857322 },
+	// 	{ value: 41, time: 1642943722, color: 'red' },
+	// 	{ value: 43, time: 1643030122 },
+	// 	{ value: 56, time: 1643116522 },
+	// 	{ value: 46, time: 1643202922, color: 'red' },
+	// ]
 
 	histogramSeries.setData(data)
 
