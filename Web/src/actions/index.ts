@@ -1,5 +1,5 @@
-import { loginAccount } from './loginAccount.ts'
-import { logoutAccount } from './logoutAccount.ts'
+import { loginAccount } from './loginAccount'
+import { logoutAccount } from './logoutAccount'
 
 export const server = {
 	loginAccount,
