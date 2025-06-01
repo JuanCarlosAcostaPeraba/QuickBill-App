@@ -1,0 +1,85 @@
+---
+import Layout from '@/layouts/Layout.astro'
+---
+
+<Layout
+	title="Login - QuickBill"
+	description="Login to your QuickBill account to manage your invoices and payments.">
+	<main
+		class="min-h-screen flex items-center justify-center bg-gray-50 py-12 px-4 sm:px-6 lg:px-8 dark:bg-gray-800">
+		<section class="w-full max-w-md space-y-8" id="login-section">
+			<div>
+				<h1
+					class="text-center text-3xl font-extrabold text-gray-900 dark:text-gray-200">
+					QuickBill
+				</h1>
+				<h2
+					class="mt-6 text-center text-xl font-semibold text-gray-700 dark:text-gray-400">
+					Sign in to your account
+				</h2>
+			</div>
+
+			<form id="login-account" class="mt-8 space-y-6">
+				<div class="rounded-md shadow-sm -space-y-px">
+					<div>
+						<label for="email-address" class="sr-only">Email address</label>
+						<input
+							id="email-address"
+							name="email"
+							type="email"
+							autocomplete="email"
+							class="appearance-none dark:text-white rounded-none relative block w-full px-3 py-2 border
+                                   border-gray-300 placeholder-gray-500 text-gray-900 rounded-t-md focus:outline-none
+                                   focus:ring-indigo-500 focus:border-indigo-500 focus:z-10 sm:text-sm"
+							placeholder="Email address"
+						/>
+					</div>
+					<div>
+						<label for="password" class="sr-only">Password</label>
+						<input
+							id="password"
+							name="password"
+							type="password"
+							autocomplete="current-password"
+							class="appearance-none dark:text-white rounded-none relative block w-full px-3 py-2 border
+                                   border-gray-300 placeholder-gray-500 text-gray-900 rounded-b-md focus:outline-none
+                                   focus:ring-indigo-500 focus:border-indigo-500 focus:z-10 sm:text-sm"
+							placeholder="Password"
+						/>
+					</div>
+				</div>
+				<button
+					class="group relative w-full flex justify-center py-2 px-4 border border-transparent text-sm font-medium
+                           rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2
+                           focus:ring-offset-2 focus:ring-indigo-500">
+					Sign in
+				</button>
+				<p id="login-error" class="mt-4 text-sm text-red-600"></p>
+			</form>
+			<script>
+				import { isInputError } from 'astro:actions'
+				import { actions } from 'astro:actions'
+
+				const loginForm = document.querySelector(
+					'#login-account'
+				) as HTMLFormElement
+
+				loginForm.addEventListener('submit', async (e) => {
+					e.preventDefault()
+					const { error, data } = await actions.loginAccount(
+						new FormData(loginForm)
+					)
+					if (error) {
+						console.log(error)
+						if (isInputError(error)) {
+							console.log(error.fields)
+						}
+						return
+					}
+
+					window.location.reload()
+				})
+			</script>
+		</section>
+	</main>
+</Layout>

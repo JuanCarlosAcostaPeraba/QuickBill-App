@@ -1,11 +1,15 @@
 ---
-import Welcome from '@/components/Welcome.astro'
 import Layout from '@/layouts/Layout.astro'
-import { app } from '@/firebase/conection.js'
+
+import Header from '@/components/Header.astro'
+import DashboardSection from '@/sections/DashboardSection.astro'
 ---
 
 <Layout
-	title="QuickBill"
-	description="Your invoices, your team, your clients all connected in one app.">
-	
+	title="QuickBill - Invoice Management"
+	description="QuickBill is a simple, open-source invoice management system built with Astro and Firebase. Easily manage your invoices, clients, and payments.">
+	<Header />
+	<main class="container mx-auto px-4 py-8 space-y-8">
+		<DashboardSection />
+	</main>
 </Layout>
