@@ -14,6 +14,10 @@ const firestore = getFirestore(firebaseApp)
 const auth = getAuth(firebaseApp)
 
 async function getEmployeesBy(businessId?: string) {
+	if (!businessId) {
+		console.log('No businessId provided.')
+		return []
+	}
 	const employeesQuery = query(
 		collection(firestore, 'businesses', businessId, 'employees')
 	)

@@ -10,7 +10,6 @@ import ButtonToScrollToTop from '@/components/ButtonToScrollToTop.astro'
 import { auth } from '@/firebase/firebase'
 
 const userSession = auth.currentUser?.uid
-const userName = auth.currentUser?.displayName
 ---
 
 <Layout
