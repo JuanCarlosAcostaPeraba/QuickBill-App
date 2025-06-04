@@ -78,7 +78,7 @@ async function getInvoicesBy(businessId: string) {
 }
 
 async function getAllDataForUser(userId: string) {
-	const allData = {}
+	const allData: any = {}
 
 	// 1. get all businesses
 	const businessesQuery = await query(collection(firestore, 'businesses'))
@@ -94,7 +94,7 @@ async function getAllDataForUser(userId: string) {
 		const businesId = doc.id
 		const employees = await getEmployeesBy(businesId)
 		const isEmployee =
-			employees.filter((employee) => employee.userId === userId) || null
+			employees.filter((employee: any) => employee.userId === userId) || null
 		if (!isEmployee || isEmployee.length === 0) {
 			return null
 		}
