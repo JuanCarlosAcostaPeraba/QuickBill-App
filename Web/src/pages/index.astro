@@ -4,6 +4,7 @@ import Layout from '@/layouts/Layout.astro'
 import Header from '@/components/Header.astro'
 import DashboardSection from '@/sections/DashboardSection.astro'
 import InvoicesSection from '@/sections/InvoicesSection.astro'
+import OverdueSection from '@/sections/OverdueSection.astro'
 ---
 
 <Layout
@@ -12,6 +13,50 @@ import InvoicesSection from '@/sections/InvoicesSection.astro'
 	<Header />
 	<main class="container mx-auto px-4 py-8 space-y-8">
 		<DashboardSection />
+		<OverdueSection />
 		<InvoicesSection />
 	</main>
+	<script>
+		import { getAllDataForUser } from '@/firebase/firebase'
+		import {
+			createChart,
+			HistogramSeries,
+		} from 'https://cdn.jsdelivr.net/npm/lightweight-charts@5.0.7/+esm'
+
+		const userSession = document.getElementById('user-session')?.dataset.uid
+
+		let data = []
+
+		if (typeof userSession === 'string') {
+			await getAllDataForUser(userSession)
+				.then((allData) => {
+					// 
+				})
+				.catch((error) => {
+					data = []
+				})
+		} else {
+			console.error('User session UID is missing or invalid.')
+			data = []
+		}
+
+		const chartOptions = {
+			layout: {
+				textColor: 'black',
+				background: { type: 'solid', color: 'white' },
+			},
+		}
+
+		const chart = createChart(
+			document.getElementById('container'),
+			chartOptions
+		)
+		const histogramSeries = chart.addSeries(HistogramSeries, {
+			color: '#26a69a',
+		})
+
+		histogramSeries.setData(data)
+
+		chart.timeScale().fitContent()
+	</script>
 </Layout>
