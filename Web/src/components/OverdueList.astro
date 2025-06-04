@@ -1,0 +1,44 @@
+---
+
+---
+
+<div
+	id="overdueClientsCards"
+	class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
+	<div class="card-skeleton card"></div>
+	<div class="card-skeleton card"></div>
+	<div class="card-skeleton card"></div>
+</div>
+
+<style>
+	.card {
+		height: 144px; /* h-36 */
+		border-radius: 0.75rem; /* rounded-xl */
+		box-shadow: 0 2px 6px rgba(0, 0, 0, 0.07);
+		border: 1px solid #e5e7eb; /* border-gray-200 */
+		padding: 1rem; /* p-4 */
+		background: #fff;
+		transition:
+			box-shadow 0.2s,
+			transform 0.2s;
+		display: flex;
+		flex-direction: column;
+		justify-content: space-between;
+	}
+	.card:hover {
+		box-shadow: 0 6px 24px rgba(0, 0, 0, 0.11);
+		transform: scale(1.03);
+	}
+	.card-skeleton {
+		background: linear-gradient(90deg, #f3f4f6 25%, #e5e7eb 37%, #f3f4f6 63%);
+		animation: skeleton-loading 1.2s infinite linear;
+	}
+	@keyframes skeleton-loading {
+		0% {
+			background-position: -200px 0;
+		}
+		100% {
+			background-position: calc(200px + 100%) 0;
+		}
+	}
+</style>
