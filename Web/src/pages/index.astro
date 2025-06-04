@@ -26,10 +26,7 @@ const userName = auth.currentUser?.displayName
 	</main>
 	<script>
 		import { getAllDataForUser } from '@/firebase/firebase'
-		import {
-			createChart,
-			HistogramSeries,
-		} from 'https://cdn.jsdelivr.net/npm/lightweight-charts@5.0.7/+esm'
+		import { createChart, HistogramSeries } from 'lightweight-charts'
 
 		const userSession = document.getElementById('user-session')?.dataset.uid
 
@@ -38,7 +35,7 @@ const userName = auth.currentUser?.displayName
 
 			let dictOverdueClients = {}
 
-			allData.clients.forEach((client) => {
+			allData.clients.forEach((client: any) => {
 				dictOverdueClients[client.id] = {
 					name: client.companyName,
 					amount: 0,
@@ -46,7 +43,7 @@ const userName = auth.currentUser?.displayName
 				}
 			})
 
-			allData.invoices.forEach((invoice) => {
+			allData.invoices.forEach((invoice: any) => {
 				if (invoice.status === 'Overdue') {
 					const client = dictOverdueClients[invoice.clientId]
 					if (client) {
@@ -59,7 +56,7 @@ const userName = auth.currentUser?.displayName
 			dictOverdueClients = Object.values(dictOverdueClients).filter(
 				(client) => client.amount > 0
 			)
-			dictOverdueClients.sort((a, b) => b.amount - a.amount)
+			dictOverdueClients.sort((a: any, b: any) => b.amount - a.amount)
 
 			overdueCards.innerHTML = dictOverdueClients
 				.map(
@@ -83,13 +80,19 @@ const userName = auth.currentUser?.displayName
 
 		function listAllInvoices(allData: any) {
 			const invoiceGrid = document.querySelector('#invoiceGrid')
-			const invoiceGridData = allData.invoices.map((invoice) => {
+			const invoiceGridData = allData.invoices.map((invoice: any) => {
 				const client = allData.clients.find(
-					(client) => client.id === invoice.clientId
+					(client: any) => client.id === invoice.clientId
 				)
 				return {
 					client: client.companyName,
-					issued: new Date(invoice.issued).toLocaleDateString(),
+					issued: new Date(
+						invoice.issuedAt ? invoice.issuedAt.seconds * 1000 : 0
+					).toLocaleDateString('default', {
+						year: 'numeric',
+						month: '2-digit',
+						day: '2-digit',
+					}),
 					total: `${invoice.totalAmount}${invoice.currency}`,
 					status: invoice.status,
 				}
