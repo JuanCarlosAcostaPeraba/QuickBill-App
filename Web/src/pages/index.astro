@@ -30,7 +30,6 @@ const userName = auth.currentUser?.displayName
 			createChart,
 			HistogramSeries,
 		} from 'https://cdn.jsdelivr.net/npm/lightweight-charts@5.0.7/+esm'
-import { DATA_FLAG } from 'node_modules/astro/dist/content/consts'
 
 		const userSession = document.getElementById('user-session')?.dataset.uid
 
@@ -101,42 +100,83 @@ import { DATA_FLAG } from 'node_modules/astro/dist/content/consts'
 		function histogramChart(allData: any) {
 			const $totalPaid = document.querySelector('#total-paid')
 			const $totalPending = document.querySelector('#total-pending')
-			const data: any[] = []
-			
+
 			let totalPaid = 0
 			let totalPending = 0
-			
-			allData.invoices.forEach((invoice) => {
+
+			const monthly = {}
+
+			allData.invoices.forEach((invoice: any) => {
+				const issuedDate = new Date(invoice.issuedAt.seconds * 1000)
+				const y = issuedDate.getFullYear() // YYYY
+				const m = (issuedDate.getMonth() + 1).toString().padStart(2, '0') // MM
+				const key = `${y}-${m}`
+				if (!monthly[key]) {
+					monthly[key] = { paid: 0, pending: 0 }
+				}
 				if (invoice.status === 'Paid') {
 					totalPaid += invoice.totalAmount
+					monthly[key].paid += invoice.totalAmount
 				} else if (invoice.status === 'Pending') {
 					totalPending += invoice.totalAmount
+					monthly[key].pending += invoice.totalAmount
 				}
 			})
 
+			const ms12h = 12 * 60 * 60 * 1000
+			const paidData = []
+			const pendingData = []
+			Object.keys(monthly)
+				.sort()
+				.forEach((key) => {
+					const [yyyy, mm] = key.split('-')
+					const base = new Date(`${yyyy}-${mm}-01T00:00:00Z`).getTime()
+					const baseSec = Math.floor(base / 1000)
+					// Pending
+					pendingData.push({
+						time: baseSec,
+						value: monthly[key].pending,
+						color: '#facc15', // yellow
+					})
+					// Paid
+					paidData.push({
+						time: Math.floor((base + ms12h) / 1000),
+						value: monthly[key].paid,
+						color: '#16a34a', // green
+					})
+				})
+
 			if ($totalPaid) $totalPaid.textContent = `${totalPaid.toFixed(2)} €`
-			if ($totalPending) $totalPending.textContent = `${totalPending.toFixed(2)} €`
+			if ($totalPending)
+				$totalPending.textContent = `${totalPending.toFixed(2)} €`
 
-			console.log(data);
-
-			const chartOptions = {
+			const histogramChart = document.getElementById('histogram-chart')
+			if (!histogramChart) return
+			if (histogramChart.__chart__) {
+				histogramChart.__chart__.pendSeries.setData(pendingData)
+				histogramChart.__chart__.paidSeries.setData(paidData)
+				histogramChart.__chart__.chart.timeScale().fitContent()
+				return
+			}
+			const chart = createChart(histogramChart, {
 				layout: {
-					textColor: 'black',
+					textColor: '#374151',
 					background: { type: 'solid', color: 'white' },
 				},
-			}
-
-			const chart = createChart(
-				document.querySelector('#histogram-chart'),
-				chartOptions
-			)
-			const histogramSeries = chart.addSeries(HistogramSeries, {
-				color: '#26a69a',
+				height: 250,
+				timeScale: {
+					tickMarkFormatter: (time) => {
+						const date = new Date(time * 1000)
+						return date.toLocaleString('default', { month: 'short' }) // Ene, Feb...
+					},
+				},
 			})
-
-			histogramSeries.setData(data)
-
+			const pendSeries = chart.addSeries(HistogramSeries, { color: '#facc15' })
+			const paidSeries = chart.addSeries(HistogramSeries, { color: '#16a34a' })
+			pendSeries.setData(pendingData)
+			paidSeries.setData(paidData)
 			chart.timeScale().fitContent()
+			histogramChart.__chart__ = { chart, paidSeries, pendSeries }
 		}
 
 		;(async () => {
