@@ -1,0 +1,21 @@
+---
+
+---
+
+<section id="Invoices">
+	<h1 class="text-3xl font-bold text-gray-800 mb-6 dark:text-white">
+		Invoices
+	</h1>
+	<script src="https://cdn.zinggrid.com/zinggrid.min.js" defer></script>
+	<zing-grid
+		id="invoiceGrid"
+		columns="client,issued,total,status"
+		sort
+		filter
+		pager
+		page-size="10"
+		class="w-full h-auto"
+		loading-text="Loading invoices..."
+		empty-text="No invoices found.">
+	</zing-grid>
+</section>
