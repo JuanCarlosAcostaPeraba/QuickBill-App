@@ -5,6 +5,7 @@ import Header from '@/components/Header.astro'
 import DashboardSection from '@/sections/DashboardSection.astro'
 import InvoicesSection from '@/sections/InvoicesSection.astro'
 import OverdueSection from '@/sections/OverdueSection.astro'
+import ButtonToScrollToTop from '@/components/ButtonToScrollToTop.astro'
 
 import { auth } from '@/firebase/firebase'
 
@@ -21,6 +22,7 @@ const userName = auth.currentUser?.displayName
 		<DashboardSection />
 		<OverdueSection />
 		<InvoicesSection />
+		<ButtonToScrollToTop />
 	</main>
 	<script>
 		import { getAllDataForUser } from '@/firebase/firebase'
@@ -28,6 +30,7 @@ const userName = auth.currentUser?.displayName
 			createChart,
 			HistogramSeries,
 		} from 'https://cdn.jsdelivr.net/npm/lightweight-charts@5.0.7/+esm'
+import { DATA_FLAG } from 'node_modules/astro/dist/content/consts'
 
 		const userSession = document.getElementById('user-session')?.dataset.uid
 
@@ -95,43 +98,57 @@ const userName = auth.currentUser?.displayName
 			invoiceGrid.data = invoiceGridData
 		}
 
-		await getAllDataForUser(userSession)
-			.then((allData) => {
-				listOverdueClients(allData)
-				listAllInvoices(allData)
+		function histogramChart(allData: any) {
+			const $totalPaid = document.querySelector('#total-paid')
+			const $totalPending = document.querySelector('#total-pending')
+			const data: any[] = []
+			
+			let totalPaid = 0
+			let totalPending = 0
+			
+			allData.invoices.forEach((invoice) => {
+				if (invoice.status === 'Paid') {
+					totalPaid += invoice.totalAmount
+				} else if (invoice.status === 'Pending') {
+					totalPending += invoice.totalAmount
+				}
 			})
-			.catch((error) => {})
 
-		const data = [
-			{ time: '2023-01-01', value: 10 },
-			{ time: '2023-01-02', value: 15 },
-			{ time: '2023-01-03', value: 20 },
-			{ time: '2023-01-04', value: 25 },
-			{ time: '2023-01-05', value: 30 },
-			{ time: '2023-01-06', value: 35 },
-			{ time: '2023-01-07', value: 40 },
-			{ time: '2023-01-08', value: 45 },
-			{ time: '2023-01-09', value: 50 },
-			{ time: '2023-01-10', value: 55 },
-		]
+			if ($totalPaid) $totalPaid.textContent = `${totalPaid.toFixed(2)} €`
+			if ($totalPending) $totalPending.textContent = `${totalPending.toFixed(2)} €`
 
-		const chartOptions = {
-			layout: {
-				textColor: 'black',
-				background: { type: 'solid', color: 'white' },
-			},
+			console.log(data);
+
+			const chartOptions = {
+				layout: {
+					textColor: 'black',
+					background: { type: 'solid', color: 'white' },
+				},
+			}
+
+			const chart = createChart(
+				document.querySelector('#histogram-chart'),
+				chartOptions
+			)
+			const histogramSeries = chart.addSeries(HistogramSeries, {
+				color: '#26a69a',
+			})
+
+			histogramSeries.setData(data)
+
+			chart.timeScale().fitContent()
 		}
 
-		const chart = createChart(
-			document.getElementById('container'),
-			chartOptions
-		)
-		const histogramSeries = chart.addSeries(HistogramSeries, {
-			color: '#26a69a',
-		})
-
-		histogramSeries.setData(data)
-
-		chart.timeScale().fitContent()
+		;(async () => {
+			if (userSession) {
+				await getAllDataForUser(userSession)
+					.then((allData) => {
+						histogramChart(allData)
+						listOverdueClients(allData)
+						listAllInvoices(allData)
+					})
+					.catch((error) => {})
+			}
+		})()
 	</script>
 </Layout>
