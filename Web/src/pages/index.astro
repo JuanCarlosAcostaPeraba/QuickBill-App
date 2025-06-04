@@ -80,7 +80,7 @@ const userName = auth.currentUser?.displayName
 		}
 
 		function listAllInvoices(allData: any) {
-			const invoiceGrid = document.querySelector('#invoiceGrid')
+			const invoiceGrid = document.querySelector('#invoiceGrid') as any
 			if (!invoiceGrid) return
 			const invoiceGridData = allData.invoices.map((invoice: any) => {
 				const client = allData.clients.find(
@@ -100,7 +100,7 @@ const userName = auth.currentUser?.displayName
 					status: invoice.status,
 				}
 			})
-			;(invoiceGrid as any).data = invoiceGridData
+			invoiceGrid.data = invoiceGridData
 		}
 
 		function histogramChart(allData: any) {
@@ -110,7 +110,7 @@ const userName = auth.currentUser?.displayName
 			let totalPaid = 0
 			let totalPending = 0
 
-			const monthly = {}
+			const monthly: any = {}
 
 			allData.invoices.forEach((invoice: any) => {
 				const issuedDate = new Date(invoice.issuedAt.seconds * 1000)
@@ -156,7 +156,7 @@ const userName = auth.currentUser?.displayName
 			if ($totalPending)
 				$totalPending.textContent = `${totalPending.toFixed(2)} €`
 
-			const histogramChart = document.getElementById('histogram-chart')
+			const histogramChart = document.getElementById('histogram-chart') as any
 			if (!histogramChart) return
 			if (histogramChart.__chart__) {
 				histogramChart.__chart__.pendSeries.setData(pendingData)
