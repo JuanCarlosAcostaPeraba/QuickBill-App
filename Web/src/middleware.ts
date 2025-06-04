@@ -14,7 +14,7 @@ export const onRequest = defineMiddleware((context, next) => {
 	}
 
 	if (currentUser) {
-		context.locals.userEmail = currentUser.email
+		context.locals.userId = currentUser.uid
 	}
 
 	if (currentUser && pathname === '/login') {
