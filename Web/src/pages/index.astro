@@ -3,6 +3,14 @@ import Layout from '@/layouts/Layout.astro'
 
 import Header from '@/components/Header.astro'
 import DashboardSection from '@/sections/DashboardSection.astro'
+import InvoicesSection from '@/sections/InvoicesSection.astro'
+import OverdueSection from '@/sections/OverdueSection.astro'
+import ButtonToScrollToTop from '@/components/ButtonToScrollToTop.astro'
+
+import { auth } from '@/firebase/firebase'
+
+const userSession = auth.currentUser?.uid
+const userName = auth.currentUser?.displayName
 ---
 
 <Layout
@@ -10,6 +18,177 @@ import DashboardSection from '@/sections/DashboardSection.astro'
 	description="QuickBill is a simple, open-source invoice management system built with Astro and Firebase. Easily manage your invoices, clients, and payments.">
 	<Header />
 	<main class="container mx-auto px-4 py-8 space-y-8">
+		<div id="user-session" data-uid={userSession}></div>
 		<DashboardSection />
+		<OverdueSection />
+		<InvoicesSection />
+		<ButtonToScrollToTop />
 	</main>
+	<script>
+		import { getAllDataForUser } from '@/firebase/firebase'
+		import {
+			createChart,
+			HistogramSeries,
+		} from 'https://cdn.jsdelivr.net/npm/lightweight-charts@5.0.7/+esm'
+
+		const userSession = document.getElementById('user-session')?.dataset.uid
+
+		function listOverdueClients(allData: any) {
+			const overdueCards = document.querySelector('#overdueClientsCards')
+
+			let dictOverdueClients = {}
+
+			allData.clients.forEach((client) => {
+				dictOverdueClients[client.id] = {
+					name: client.companyName,
+					amount: 0,
+					currency: '',
+				}
+			})
+
+			allData.invoices.forEach((invoice) => {
+				if (invoice.status === 'Overdue') {
+					const client = dictOverdueClients[invoice.clientId]
+					if (client) {
+						client.amount += invoice.totalAmount
+						client.currency = invoice.currency
+					}
+				}
+			})
+
+			dictOverdueClients = Object.values(dictOverdueClients).filter(
+				(client) => client.amount > 0
+			)
+			dictOverdueClients.sort((a, b) => b.amount - a.amount)
+
+			overdueCards.innerHTML = dictOverdueClients
+				.map(
+					(client) => `
+				<div class="card flex flex-col justify-between bg-white border border-gray-200 rounded-xl shadow hover:shadow-lg hover:scale-[1.03] transition-all p-4 h-36">
+					<div class="flex items-center gap-3 mb-2">
+						<div class="text-base font-bold text-gray-900 truncate">
+							${client.name}
+						</div>
+					</div>
+					<div class="mt-auto">
+						<span class="inline-block bg-red-100 text-red-700 px-4 py-1 rounded-lg font-mono font-semibold text-lg shadow">
+							${client.amount.toFixed(2)} ${client.currency}
+						</span>
+					</div>
+				</div>
+			`
+				)
+				.join('')
+		}
+
+		function listAllInvoices(allData: any) {
+			const invoiceGrid = document.querySelector('#invoiceGrid')
+			const invoiceGridData = allData.invoices.map((invoice) => {
+				const client = allData.clients.find(
+					(client) => client.id === invoice.clientId
+				)
+				return {
+					client: client.companyName,
+					issued: new Date(invoice.issued).toLocaleDateString(),
+					total: `${invoice.totalAmount}${invoice.currency}`,
+					status: invoice.status,
+				}
+			})
+			invoiceGrid.data = invoiceGridData
+		}
+
+		function histogramChart(allData: any) {
+			const $totalPaid = document.querySelector('#total-paid')
+			const $totalPending = document.querySelector('#total-pending')
+
+			let totalPaid = 0
+			let totalPending = 0
+
+			const monthly = {}
+
+			allData.invoices.forEach((invoice: any) => {
+				const issuedDate = new Date(invoice.issuedAt.seconds * 1000)
+				const y = issuedDate.getFullYear() // YYYY
+				const m = (issuedDate.getMonth() + 1).toString().padStart(2, '0') // MM
+				const key = `${y}-${m}`
+				if (!monthly[key]) {
+					monthly[key] = { paid: 0, pending: 0 }
+				}
+				if (invoice.status === 'Paid') {
+					totalPaid += invoice.totalAmount
+					monthly[key].paid += invoice.totalAmount
+				} else if (invoice.status === 'Pending') {
+					totalPending += invoice.totalAmount
+					monthly[key].pending += invoice.totalAmount
+				}
+			})
+
+			const ms12h = 12 * 60 * 60 * 1000
+			const paidData = []
+			const pendingData = []
+			Object.keys(monthly)
+				.sort()
+				.forEach((key) => {
+					const [yyyy, mm] = key.split('-')
+					const base = new Date(`${yyyy}-${mm}-01T00:00:00Z`).getTime()
+					const baseSec = Math.floor(base / 1000)
+					// Pending
+					pendingData.push({
+						time: baseSec,
+						value: monthly[key].pending,
+						color: '#facc15', // yellow
+					})
+					// Paid
+					paidData.push({
+						time: Math.floor((base + ms12h) / 1000),
+						value: monthly[key].paid,
+						color: '#16a34a', // green
+					})
+				})
+
+			if ($totalPaid) $totalPaid.textContent = `${totalPaid.toFixed(2)} €`
+			if ($totalPending)
+				$totalPending.textContent = `${totalPending.toFixed(2)} €`
+
+			const histogramChart = document.getElementById('histogram-chart')
+			if (!histogramChart) return
+			if (histogramChart.__chart__) {
+				histogramChart.__chart__.pendSeries.setData(pendingData)
+				histogramChart.__chart__.paidSeries.setData(paidData)
+				histogramChart.__chart__.chart.timeScale().fitContent()
+				return
+			}
+			const chart = createChart(histogramChart, {
+				layout: {
+					textColor: '#374151',
+					background: { type: 'solid', color: 'white' },
+				},
+				height: 250,
+				timeScale: {
+					tickMarkFormatter: (time) => {
+						const date = new Date(time * 1000)
+						return date.toLocaleString('default', { month: 'short' }) // Ene, Feb...
+					},
+				},
+			})
+			const pendSeries = chart.addSeries(HistogramSeries, { color: '#facc15' })
+			const paidSeries = chart.addSeries(HistogramSeries, { color: '#16a34a' })
+			pendSeries.setData(pendingData)
+			paidSeries.setData(paidData)
+			chart.timeScale().fitContent()
+			histogramChart.__chart__ = { chart, paidSeries, pendSeries }
+		}
+
+		;(async () => {
+			if (userSession) {
+				await getAllDataForUser(userSession)
+					.then((allData) => {
+						histogramChart(allData)
+						listOverdueClients(allData)
+						listAllInvoices(allData)
+					})
+					.catch((error) => {})
+			}
+		})()
+	</script>
 </Layout>
