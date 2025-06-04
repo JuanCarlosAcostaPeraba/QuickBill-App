@@ -33,7 +33,7 @@ const userName = auth.currentUser?.displayName
 		function listOverdueClients(allData: any) {
 			const overdueCards = document.querySelector('#overdueClientsCards')
 
-			let dictOverdueClients = {}
+			let dictOverdueClients: any = {}
 
 			allData.clients.forEach((client: any) => {
 				dictOverdueClients[client.id] = {
@@ -54,13 +54,14 @@ const userName = auth.currentUser?.displayName
 			})
 
 			dictOverdueClients = Object.values(dictOverdueClients).filter(
-				(client) => client.amount > 0
+				(client: any) => client.amount > 0
 			)
 			dictOverdueClients.sort((a: any, b: any) => b.amount - a.amount)
 
+			if (!overdueCards) return
 			overdueCards.innerHTML = dictOverdueClients
 				.map(
-					(client) => `
+					(client: any) => `
 				<div class="card flex flex-col justify-between bg-white border border-gray-200 rounded-xl shadow hover:shadow-lg hover:scale-[1.03] transition-all p-4 h-36">
 					<div class="flex items-center gap-3 mb-2">
 						<div class="text-base font-bold text-gray-900 truncate">
@@ -80,24 +81,26 @@ const userName = auth.currentUser?.displayName
 
 		function listAllInvoices(allData: any) {
 			const invoiceGrid = document.querySelector('#invoiceGrid')
+			if (!invoiceGrid) return
 			const invoiceGridData = allData.invoices.map((invoice: any) => {
 				const client = allData.clients.find(
 					(client: any) => client.id === invoice.clientId
 				)
 				return {
 					client: client.companyName,
-					issued: new Date(
-						invoice.issuedAt ? invoice.issuedAt.seconds * 1000 : 0
-					).toLocaleDateString('default', {
-						year: 'numeric',
-						month: '2-digit',
-						day: '2-digit',
-					}),
+					issued: new Date(invoice.issuedAt.seconds * 1000).toLocaleDateString(
+						'es',
+						{
+							day: '2-digit',
+							month: '2-digit',
+							year: 'numeric',
+						}
+					),
 					total: `${invoice.totalAmount}${invoice.currency}`,
 					status: invoice.status,
 				}
 			})
-			invoiceGrid.data = invoiceGridData
+			;(invoiceGrid as any).data = invoiceGridData
 		}
 
 		function histogramChart(allData: any) {
@@ -127,8 +130,8 @@ const userName = auth.currentUser?.displayName
 			})
 
 			const ms12h = 12 * 60 * 60 * 1000
-			const paidData = []
-			const pendingData = []
+			const paidData: any[] = []
+			const pendingData: any[] = []
 			Object.keys(monthly)
 				.sort()
 				.forEach((key) => {
@@ -168,7 +171,7 @@ const userName = auth.currentUser?.displayName
 				},
 				height: 250,
 				timeScale: {
-					tickMarkFormatter: (time) => {
+					tickMarkFormatter: (time: any) => {
 						const date = new Date(time * 1000)
 						return date.toLocaleString('default', { month: 'short' }) // Ene, Feb...
 					},
