@@ -1,4 +1,4 @@
-import { auth } from '@/firebase/config'
+import { auth } from '@/firebase/firebase'
 import { defineAction } from 'astro:actions'
 
 export const logoutAccount = defineAction({

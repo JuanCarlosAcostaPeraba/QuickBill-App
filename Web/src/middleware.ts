@@ -1,5 +1,5 @@
 import { defineMiddleware } from 'astro:middleware'
-import { auth } from '@/firebase/config'
+import { auth } from '@/firebase/firebase'
 
 export const onRequest = defineMiddleware((context, next) => {
 	const currentUser = auth.currentUser
