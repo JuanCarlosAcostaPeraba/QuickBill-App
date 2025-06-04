@@ -10,7 +10,6 @@ import ButtonToScrollToTop from '@/components/ButtonToScrollToTop.astro'
 import { auth } from '@/firebase/firebase'
 
 const userSession = auth.currentUser?.uid
-const userName = auth.currentUser?.displayName
 ---
 
 <Layout
@@ -26,19 +25,16 @@ const userName = auth.currentUser?.displayName
 	</main>
 	<script>
 		import { getAllDataForUser } from '@/firebase/firebase'
-		import {
-			createChart,
-			HistogramSeries,
-		} from 'https://cdn.jsdelivr.net/npm/lightweight-charts@5.0.7/+esm'
+		import { createChart, HistogramSeries } from 'lightweight-charts'
 
 		const userSession = document.getElementById('user-session')?.dataset.uid
 
 		function listOverdueClients(allData: any) {
 			const overdueCards = document.querySelector('#overdueClientsCards')
 
-			let dictOverdueClients = {}
+			let dictOverdueClients: any = {}
 
-			allData.clients.forEach((client) => {
+			allData.clients.forEach((client: any) => {
 				dictOverdueClients[client.id] = {
 					name: client.companyName,
 					amount: 0,
@@ -46,7 +42,7 @@ const userName = auth.currentUser?.displayName
 				}
 			})
 
-			allData.invoices.forEach((invoice) => {
+			allData.invoices.forEach((invoice: any) => {
 				if (invoice.status === 'Overdue') {
 					const client = dictOverdueClients[invoice.clientId]
 					if (client) {
@@ -57,13 +53,14 @@ const userName = auth.currentUser?.displayName
 			})
 
 			dictOverdueClients = Object.values(dictOverdueClients).filter(
-				(client) => client.amount > 0
+				(client: any) => client.amount > 0
 			)
-			dictOverdueClients.sort((a, b) => b.amount - a.amount)
+			dictOverdueClients.sort((a: any, b: any) => b.amount - a.amount)
 
+			if (!overdueCards) return
 			overdueCards.innerHTML = dictOverdueClients
 				.map(
-					(client) => `
+					(client: any) => `
 				<div class="card flex flex-col justify-between bg-white border border-gray-200 rounded-xl shadow hover:shadow-lg hover:scale-[1.03] transition-all p-4 h-36">
 					<div class="flex items-center gap-3 mb-2">
 						<div class="text-base font-bold text-gray-900 truncate">
@@ -82,14 +79,22 @@ const userName = auth.currentUser?.displayName
 		}
 
 		function listAllInvoices(allData: any) {
-			const invoiceGrid = document.querySelector('#invoiceGrid')
-			const invoiceGridData = allData.invoices.map((invoice) => {
+			const invoiceGrid = document.querySelector('#invoiceGrid') as any
+			if (!invoiceGrid) return
+			const invoiceGridData = allData.invoices.map((invoice: any) => {
 				const client = allData.clients.find(
-					(client) => client.id === invoice.clientId
+					(client: any) => client.id === invoice.clientId
 				)
 				return {
 					client: client.companyName,
-					issued: new Date(invoice.issued).toLocaleDateString(),
+					issued: new Date(invoice.issuedAt.seconds * 1000).toLocaleDateString(
+						'es',
+						{
+							day: '2-digit',
+							month: '2-digit',
+							year: 'numeric',
+						}
+					),
 					total: `${invoice.totalAmount}${invoice.currency}`,
 					status: invoice.status,
 				}
@@ -104,7 +109,7 @@ const userName = auth.currentUser?.displayName
 			let totalPaid = 0
 			let totalPending = 0
 
-			const monthly = {}
+			const monthly: any = {}
 
 			allData.invoices.forEach((invoice: any) => {
 				const issuedDate = new Date(invoice.issuedAt.seconds * 1000)
@@ -124,8 +129,8 @@ const userName = auth.currentUser?.displayName
 			})
 
 			const ms12h = 12 * 60 * 60 * 1000
-			const paidData = []
-			const pendingData = []
+			const paidData: any[] = []
+			const pendingData: any[] = []
 			Object.keys(monthly)
 				.sort()
 				.forEach((key) => {
@@ -150,7 +155,7 @@ const userName = auth.currentUser?.displayName
 			if ($totalPending)
 				$totalPending.textContent = `${totalPending.toFixed(2)} €`
 
-			const histogramChart = document.getElementById('histogram-chart')
+			const histogramChart = document.getElementById('histogram-chart') as any
 			if (!histogramChart) return
 			if (histogramChart.__chart__) {
 				histogramChart.__chart__.pendSeries.setData(pendingData)
@@ -161,11 +166,11 @@ const userName = auth.currentUser?.displayName
 			const chart = createChart(histogramChart, {
 				layout: {
 					textColor: '#374151',
-					background: { type: 'solid', color: 'white' },
+					background: { color: 'white' },
 				},
 				height: 250,
 				timeScale: {
-					tickMarkFormatter: (time) => {
+					tickMarkFormatter: (time: any) => {
 						const date = new Date(time * 1000)
 						return date.toLocaleString('default', { month: 'short' }) // Ene, Feb...
 					},
