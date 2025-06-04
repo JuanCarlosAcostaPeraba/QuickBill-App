@@ -17,7 +17,6 @@ const firebaseConfig = {
 	appId: import.meta.env.PUBLIC_FIREBASE_APP_ID,
 	measurementId: import.meta.env.PUBLIC_FIREBASE_MEASUREMENT_ID,
 }
-console.log('Firebase configuration:', firebaseConfig)
 
 // Initialize Firebase
 const app = initializeApp(firebaseConfig)
