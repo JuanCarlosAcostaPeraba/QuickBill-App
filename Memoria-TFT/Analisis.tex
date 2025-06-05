@@ -5,16 +5,21 @@
 %----------------------------------------------------------
 \section{Problema}
 %----------------------------------------------------------
+
 \begin{large}
+
 El día a día de muchas pymes y autónomos sigue un recorrido fragmentado, combinando plantillas en hojas de cálculo, correos electrónicos y archivado físico. Esta fragmentación obliga a reintroducir datos manualmente en varias aplicaciones, aumentando el riesgo de errores humanos e inconsistencias, dificultando la obtención de información financiera fiable y generando retrasos en los cobros y pagos. Además, la falta de conectividad estable limita gravemente la movilidad, impidiendo emitir o consultar facturas en tiempo real, provocando que la información quede rápidamente obsoleta.
 
 A esto se suman las exigencias normativas recientes, como la Ley 18/2022, que obliga a las empresas a emitir factura electrónica en todas sus transacciones comerciales, mantener registros íntegros y garantizar la autenticidad de cada documento. Cumplir con estos requisitos con herramientas tradicionales implica una inversión considerable en nuevas soluciones, formación del personal y rediseño de procesos internos, afectando negativamente la productividad, la competitividad y el potencial de crecimiento de los negocios.
+
 \end{large}
 
 %----------------------------------------------------------
 \section{Solución}
 %----------------------------------------------------------
+
 \begin{large}
+
 Se propone una plataforma de facturación basada en aplicaciones móviles nativas para iOS y Android y un portal web administrativo. Todas las versiones se conectan a Firestore, lo que garantiza la consistencia de los datos. Firebase actúa como backend sin servidor, reduciendo la carga de mantenimiento y permitiendo un escalado automático según el uso.
 
 Las apps móviles siguen un modelo \textit{offline-first}: cuando no hay conexión, los datos se almacenan localmente de forma segura y se sincronizan con Firestore tan pronto se restablece la red. Así, se puede seguir trabajando sin interrupciones y los posibles conflictos se resuelven automáticamente mediante marcas de tiempo.
@@ -22,12 +27,15 @@ Las apps móviles siguen un modelo \textit{offline-first}: cuando no hay conexi�
 Se plantea utilizar Cloud Functions para generar los PDF de las facturas, aplicar numeración secuencial y almacenar los archivos en Cloud Storage. La seguridad está cubiera con reglas de Firestore, autenticación y cifrado, cumpliendo con el \gls{rgpd} y dejando registro de auditoría para cada operación sensible.
 
 El portal web, construido con \gls{astro} y alojado en Vercel, muestra en tiempo real indicadores clave (ingresos cobrados, importes pendientes, ratio de morosidad). Gracias a la suscripción en tiempo real a Firestore y al enfoque de “render estático + hidrata solo lo necesario”, la interfaz es ligera, accesible y se adapta a distintos dispositivos. En conjunto, esta solución unifica el flujo de trabajo, elimina la fragmentación de herramientas y permite facturar desde cualquier lugar , reduciendo costes operativos y minimizando errores.
+
 \end{large}
 
 %----------------------------------------------------------
 \section{Metodología}
 %----------------------------------------------------------
+
 \begin{large}
+
 El desarrollo de la plataforma se organiza mediante un enfoque ágil e iterativo incremental que combina un tablero Kanban con principios de Scrum. Las tareas se registran y priorizan en GitHub Projects; al limitar el trabajo en curso es posible concentrarse en entregas parciales funcionales y reajustar el alcance cuando resulta necesario. Tras una sesión inicial de planificación, en la que se definen los requisitos preliminares y el marco de trabajo, el proyecto se divide en cinco incrementos, y cada ciclo atraviesa cuatro fases bien diferenciadas.
 
 Durante la fase de análisis se detallan los requisitos, las funcionalidades y los criterios de aceptación correspondientes a cada incremento. La fase de diseño establece la estructura de datos, las vistas y las interfaces mediante prototipos en Figma. Con el diseño definido, comienza la fase de implementación, donde se desarrolla la aplicación iOS en Xcode y la versión Android en Android Studio, se escriben Cloud Functions para Firebase en TypeScript y se construye el portal web en Astro, seleccionado por su capacidad para renderizar contenido estático y aplicar hidratación parcial únicamente cuando es necesario. Para garantizar la estabilidad, cada incremento concluye con una fase de pruebas manuales en dispositivos emulados.
@@ -35,55 +43,71 @@ Durante la fase de análisis se detallan los requisitos, las funcionalidades y l
 Una vez finalizados los cinco ciclos se inicia la etapa dedicada a la elaboración de la documentación y a la preparación de la defensa del proyecto. En esta fase se actualizan los manuales de usuario, la guía de despliegue y la memoria técnica, y se generan capturas y métricas que respaldan los resultados obtenidos.
 
 Este esquema incremental favorece una evolución progresiva del sistema, mantiene la calidad en cada entrega y proporciona flexibilidad para incorporar mejoras o responder a cambios surgidos a lo largo del desarrollo.
+
 \end{large}
 
 %----------------------------------------------------------
 \section{Organización del proyecto}
 %----------------------------------------------------------
+
 \begin{large}
+
 El desarrollo se ha estructurado en cinco fases sucesivas que abarcan desde la definición inicial de requisitos hasta el despliegue de la solución y las pruebas finales. Este planteamiento facilita la trazabilidad de las tareas, la detección temprana de riesgos y la medición objetiva del progreso.
 
 \subsection*{Fase 1. Análisis de requisitos}
+
 Durante esta etapa se recopilaron las necesidades de pymes y profesionales autónomos a fin de fijar los objetivos funcionales y priorizar las características de mayor impacto. El resultado fue un catálogo de historias de usuario con criterios de aceptación medibles y una hoja de ruta inicial.
 
 \subsection*{Fase 2. Diseño}
+
 Una vez definidos los requisitos, se trazó la arquitectura lógica del sistema y se elaboraron prototipos de interfaz en Figma. Los diagramas de entidad–relación y los flujos de navegación sirvieron para validar la coherencia de los datos y la usabilidad antes de escribir una sola línea de código.
 
 \subsection*{Fase 3. Implementación móvil (iOS)}
+
 El desarrollo comenzó con la aplicación para iOS, implementada en Swift mediante Xcode. En esta fase se incluyeron todas las funcionalidades clave: alta de empresas, generación de facturas, modo offline y sincronización con Firestore.
 
 \subsection*{Fase 4. Implementación móvil (Android)}
+
 A continuación se abordó la versión Android con Kotlin en Android Studio. Dado el calendario del proyecto, esta edición se centró en el núcleo funcional, es decir, la emisión y la consulta de facturas, reutilizando la lógica de negocio y los modelos de datos definidos para iOS.
 
 \subsection*{Fase 5. Portal web y pruebas finales}
+
 El ciclo concluyó con la construcción del portal administrativo en Astro, alojado en Firebase Hosting, y con la ejecución de pruebas de usabilidad, rendimiento y seguridad. Estas pruebas, realizadas en dispositivos emulados y en entornos reales, verificaron la integración entre las aplicaciones móviles, las Cloud Functions y la base de datos Firestore antes del lanzamiento definitivo.
+
 \end{large}
 
 %----------------------------------------------------------
 \section{Herramientas}
 %----------------------------------------------------------
+
 \begin{large}
+
 Esta sección describe las tecnologías empleadas en cada capa de la plataforma y las razones de su elección.
 
 \subsection*{iOS}
+
 Las aplicaciones para iPhone se implementan en \textbf{Swift}, un lenguaje moderno creado por Apple que prioriza la seguridad mediante tipado fuerte y gestión automática de memoria, y el rendimiento gracias a la optimización de sus compiladores \gls{llvm} \cite{swift_lang2025}.
 
 El entorno de desarrollo es \textbf{Xcode} 16.3. Este IDE integra editor, depurador, simuladores de dispositivos y marcos de pruebas unitarias y de interfaz. Herramientas como Instruments permiten perfilar CPU, memoria y consumo energético, lo que facilita detectar cuellos de botella y mantener la fluidez de la experiencia. Con esta combinación el código se compila a binarios nativos y se alinea con las directrices de accesibilidad de iOS sin recurrir a SDK externos \cite{xcode16_3}.
 
 \subsection*{Android}
+
 La versión para Android se escribe en \textbf{Kotlin}, un lenguaje conciso y expresivo que incorpora nulabilidad segura y corrutinas para la programación asíncrona \cite{kotlin_lang2025}.
 
 El desarrollo se realiza en \textbf{Android Studio} 2024.3.2 (Meerkat Feature Drop). Esta versión incorpora emuladores con perfiles personalizables, inspector de bases de datos y analizador de rendimiento en tiempo real, además de plantillas que agilizan la integración con bibliotecas Jetpack \cite{as2024_3_2}. La combinación de Kotlin con Android Studio reduce la verbosidad, mejora la legibilidad y disminuye la probabilidad de errores típicos de Java.
 
 \subsection*{Web}
+
 El portal administrativo se construye con \textbf{Astro}. Este framework genera HTML estático en la compilación y aplica hidratación parcial solo a los componentes que requieren interactividad, de modo que la carga inicial resulta ligera y accesible \cite{astro_docs2025}.
 
 Para la gestión de dependencias se utiliza \textbf{pnpm}, un gestor que comparte una caché global y evita duplicados en \textit{node\_modules}, lo que acelera las instalaciones \cite{pnpm_docs2025}. El despliegue se realiza en Firebase Hosting y la lógica de servidor reside en Cloud Functions escritas en TypeScript, lo que proporciona escalado automático sin necesidad de administrar infraestructura.
 
 \subsection*{Servicios en la nube}
+
 La capa de backend y servicios gestionados se apoya en \textbf{Firebase}. Este conjunto de productos de Google aporta una base de datos NoSQL en tiempo real (Firestore), reglas de seguridad personalizables, autenticación multifactor y almacenamiento de archivos en Cloud Storage \cite{firebase_docs2025}. La lógica de servidor se desarrolla con Cloud Functions escritas en TypeScript, mientras que Firebase Hosting proporciona un despliegue estático con certificados TLS automáticos. Gracias a sus capacidades de escalado bajo demanda, la plataforma puede crecer sin intervención administrativa y sin inversiones iniciales en infraestructura.
 
 \subsection*{Control de versiones}
+
 El control de cambios se lleva a cabo con \textbf{Git}, sistema distribuido que mantiene un historial completo y permite revertir versiones con precisión \cite{git_book2023}. El repositorio se aloja en \textbf{GitHub}, plataforma que ofrece \textit{pull requests}, revisiones entre pares y flujos de integración y entrega continuas mediante GitHub Actions \cite{github_docs2025}. Cada confirmación ejecuta linters, pruebas y despliegues a canales de previsualización, lo que garantiza calidad continua y retroalimentación temprana.
 
 \end{large}
