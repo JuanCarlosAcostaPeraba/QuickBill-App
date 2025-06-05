@@ -36,13 +36,18 @@ El portal web, construido con \gls{astro} y alojado en Vercel, muestra en tiempo
 
 \begin{large}
 
-El desarrollo de la plataforma se organiza mediante un enfoque ágil e iterativo incremental que combina un tablero Kanban con principios de Scrum. Las tareas se registran y priorizan en GitHub Projects; al limitar el trabajo en curso es posible concentrarse en entregas parciales funcionales y reajustar el alcance cuando resulta necesario. Tras una sesión inicial de planificación, en la que se definen los requisitos preliminares y el marco de trabajo, el proyecto se divide en cinco incrementos, y cada ciclo atraviesa cuatro fases bien diferenciadas.
+Para desarrollar la plataforma seguimos un enfoque ágil iterativo basado en Kanban y Scrum. Cada tarea se crea y prioriza en GitHub Projects, limitando el trabajo en curso para enfocarnos en entregas parciales y ajustando el alcance según sea necesario. Tras una sesión inicial de planificación (donde definimos requisitos y criterios básicos), dividimos el proyecto en cinco ciclos, y cada ciclo consta de cuatro fases:
 
-Durante la fase de análisis se detallan los requisitos, las funcionalidades y los criterios de aceptación correspondientes a cada incremento. La fase de diseño establece la estructura de datos, las vistas y las interfaces mediante prototipos en Figma. Con el diseño definido, comienza la fase de implementación, donde se desarrolla la aplicación iOS en Xcode y la versión Android en Android Studio, se escriben Cloud Functions para Firebase en TypeScript y se construye el portal web en Astro, seleccionado por su capacidad para renderizar contenido estático y aplicar hidratación parcial únicamente cuando es necesario. Para garantizar la estabilidad, cada incremento concluye con una fase de pruebas manuales en dispositivos emulados.
+\begin{itemize}
+  \item \textbf{Análisis:} Detallamos funcionalidades y criterios de aceptación para cada incremento.
+  \item \textbf{Diseño:} Definimos la arquitectura de datos y creamos prototipos de interfaz en Figma.
+  \item \textbf{Implementación:} Desarrollamos la app para iOS y Android, escribimos las funciones de backend y construimos el portal web.  
+  \item \textbf{Pruebas:} Realizamos pruebas manuales en dispositivos emulados para verificar que cada función cumple los requisitos.
+\end{itemize}
 
-Una vez finalizados los cinco ciclos se inicia la etapa dedicada a la elaboración de la documentación y a la preparación de la defensa del proyecto. En esta fase se actualizan los manuales de usuario, la guía de despliegue y la memoria técnica, y se generan capturas y métricas que respaldan los resultados obtenidos.
+Al completar los cinco ciclos, dedicamos tiempo a redactar la documentación final: manuales de usuario, guía de despliegue y la propia memoria técnica. Durante esta última fase, generamos capturas y métricas que respalden los resultados.
 
-Este esquema incremental favorece una evolución progresiva del sistema, mantiene la calidad en cada entrega y proporciona flexibilidad para incorporar mejoras o responder a cambios surgidos a lo largo del desarrollo.
+Con este esquema iterativo, avanzamos de forma progresiva, mantuvimos la calidad en cada entrega y nos permitió incorporar mejoras o ajustes según surgían nuevos retos.
 
 \end{large}
 
