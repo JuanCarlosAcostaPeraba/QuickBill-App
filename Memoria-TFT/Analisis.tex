@@ -26,7 +26,7 @@ Las apps móviles siguen un modelo \textit{offline-first}: cuando no hay conexi�
 
 Se plantea utilizar Cloud Functions para generar los PDF de las facturas, aplicar numeración secuencial y almacenar los archivos en Cloud Storage. La seguridad está cubiera con reglas de Firestore, autenticación y cifrado, cumpliendo con el \gls{rgpd} y dejando registro de auditoría para cada operación sensible.
 
-El portal web, construido con \gls{astro} y alojado en Vercel, muestra en tiempo real indicadores clave (ingresos cobrados, importes pendientes, ratio de morosidad). Gracias a la suscripción en tiempo real a Firestore y al enfoque de “render estático + hidrata solo lo necesario”, la interfaz es ligera, accesible y se adapta a distintos dispositivos. En conjunto, esta solución unifica el flujo de trabajo, elimina la fragmentación de herramientas y permite facturar desde cualquier lugar , reduciendo costes operativos y minimizando errores.
+El portal web, construido con \gls{astro} y alojado en Vercel, muestra en tiempo real indicadores clave (ingresos cobrados, importes pendientes, ratio de morosidad). Gracias a la suscripción en tiempo real a Firestore y al enfoque de generar HTML estático en el servidor y habilitar la hidratación únicamente en los componentes que lo requieren, la interfaz permanece ligera, accesible y adaptable a distintos dispositivos. En conjunto, esta solución unifica el flujo de trabajo, elimina la fragmentación de herramientas y permite facturar desde cualquier lugar, reduciendo costes operativos y minimizando errores.
 
 \end{large}
 
