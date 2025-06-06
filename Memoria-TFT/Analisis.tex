@@ -31,12 +31,84 @@ El portal web, construido con \gls{astro} y alojado en Vercel, muestra en tiempo
 \end{large}
 
 %----------------------------------------------------------
+\section{Requisitos del sistema}
+%----------------------------------------------------------
+
+\subsection{Requisitos funcionales (RF)}
+
+\begin{large}
+
+\begin{enumerate}[label=\textbf{RF\arabic*.}]
+  \item \textbf{Gestión de usuarios}
+        \begin{itemize}
+          \item Registro de empresarios.
+          \item Inicio y cierre de sesión de usuarios.
+          \item Creación y gestión de empleados por parte del empresario.
+          \item Alta de clientes asociados a cada empresa.
+          \item Separación y aislamiento de datos por empresa.
+        \end{itemize}
+
+  \item \textbf{Facturación}
+        \begin{itemize}
+          \item Creación, edición, consulta y eliminación de facturas por el empresario (CRUD).
+          \item Creación, edición y consulta de facturas por empleados (CRU).
+          \item Lectura de facturas filtradas por cliente.
+          \item Descarga de cada factura en formato PDF.
+          \item Envío y reenvío de facturas por correo electrónico.
+          \item Gestión de estados de factura: \emph{Pagada}, \emph{Pendiente}, \emph{Vencida}.
+          \item Marcado manual de factura como pagada por el empresario.
+          \item Notificación push y correo al empresario y al cliente antes del vencimiento.
+        \end{itemize}
+
+  \item \textbf{Funcionalidades avanzadas}
+        \begin{itemize}
+          \item Facturación en modo \emph{offline} con posterior sincronización.
+          \item Firma digital de facturas.
+          \item Escaneo de recibos mediante OCR para precargar datos.
+        \end{itemize}
+
+  \item \textbf{Gestión de clientes}
+        \begin{itemize}
+          \item Listado y búsqueda de clientes.
+          \item Historial de facturas por cliente.
+        \end{itemize}
+
+  \item \textbf{Seguridad y control}
+        \begin{itemize}
+          \item Autenticación segura con Firebase Auth y roles de usuario.
+          \item Registro de actividad de los usuarios en las operaciones sensibles.
+        \end{itemize}
+\end{enumerate}
+
+\end{large}
+
+%----------------------------------------------------------
+% Requisitos no funcionales (RNF)
+%----------------------------------------------------------
+\subsection*{Requisitos no funcionales (RNF)}
+
+\begin{large}
+
+\begin{enumerate}[label=\textbf{RNF\arabic*.}]
+   \item Disponibilidad: la aplicación iOS debe usable tanto con conexión como offline.
+  \item Usabilidad: emitir una factura completa en menos de un minuto.
+  \item Seguridad: todas las operaciones deben pasar por reglas de Firestore y HTTPS. Datos cifrados en tránsito y reposo.
+  \item Escalabilidad: el modelo en Firestore debe soportar al menos 10\,000 facturas por negocio sin rediseño.
+  \item Compatibilidad: portal web operativo en Chrome, Firefox, Safari y Edge con versiones de los últimos dos años.
+  \item Mantenibilidad: el código se organizará en MVVM (iOS) y en componentes desacoplados (Astro) para facilitar refactorización.
+\end{enumerate}
+
+\end{large}
+
+%----------------------------------------------------------
 \section{Metodología}
 %----------------------------------------------------------
 
 \begin{large}
 
-Para desarrollar la plataforma seguimos un enfoque ágil iterativo basado en Kanban y Scrum. Cada tarea se crea y prioriza en GitHub Projects, limitando el trabajo en curso para enfocarnos en entregas parciales y ajustando el alcance según sea necesario. Tras una sesión inicial de planificación (donde definimos requisitos y criterios básicos), dividimos el proyecto en cinco ciclos, y cada ciclo consta de cuatro fases:
+Para desarrollar la plataforma se adoptó un enfoque ágil iterativo incremental basado en Kanban. Cada tarea se crea y prioriza en GitHub Projects, limitando el trabajo en curso para enfocarnos en entregas parciales y ajustando el alcance según sea necesario.
+
+El plan de trabajo se estructuró en siete fases bien diferenciadas: una \textbf{planificación inicial}; cinco \textbf{incrementos funcionales}; y una fase final de \textbf{documentación y presentación}. Cada incremento funcional se subdividió de forma repetible en las cuatro tareas que se describen a continuación:
 
 \begin{itemize}
   \item \textbf{Análisis:} Detallamos funcionalidades y criterios de aceptación para cada incremento.
@@ -45,19 +117,19 @@ Para desarrollar la plataforma seguimos un enfoque ágil iterativo basado en Kan
   \item \textbf{Pruebas:} Realizamos pruebas manuales en dispositivos emulados para verificar que cada función cumple los requisitos.
 \end{itemize}
 
-Al completar los cinco ciclos, dedicamos tiempo a redactar la documentación final: manuales de usuario, guía de despliegue y la propia memoria técnica. Durante esta última fase, generamos capturas y métricas que respalden los resultados.
+Al finalizar los cinco incrementos funcionales se dedicó tiempo a la elaboración de la documentación completa: manuales de usuario, guía de despliegue y la memoria técnica. Durante esta etapa se generaron capturas y métricas que respaldan los resultados.
 
-Con este esquema iterativo, avanzamos de forma progresiva, mantuvimos la calidad en cada entrega y nos permitió incorporar mejoras o ajustes según surgían nuevos retos.
+Con este esquema iterativo avanzamos de forma progresiva, mantuvimos la calidad en cada entrega y pudimos incorporar mejoras o ajustes cuando surgían nuevos requisitos.
 
 \end{large}
 
 %----------------------------------------------------------
-\section{Organización del proyecto}
+\section{Marco de trabajo}
 %----------------------------------------------------------
 
 \begin{large}
 
-La plataforma se ha organizado en dos componentes principales, correspondientes a los clientes nativos y al portal web:
+El marco de trabajo del proyecto se articula en dos grandes componentes: los clientes nativos y el portal web. Cada uno cumple una función específica dentro del flujo integral de facturación:
 
 \end{large}
 
@@ -121,84 +193,6 @@ El portal web se desarrolló con el framework Astro y estilos en TailwindCSS. La
       \item El portal web se publica en Vercel, con integración continua vía GitHub Actions. Cada merge a `main` dispara un despliegue automático.
     \end{itemize}
 \end{itemize}
-
-\end{large}
-
-\subsection{Modelo de datos en Firestore}
-
-\begin{large}
-
-\begin{lstlisting}[language={},basicstyle=\ttfamily\small]
-/businesses/{businessId}
-    |-- name
-    |-- tagline (nullable)
-    |-- address
-    |-- city
-    |-- country
-    |-- postcode
-    |-- taxId (CIF in Spain, VAT in the UK, EIN in the USA, etc.)
-    |-- email
-    |-- phone
-    |-- createdAt
-    |-- subscriptionPlan: "free" | "premium"
-    |-- storageLimit: "1 month" | "unlimited"
-    |
-    |-- employees/{employeeId}
-    |        |-- userId (linked to Firebase Auth)
-    |        |-- name
-    |        |-- email (linked to Firebase Auth)
-    |        |-- phone
-    |        |-- role: "admin" | "employee" (linked to Firebase Auth)
-    |        |-- joinedAt
-    |
-    |-- clients/{clientId}
-    |        |-- userClientId (linked to Firebase Auth) ??
-    |        |-- companyName
-    |        |-- clientName
-    |        |-- address
-    |        |-- city
-    |        |-- country
-    |        |-- postcode
-    |        |-- email (linked to Firebase Auth)
-    |        |-- phone
-    |        |-- createdAt
-    |
-    |-- invoices/{invoiceId}
-    |        |-- issuedAt
-    |        |-- dueDate
-    |        |-- status: "Paid" | "Pending" | "Overdue"
-    |        |-- subtotal
-    |        |-- taxTotal
-    |        |-- discounts
-    |        |-- totalAmount
-    |        |-- currency
-    |        |-- clientId
-    |        |-- employeeId
-    |        |-- pdfURL (Cloudflare)
-    |        |-- deleteAfter (Free plan: issuedAt + 1 month,
-                                Premium plan: unlimited)
-    |        |-- productsStack/{productStackId}
-    |                          |-- productId
-    |                          |-- supplyDate
-    |                          |-- quantity
-    |                          |-- amount
-    |                          |-- taxRate
-    |                          |-- taxNet
-    |
-    |-- products/{productId}
-    |        |-- description
-    |        |-- unitPrice
-\end{lstlisting}
-
-\begin{description}[leftmargin=3cm, style=nextline]
-  \item[\textit{businesses/\{businessId\}}] Documento principal que contiene datos generales de la empresa (nombre, contactos, identificación fiscal, suscripción y límites de almacenamiento) y agrupa subcolecciones.
-  \item[\textit{businesses/\{businessId\}/employees/\{employeeId\}}] Empleados de la empresa, con referencia a Firebase Auth, datos de contacto y rol.
-  \item[\textit{businesses/\{businessId\}/clients/\{clientId\}}] Clientes asociados a la empresa, con datos de contacto y posible vinculación a Firebase Auth.
-  \item[\textit{businesses/\{businessId\}/invoices/\{invoiceId\}}] Facturas emitidas por la empresa, con fechas, estado, importes y subcolección \textit{productsStack} para desglosar cada línea de producto (ID de producto, cantidad, impuesto, etc.).
-  \item[\textit{businesses/\{businessId\}/products/\{productId\}}] Productos que la empresa ofrece, con descripción y precio unitario.
-\end{description}
-
-Esta organización centraliza la lógica de datos y asegura coherencia en todos los clientes, facilitando la mantenibilidad y escalabilidad del sistema.
 
 \end{large}
 

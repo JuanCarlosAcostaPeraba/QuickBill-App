@@ -43,3 +43,5 @@ Android/obj/
 # Temporary files and logs
 *.log
 *.hprof
+
+*.zip
