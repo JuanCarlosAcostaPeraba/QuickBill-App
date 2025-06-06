@@ -443,29 +443,32 @@ La parte web, aunque más ligera, ofrece tres funcionalidades clave: gráfica de
 \begin{large}
 
 El repositorio para el portal web sigue la convención estándar de Astro:
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.3\textwidth]{Ilustraciones/astro_project_structure.png}
+\caption{Estructura del proyecto Astro}
+\label{fig:astro_project_structure}
+\end{figure}
+
 \begin{itemize}
   \item \textit{/src/pages}:
     \begin{itemize}
       \item \textit{index.astro}: página principal que importa los tres componentes.
-      \item \textit{invoices.astro}: gestión de todas las facturas (tabla).
-      \item \textit{overdue.astro}: listado de clientes morosos.
-      \item \textit{chart.astro}: componente independiente para la gráfica mensual.
+      \item \textit{login.astro}: página de inicio de sesión para acceder al portal.
     \end{itemize}
   \item \textit{/src/components}:
     \begin{itemize}
       \item \textit{MoneyChart.astro}: renderiza la gráfica de barras usando \emph{lightweight-charts}.
-      \item \textit{OverdueList.astro}: muestra tarjetas con clientes morosos y sus importes.
-      \item \textit{InvoiceTable.astro}: tabla con todas las facturas (ID, cliente, importe, estado, fecha).
+      \item \textit{OverdueList.astro}: muestra tarjetas con clientes morosos y sus importes totales.
+      \item \textit{InvoiceTable.astro}: tabla con todas las facturas (cliente, fecha, importe, estado) con ZingGrid.
+			\item \textit{Header.astro}: barra de navegación con enlaces a las diferentes secciones y un botón de cierre de sesión.
+			\item \textit{ButtonToScrollTop.astro}: botón que permite volver al inicio de la página.
     \end{itemize}
   \item \textit{/src/firebase}:
     \begin{itemize}
-      \item \textit{firebase.ts}: inicializa Firebase con la configuración y exporta instancias de \textit{firestore} y \textit{auth}.
-      \item \textit{invoiceService.ts}: funciones para leer y escribir facturas en Firestore.
-    \end{itemize}
-  \item \textit{/src/styles}:
-    \begin{itemize}
-      \item \textit{globals.css}: importa y personaliza TailwindCSS.
-      \item \textit{variables.css}: define paletas de color y tipografías.
+      \item \textit{firebase.ts}: inicializa Firebase con la configuración y exporta funciones e instancias de \textit{firestore} y \textit{auth}.
+      \item \textit{config.ts}: carga la configuración desde el archivo \textit{.env} y exporta las variables necesarias.
     \end{itemize}
 \end{itemize}
 
@@ -475,115 +478,136 @@ El repositorio para el portal web sigue la convención estándar de Astro:
 
 \begin{large}
 
-Para obtener las facturas del negocio, \textit{invoiceService.ts} expone:
+Para cargar los datos de Firestore, se implementaron funciones asíncronas que se invocan en cada componente. A continuación se muestra cómo se obtienen todos los datos relevantes de un usuario a partir de su ID, que es el punto de partida para poblar las tablas y gráficas.
 
-\begin{verbatim}
-import { firestore } from "./firebase";
+\begin{lstlisting}[language={}, caption={Función para obtener todos los datos de un usuario a partir de su ID}]
+async function getAllDataForUser(userId: string) {
+	const allData: any = {}
 
-export async function getInvoices(businessId) {
-  const snapshot = await firestore
-    .collection(`businesses/${businessId}/invoices`)
-    .orderBy("issuedAt", "desc")
-    .get();
-  return snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+	// 1. get all businesses
+	const businessesQuery = await query(collection(firestore, 'businesses'))
+	const businessesSnapshot = await getDocs(businessesQuery)
+	if (businessesSnapshot.empty) {
+		console.log('No businesses found.')
+		return []
+	}
+
+	// 2. filter all businesses where the user is in the employees collection
+	const businesData = businessesSnapshot.docs.map(async (doc) => {
+		const businessData = doc.data()
+		const businesId = doc.id
+		const employees = await getEmployeesBy(businesId)
+		const isEmployee =
+			employees.filter((employee: any) => employee.userId === userId) || null
+		if (!isEmployee || isEmployee.length === 0) {
+			return null
+		}
+		return {
+			id: businesId,
+			...businessData,
+		}
+	})
+	const businesses = (await Promise.all(businesData)).filter((b) => b !== null)
+	if (businesses.length === 0) {
+		console.log('No businesses found for this user.')
+		return []
+	}
+	const businessId = businesses[0].id
+	allData.businesses = businesses
+
+	// 3. get all invoices that are inside the business collection
+	const invoices = getInvoicesBy(businessId)
+	allData.invoices = await invoices
+
+	// 4. get all clients that are inside the business collection
+	const clients = getClientsBy(businessId)
+	allData.clients = await clients
+
+	// 5. get all products that are inside the business collection
+	const products = getProductsBy(businessId)
+	allData.products = await products
+
+	// 6. get all employees that are inside the business collection
+	const employees = getEmployeesBy(businessId)
+	allData.employees = await employees
+
+	return allData
 }
-\end{verbatim}
+\end{lstlisting}
 
-En \textit{InvoiceTable.astro} se utiliza:
+Una vez se retorna el objeto \textit{allData}, cada componente puede acceder a los datos necesarios del objeto, el cual se actualizará automáticamente cuando cambien los datos en Firestore.
 
-\begin{verbatim}
----
-import { getInvoices } from "../firebase/invoiceService";
-const businessId = Astro.site.businessId;
-const invoices = await getInvoices(businessId);
----
-<table class="min-w-full bg-white">
-  <thead>
-    <tr>
-      <th class="px-4 py-2">ID</th>
-      <th class="px-4 py-2">Cliente</th>
-      <th class="px-4 py-2">Importe</th>
-      <th class="px-4 py-2">Estado</th>
-      <th class="px-4 py-2">Fecha</th>
-    </tr>
-  </thead>
-  <tbody class="text-center">
-    {invoices.map(inv => (
-      <tr class="border-t">
-        <td class="px-4 py-2">{inv.id}</td>
-        <td class="px-4 py-2">{inv.clientName}</td>
-        <td class="px-4 py-2">{inv.totalAmount.toFixed(2)}</td>
-        <td class="px-4 py-2">{inv.status}</td>
-        <td class="px-4 py-2">{new Date(inv.issuedAt).toLocaleDateString()}</td>
-      </tr>
-    ))}
-  </tbody>
-</table>
-\end{verbatim}
+\begin{lstlisting}[language={}, basicstyle=\ttfamily\small, caption={Función para listar todas las facturas en la tabla}]
+function listAllInvoices(allData: any) {
+    const invoiceGrid = document.querySelector('#invoiceGrid') as any
+    if (!invoiceGrid) return
+    const invoiceGridData = allData.invoices.map((invoice: any) => {
+        const client = allData.clients.find(
+            (client: any) => client.id === invoice.clientId
+        )
+        return {
+            client: client.companyName,
+            issued: new Date(invoice.issuedAt.seconds * 1000)
+              .toLocaleDateString(
+                'es',
+                {
+                    day: '2-digit',
+                    month: '2-digit',
+                    year: 'numeric',
+                }
+            ),
+            total: `${invoice.totalAmount}${invoice.currency}`,
+            status: invoice.status,
+        }
+    })
+    invoiceGrid.data = invoiceGridData
+}
+\end{lstlisting}
 
-Para el listado de morosos, \textit{OverdueList.astro} filtra facturas cuyo estado sea “Pending” u “Overdue” y agrupa por cliente.
+Para el listado de morosos, \textit{OverdueList.astro} filtra facturas cuyo estado sea “Overdue” y las agrupa por cliente.
 
-En \textit{MoneyChart.astro}, se transforma el array \textit{invoices} en dos series (pagos y pendientes) para la librería de gráficas:
+\begin{lstlisting}[language={}, basicstyle=\ttfamily\small, caption={Función para listar clientes morosos}]
+function listOverdueClients(allData: any) {
+	const overdueCards = document.querySelector('#overdueClientsCards')
 
-\begin{verbatim}
----
-import { createChart, HistogramSeries } from "https://cdn.jsdelivr.net/npm/lightweight-charts@5.0.7/+esm";
+	let dictOverdueClients: any = {}
 
-const invoiceData = await getInvoices(businessId);
+	allData.clients.forEach((client: any) => {
+		dictOverdueClients[client.id] = {
+			name: client.companyName,
+			amount: 0,
+			currency: '',
+		}
+	})
 
-// Agregar lógica para agrupar por mes y separar pagos/pendientes
-const monthly = {};
-invoiceData.forEach(inv => {
-  const [year, month] = new Date(inv.issuedAt).toISOString().split("T")[0].split("-");
-  const key = `${year}-${month}`;
-  if (!monthly[key]) monthly[key] = { paid: 0, pending: 0 };
-  if (inv.status === "Paid") {
-    monthly[key].paid += inv.totalAmount;
-  } else {
-    monthly[key].pending += inv.totalAmount;
-  }
-});
-
-const pendingData = [];
-const paidData = [];
-const ms12h = 12 * 60 * 60 * 1000;
-Object.keys(monthly).sort().forEach(key => {
-  const [yy, mm] = key.split("-");
-  const base = new Date(`${yy}-${mm}-01T00:00:00Z`).getTime() / 1000;
-  pendingData.push({ time: base, value: monthly[key].pending, color: "#facc15" });
-  paidData.push({ time: base + ms12h, value: monthly[key].paid, color: "#16a34a" });
-});
-
-const container = document.getElementById("moneyChart");
-const chart = createChart(container, {
-  layout: { background: { color: "white" }, textColor: "#374151" },
-  height: 250,
-  timeScale: { tickMarkFormatter: time => new Date(time * 1000).toLocaleString("default", { month: "short" }) }
-});
-const pendSeries = chart.addSeries(HistogramSeries, { color: "#facc15" });
-const paySeries = chart.addSeries(HistogramSeries, { color: "#16a34a" });
-pendSeries.setData(pendingData);
-paySeries.setData(paidData);
-chart.timeScale().fitContent();
----
-<div id="moneyChart" class="w-full h-64"></div>
-\end{verbatim}
+	allData.invoices.forEach((invoice: any) => {
+		if (invoice.status === 'Overdue') {
+			const client = dictOverdueClients[invoice.clientId]
+			if (client) {
+				client.amount += invoice.totalAmount
+				client.currency = invoice.currency
+			}
+		}
+	})
+	
+	/* Inyectar HTML */
+}
+\end{lstlisting}
 
 \end{large}
 
-\subsection{Estilos y responsive}
+\subsection{Librerías externas}
 
 \begin{large}
 
-Para la tabla de facturas y la lista de morosos, se usaron clases de TailwindCSS:
+Para el portal web se utilizaron varias librerías externas que facilitan la creación de gráficos, tablas y la experiencia de usuario:
 
 \begin{itemize}
-  \item Tablas: \textit{class="min-w-full bg-white"}, encabezados con \textit{px-4 py-2 text-left font-medium}, filas con \textit{border-t text-center}.
-  \item Tarjetas de morosos: \textit{class="bg-white shadow rounded p-4 hover:shadow-lg grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4"}.
-  \item Gráfica: contenedor con \textit{class="w-full h-64"} para acomodar el lienzo de \emph{lightweight-charts}.
+    \item \textbf{lightweight-charts}: Permite renderizar gráficas de barras y líneas de forma eficiente y responsiva\,\cite{lightweight_charts}. Se emplea en el componente \textit{MoneyChart.astro} para mostrar la evolución mensual de los pagos.
+    \item \textbf{ZingGrid}: Framework para crear tablas interactivas y personalizables\,\cite{zinggrid}. Se utiliza en \textit{InvoiceTable.astro} para listar todas las facturas con ordenación, filtrado y paginación.
 \end{itemize}
 
-La configuración responsive se logra con clases como \textit{grid-cols-1 md:grid-cols-2 lg:grid-cols-3} y utilidades de Tailwind para márgenes y paddings en distintos puntos de ruptura.
+Estas librerías permiten construir una interfaz moderna y dinámica, reduciendo el esfuerzo de desarrollo y mejorando la experiencia del usuario final.
 
 \end{large}
 
