@@ -57,27 +57,148 @@ Con este esquema iterativo, avanzamos de forma progresiva, mantuvimos la calidad
 
 \begin{large}
 
-El desarrollo se ha estructurado en cinco fases sucesivas que abarcan desde la definición inicial de requisitos hasta el despliegue de la solución y las pruebas finales. Este planteamiento facilita la trazabilidad de las tareas, la detección temprana de riesgos y la medición objetiva del progreso.
+La plataforma se ha organizado en dos componentes principales, correspondientes a los clientes nativos y al portal web:
 
-\subsection*{Fase 1. Análisis de requisitos}
+\end{large}
 
-Durante esta etapa se recopilaron las necesidades de pymes y profesionales autónomos a fin de fijar los objetivos funcionales y priorizar las características de mayor impacto. El resultado fue un catálogo de historias de usuario con criterios de aceptación medibles y una hoja de ruta inicial.
+\subsection*{App iOS (\textit{Swift})}
 
-\subsection*{Fase 2. Diseño}
+\begin{large}
 
-Una vez definidos los requisitos, se trazó la arquitectura lógica del sistema y se elaboraron prototipos de interfaz en Figma. Los diagramas de entidad–relación y los flujos de navegación sirvieron para validar la coherencia de los datos y la usabilidad antes de escribir una sola línea de código.
+El código de la aplicación iOS sigue el patrón Model–View–ViewModel (MVVM) para separar lógicamente la interfaz de usuario de la capa de datos y negocio. 
+\begin{itemize}
+  \item \textbf{Modelo (Model):} Contiene las estructuras que representan entidades como Empresas, Clientes y Facturas. Estas estructuras definen los campos que se almacenan en Firestore (por ejemplo, fecha de emisión, importe, estado, etc.) y métodos para convertir documentos de Firestore a objetos Swift.
+  \item \textbf{Vista (View):} Con SwiftUI se crearon vistas reutilizables para cada pantalla principal: lista de facturas, detalle de factura, formulario de creación/edición y ajustes. Cada vista se conecta a su ViewModel mediante propiedades marcadas con \texttt{@ObservedObject} o \texttt{@StateObject}.
+  \item \textbf{ViewModel:} Cada pantalla tiene un ViewModel que agrupa la lógica de negocio y la interacción con Firebase. Los ViewModels se encargan de:
+    \begin{itemize}
+      \item Recuperar y observar los cambios en documentos de Firestore.
+      \item Validar y formatear datos antes de mostrarlos en pantalla.
+      \item Enviar nuevas facturas a Firestore, gestionar el estado (Paid/Pending) y calcular totales.
+      \item Generar el PDF de la factura y guardarlo localmente, empleando el ID único de Firestore para numeración.
+    \end{itemize}
+  \item \textbf{Servicios de Firebase:}  
+    \begin{itemize}
+      \item \textit{Firestore:} Actúa como base de datos de documentos. Cada colección almacena objetos con la información necesaria.
+      \item \textit{Authentication:} Gestiona el inicio de sesión con correo/contraseña, manteniendo sesiones y seguridad.
+    \end{itemize}
+\end{itemize}
 
-\subsection*{Fase 3. Implementación móvil (iOS)}
+\end{large}
 
-El desarrollo comenzó con la aplicación para iOS, implementada en Swift mediante Xcode. En esta fase se incluyeron todas las funcionalidades clave: alta de empresas, generación de facturas, modo offline y sincronización con Firestore.
+\subsection*{App Android (Kotlin)}
 
-\subsection*{Fase 4. Implementación móvil (Android)}
+\begin{large}
 
-A continuación se abordó la versión Android con Kotlin en Android Studio. Dado el calendario del proyecto, esta edición se centró en el núcleo funcional, es decir, la emisión y la consulta de facturas, reutilizando la lógica de negocio y los modelos de datos definidos para iOS.
+La versión para Android estaba prevista en Kotlin siguiendo una arquitectura similar (MVVM), pero debido a limitaciones de tiempo no llegó a completarse. La carpeta \texttt{android/} contiene el esqueleto del proyecto (configuración de Gradle, dependencias de Firebase, diseño de pantallas básicas), pero las funciones principales (CRUD de facturas, generación de PDF, lógica de sincronización) quedaron pendientes y se documentan como trabajo futuro.
 
-\subsection*{Fase 5. Portal web y pruebas finales}
+\end{large}
 
-El ciclo concluyó con la construcción del portal administrativo en Astro, alojado en Firebase Hosting, y con la ejecución de pruebas de usabilidad, rendimiento y seguridad. Estas pruebas, realizadas en dispositivos emulados y en entornos reales, verificaron la integración entre las aplicaciones móviles, las Cloud Functions y la base de datos Firestore antes del lanzamiento definitivo.
+\subsection*{Portal Web}
+
+\begin{large}
+
+El portal web se desarrolló con el framework Astro y estilos en TailwindCSS. La estructura principal del código es:
+\begin{itemize}
+  \item \textbf{Páginas estáticas (`/src/pages`):}  
+    \begin{itemize}
+      \item \texttt{index.astro}: Página de inicio que contiene la gráfica donde se muestra el total de los pagado y de lo que queda pendiente de pago mensualmente.
+      \item \texttt{login.astro}: Página para que los usuarios, previamente registrados desde la aplicación móvil, puedan acceder con sus credenciales.
+    \end{itemize}
+  \item \textbf{Componentes (`/src/components`):}  
+    \begin{itemize}
+      \item \texttt{ButtonToScrollToTop.astro}: Componente que renderiza un botón en la esquina inferior derecha de la página para volver al inicio de la página.
+      \item \texttt{Header.astro}: Componente que renderiza la cabecera de la página con un enlace de la web, un menú de navegación entre las diferentes secciones y el botón de cerrar la sesión.
+      \item \texttt{MoneyChart.astro}: Componente que renderiza la gráfica de barras usando \textit{lightweight-charts}.
+      \item \texttt{OverdueList.astro}: Componente que renderiza el listado de los clientes que no han pagado en su tiempo (morosos), haciendo el cálculo de la cantidad total que deben.
+    \end{itemize}
+  \item \textbf{Servicios de Firebase (en `/src/firebase`):}  
+    \begin{itemize}
+      \item \texttt{config.ts}: Fichero con la configuración para establecer la conexión con firebase.
+      \item \texttt{firebase.ts}: Inicializa la instancia de Firebase y exporta funciones para autenticar y leer cualquier dato de Firestore.
+    \end{itemize}
+  \item \textbf{Despliegue:}  
+    \begin{itemize}
+      \item El portal web se publica en Vercel, con integración continua vía GitHub Actions. Cada merge a `main` dispara un despliegue automático.
+    \end{itemize}
+\end{itemize}
+
+\end{large}
+
+\subsection*{Modelo de datos en Firestore}
+
+\begin{large}
+
+\begin{lstlisting}[language={},basicstyle=\ttfamily\small]
+/businesses/{businessId}
+    |-- name
+    |-- tagline (nullable)
+    |-- address
+    |-- city
+    |-- country
+    |-- postcode
+    |-- taxId (CIF in Spain, VAT in the UK, EIN in the USA, etc.)
+    |-- email
+    |-- phone
+    |-- createdAt
+    |-- subscriptionPlan: "free" | "premium"
+    |-- storageLimit: "1 month" | "unlimited"
+    |
+    |-- employees/{employeeId}
+    |        |-- userId (linked to Firebase Auth)
+    |        |-- name
+    |        |-- email (linked to Firebase Auth)
+    |        |-- phone
+    |        |-- role: "admin" | "employee" (linked to Firebase Auth)
+    |        |-- joinedAt
+    |
+    |-- clients/{clientId}
+    |        |-- userClientId (linked to Firebase Auth) ??
+    |        |-- companyName
+    |        |-- clientName
+    |        |-- address
+    |        |-- city
+    |        |-- country
+    |        |-- postcode
+    |        |-- email (linked to Firebase Auth)
+    |        |-- phone
+    |        |-- createdAt
+    |
+    |-- invoices/{invoiceId}
+    |        |-- issuedAt
+    |        |-- dueDate
+    |        |-- status: "Paid" | "Pending" | "Overdue"
+    |        |-- subtotal
+    |        |-- taxTotal
+    |        |-- discounts
+    |        |-- totalAmount
+    |        |-- currency
+    |        |-- clientId
+    |        |-- employeeId
+    |        |-- pdfURL (Cloudflare)
+    |        |-- deleteAfter (Free plan: issuedAt + 1 month,
+                                Premium plan: unlimited)
+    |        |-- productsStack/{productStackId}
+    |                          |-- productId
+    |                          |-- supplyDate
+    |                          |-- quantity
+    |                          |-- amount
+    |                          |-- taxRate
+    |                          |-- taxNet
+    |
+    |-- products/{productId}
+    |        |-- description
+    |        |-- unitPrice
+\end{lstlisting}
+
+\begin{description}[leftmargin=3cm, style=nextline]
+  \item[\texttt{businesses/\{businessId\}}] Documento principal que contiene datos generales de la empresa (nombre, contactos, identificación fiscal, suscripción y límites de almacenamiento) y agrupa subcolecciones.
+  \item[\texttt{businesses/\{businessId\}/employees/\{employeeId\}}] Empleados de la empresa, con referencia a Firebase Auth, datos de contacto y rol.
+  \item[\texttt{businesses/\{businessId\}/clients/\{clientId\}}] Clientes asociados a la empresa, con datos de contacto y posible vinculación a Firebase Auth.
+  \item[\texttt{businesses/\{businessId\}/invoices/\{invoiceId\}}] Facturas emitidas por la empresa, con fechas, estado, importes y subcolección \texttt{productsStack} para desglosar cada línea de producto (ID de producto, cantidad, impuesto, etc.).
+  \item[\texttt{businesses/\{businessId\}/products/\{productId\}}] Productos que la empresa ofrece, con descripción y precio unitario.
+\end{description}
+
+Esta organización centraliza la lógica de datos y asegura coherencia en todos los clientes, facilitando la mantenibilidad y escalabilidad del sistema.
 
 \end{large}
 
