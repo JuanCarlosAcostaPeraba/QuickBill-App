@@ -33,22 +33,22 @@ rules_version = '2';
 service cloud.firestore {
   match /databases/{database}/documents {
     
-    // Raíz de negocios: controlamos creación/lectura/actualización/borrado a nivel de negocio
+    // Raiz de negocios: controlamos creacion/lectura/actualizacion/borrado a nivel de negocio
     match /businesses/{businessId} {
-      // Cualquiera autenticado puede leer la información de un negocio
+      // Cualquiera autenticado puede leer la informacion de un negocio
       allow read: if request.auth != null;
       // Cualquiera autenticado puede crear un nuevo negocio
       allow create: if request.auth != null;
       // Solo un admin (claim role == "admin") puede modificar o borrar un negocio
       allow update, delete: if request.auth.token.role == 'admin';
       
-      // Subcolección de empleados: solo admins pueden gestionar empleados
+      // Subcoleccion de empleados: solo admins pueden gestionar empleados
       match /employees/{employeeId} {
         allow read: if request.auth != null;
         allow create, update, delete: if request.auth.token.role == 'admin';
       }
       
-      // Subcolección de clientes: 
+      // Subcoleccion de clientes: 
       //   - cualquiera autenticado ve datos de clientes
       //   - un admin o el propio cliente (uid == userClientId) puede crear/editar/borrar
       match /clients/{clientId} {
@@ -58,10 +58,10 @@ service cloud.firestore {
                               || request.auth.uid == resource.data.userClientId;
       }
       
-      // Subcolección de facturas:
+      // Subcoleccion de facturas:
       //   - cualquiera autenticado puede leer
       //   - crear: admin o empleado que firma la factura (employeeId en request.resource.data)
-      //   - actualizar: admin o empleado que creó la factura (employeeId en el dato existente)
+      //   - actualizar: admin o empleado que creo la factura (employeeId en el dato existente)
       //   - borrar: solo admin
       match /invoices/{invoiceId} {
         allow read: if request.auth != null;
@@ -71,7 +71,7 @@ service cloud.firestore {
                       || request.auth.uid == resource.data.employeeId;
         allow delete: if request.auth.token.role == 'admin';
         
-        // Dentro de cada factura, la subcolección de líneas de producto:
+        // Dentro de cada factura, la subcoleccion de lineas de producto:
         //   - cualquiera autenticado puede leer
         //   - solo el admin puede escribir/borrar
         match /productsStack/{productStackId} {
@@ -80,7 +80,7 @@ service cloud.firestore {
         }
       }
       
-      // Subcolección de productos: 
+      // Subcoleccion de productos: 
       //   - cualquiera autenticado puede leer
       //   - solo admin puede escribir/borrar
       match /products/{productId} {
@@ -230,7 +230,7 @@ En lugar de recurrir a Cloud Functions, la app genera el PDF de la factura local
   \item \textbf{Crear el lienzo A4}\newline
   Se instancia un \textit{UIGraphicsPDFRenderer} con tamaño A4 y metadatos del documento:
   \begin{lstlisting}[language=swift, basicstyle=\ttfamily\small]
-let bounds = CGRect(x: 0, y: 0, width: 595, height: 842) // A4 @72 dpi
+let bounds = CGRect(x: 0, y: 0, width: 595, height: 842) // A4 @72 dpi
 let format = UIGraphicsPDFRendererFormat()
 format.documentInfo = [
   kCGPDFContextCreator: "QuickBill",
@@ -255,7 +255,7 @@ drawBlock(label: "Bill to", lines: [clientName])
 
   \item \textbf{Calcular importes}\newline
   Al final se muestran subtotal, impuestos, descuentos y el TOTAL resaltado:
-  \begin{lstlisting}[language=swift, basicstyle=\ttfamily\small]]
+  \begin{lstlisting}[language=swift, basicstyle=\ttfamily\small]
 amountRow("Subtotal",  invoice.subtotal)
 amountRow("Tax",       invoice.taxTotal)
 amountRow("Discounts", invoice.discounts)
@@ -317,7 +317,7 @@ Firestore.firestore()
   .document(businessId)
   .collection("invoices")
   .whereField("employeeId", isEqualTo: uid)
-  .getDocuments { snapshot, error in /* … */ }
+  .getDocuments { snapshot, error in ... }
 \end{lstlisting}
 
 El código completo de la pantalla de inicio de sesión, así como del \textit{SignInViewModel}, puede consultarse en GitHub:
@@ -589,7 +589,7 @@ function listOverdueClients(allData: any) {
 			}
 		}
 	})
-	
+    
 	/* Inyectar HTML */
 }
 \end{lstlisting}
@@ -603,8 +603,8 @@ function listOverdueClients(allData: any) {
 Para el portal web se utilizaron varias librerías externas que facilitan la creación de gráficos, tablas y la experiencia de usuario:
 
 \begin{itemize}
-    \item \textbf{lightweight-charts}: Permite renderizar gráficas de barras y líneas de forma eficiente y responsiva\,\cite{lightweight_charts}. Se emplea en el componente \textit{MoneyChart.astro} para mostrar la evolución mensual de los pagos.
-    \item \textbf{ZingGrid}: Framework para crear tablas interactivas y personalizables\,\cite{zinggrid}. Se utiliza en \textit{InvoiceTable.astro} para listar todas las facturas con ordenación, filtrado y paginación.
+\item \textbf{lightweight-charts}: Permite renderizar gráficas de barras y líneas de forma eficiente y responsiva\,\cite{lightweight_charts}. Se emplea en el componente \textit{MoneyChart.astro} para mostrar la evolución mensual de los pagos.
+\item \textbf{ZingGrid}: Framework para crear tablas interactivas y personalizables\,\cite{zinggrid}. Se utiliza en \textit{InvoiceTable.astro} para listar todas las facturas con ordenación, filtrado y paginación.
 \end{itemize}
 
 Estas librerías permiten construir una interfaz moderna y dinámica, reduciendo el esfuerzo de desarrollo y mejorando la experiencia del usuario final.
