@@ -1,20 +1,10 @@
 ---
-
+import InvoiceTable from '@/components/InvoiceTable.astro'
 ---
 
 <section id="Invoices">
 	<h1 class="text-3xl font-bold text-gray-800 mb-6 dark:text-white">
 		Invoices
 	</h1>
-	<script src="https://cdn.zinggrid.com/zinggrid.min.js" defer></script>
-	<zing-grid
-		id="invoiceGrid"
-		sort
-		filter
-		pager
-		page-size="10"
-		loading
-		class="w-full h-auto"
-		empty-text="No invoices found.">
-	</zing-grid>
+	<InvoiceTable />
 </section>
