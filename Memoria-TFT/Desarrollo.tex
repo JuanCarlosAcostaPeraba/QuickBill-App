@@ -22,6 +22,84 @@ Para conectar la aplicación iOS, se descargó el archivo \textit{GoogleService-
 
 \end{large}
 
+\subsection{Modelo de datos en Firestore}
+
+\begin{large}
+
+\begin{lstlisting}[language={},basicstyle=\ttfamily\small, caption={Modelo de datos en Firestore}]
+/businesses/{businessId}
+    |-- name
+    |-- tagline (nullable)
+    |-- address
+    |-- city
+    |-- country
+    |-- postcode
+    |-- taxId (CIF in Spain, VAT in the UK, EIN in the USA, etc.)
+    |-- email
+    |-- phone
+    |-- createdAt
+    |-- subscriptionPlan: "free" | "premium"
+    |-- storageLimit: "1 month" | "unlimited"
+    |
+    |-- employees/{employeeId}
+    |        |-- userId (linked to Firebase Auth)
+    |        |-- name
+    |        |-- email (linked to Firebase Auth)
+    |        |-- phone
+    |        |-- role: "admin" | "employee" (linked to Firebase Auth)
+    |        |-- joinedAt
+    |
+    |-- clients/{clientId}
+    |        |-- userClientId (linked to Firebase Auth) ??
+    |        |-- companyName
+    |        |-- clientName
+    |        |-- address
+    |        |-- city
+    |        |-- country
+    |        |-- postcode
+    |        |-- email (linked to Firebase Auth)
+    |        |-- phone
+    |        |-- createdAt
+    |
+    |-- invoices/{invoiceId}
+    |        |-- issuedAt
+    |        |-- dueDate
+    |        |-- status: "Paid" | "Pending" | "Overdue"
+    |        |-- subtotal
+    |        |-- taxTotal
+    |        |-- discounts
+    |        |-- totalAmount
+    |        |-- currency
+    |        |-- clientId
+    |        |-- employeeId
+    |        |-- pdfURL (Cloudflare)
+    |        |-- deleteAfter (Free plan: issuedAt + 1 month,
+                                Premium plan: unlimited)
+    |        |-- productsStack/{productStackId}
+    |                          |-- productId
+    |                          |-- supplyDate
+    |                          |-- quantity
+    |                          |-- amount
+    |                          |-- taxRate
+    |                          |-- taxNet
+    |
+    |-- products/{productId}
+    |        |-- description
+    |        |-- unitPrice
+\end{lstlisting}
+
+\begin{description}[leftmargin=3cm, style=nextline]
+  \item[\textit{businesses/\{businessId\}}] Documento principal que contiene datos generales de la empresa (nombre, contactos, identificación fiscal, suscripción y límites de almacenamiento) y agrupa subcolecciones.
+  \item[\textit{businesses/\{businessId\}/employees/\{employeeId\}}] Empleados de la empresa, con referencia a Firebase Auth, datos de contacto y rol.
+  \item[\textit{businesses/\{businessId\}/clients/\{clientId\}}] Clientes asociados a la empresa, con datos de contacto y posible vinculación a Firebase Auth.
+  \item[\textit{businesses/\{businessId\}/invoices/\{invoiceId\}}] Facturas emitidas por la empresa, con fechas, estado, importes y subcolección \textit{productsStack} para desglosar cada línea de producto (ID de producto, cantidad, impuesto, etc.).
+  \item[\textit{businesses/\{businessId\}/products/\{productId\}}] Productos que la empresa ofrece, con descripción y precio unitario.
+\end{description}
+
+Esta organización centraliza la lógica de datos y asegura coherencia en todos los clientes, facilitando la mantenibilidad y escalabilidad del sistema.
+
+\end{large}
+
 \subsection{Reglas de seguridad de Firestore}
 
 \begin{large}
@@ -229,7 +307,7 @@ En lugar de recurrir a Cloud Functions, la app genera el PDF de la factura local
 \begin{enumerate}
   \item \textbf{Crear el lienzo A4}\newline
   Se instancia un \textit{UIGraphicsPDFRenderer} con tamaño A4 y metadatos del documento:
-  \begin{lstlisting}[language=swift, basicstyle=\ttfamily\small]
+  \begin{lstlisting}[language=swift, basicstyle=\ttfamily\small, caption={Creación del lienzo A4}]
 let bounds = CGRect(x: 0, y: 0, width: 595, height: 842) // A4 @72 dpi
 let format = UIGraphicsPDFRendererFormat()
 format.documentInfo = [
@@ -241,7 +319,7 @@ let renderer = UIGraphicsPDFRenderer(bounds: bounds, format: format)
 
   \item \textbf{Dibujar encabezados}\newline
   Dentro del bloque \textit{renderer.pdfData \{ ctx in …\}}, se escribe el título y los datos de empresa y cliente:
-  \begin{lstlisting}[language=swift, basicstyle=\ttfamily\small]
+  \begin{lstlisting}[language=swift, basicstyle=\ttfamily\small, caption={Dibujar encabezados}]
 ctx.beginPage()
 "INVOICE".draw(at: CGPoint(x: bounds.midX-40, y:36),
                withAttributes: titleAttr)
@@ -255,7 +333,7 @@ drawBlock(label: "Bill to", lines: [clientName])
 
   \item \textbf{Calcular importes}\newline
   Al final se muestran subtotal, impuestos, descuentos y el TOTAL resaltado:
-  \begin{lstlisting}[language=swift, basicstyle=\ttfamily\small]
+  \begin{lstlisting}[language=swift, basicstyle=\ttfamily\small, caption={Calcular importes}]
 amountRow("Subtotal",  invoice.subtotal)
 amountRow("Tax",       invoice.taxTotal)
 amountRow("Discounts", invoice.discounts)
@@ -310,7 +388,7 @@ func signIn() async {
 
 \noindent Una vez autenticado, el UID se usa para filtrar datos, por ejemplo:
 
-\begin{lstlisting}[language=swift, basicstyle=\ttfamily\small]
+\begin{lstlisting}[language=swift, basicstyle=\ttfamily\small, caption={Filtrado de facturas por empleado}]
 let uid = Auth.auth().currentUser?.uid ?? ""
 Firestore.firestore()
   .collection("businesses")
@@ -386,13 +464,13 @@ A continuación se muestran algunas capturas de pantalla que ilustran estos fluj
   %------------- Fila 1 -------------
   \begin{minipage}[t]{0.45\textwidth}
     \centering
-    \includegraphics[width=\linewidth]{Ilustraciones/ios_sign_in.png}
+    \includegraphics[width=0.8\textwidth]{Ilustraciones/ios_sign_in.png}
     \caption{Pantalla de inicio de sesión}
     \label{fig:ios_sign_in}
   \end{minipage}\hfill
   \begin{minipage}[t]{0.45\textwidth}
     \centering
-    \includegraphics[width=\linewidth]{Ilustraciones/ios_homeview.png}
+    \includegraphics[width=0.8\textwidth]{Ilustraciones/ios_homeview.png}
     \caption{Vista principal con lista de facturas}
     \label{fig:home_view}
   \end{minipage}
@@ -403,13 +481,13 @@ A continuación se muestran algunas capturas de pantalla que ilustran estos fluj
 	%------------- Fila 2 -------------
   \begin{minipage}[t]{0.45\textwidth}
     \centering
-    \includegraphics[width=\linewidth]{Ilustraciones/ios_addinvoice.png}
+    \includegraphics[width=0.8\textwidth]{Ilustraciones/ios_addinvoice.png}
     \caption{Formulario para añadir una nueva factura}
     \label{fig:add_invoice}
   \end{minipage}\hfill
   \begin{minipage}[t]{0.45\textwidth}
     \centering
-    \includegraphics[width=\linewidth]{Ilustraciones/ios_invoicedetails.png}
+    \includegraphics[width=0.8\textwidth]{Ilustraciones/ios_invoicedetails.png}
     \caption{Detalles de una factura con opción de generar PDF}
     \label{fig:invoice_details}
   \end{minipage}
@@ -420,7 +498,7 @@ A continuación se muestran algunas capturas de pantalla que ilustran estos fluj
 	%------------- Fila 3 -------------
   \begin{minipage}[t]{0.45\textwidth}
     \centering
-    \includegraphics[width=\linewidth]{Ilustraciones/ios_save_pdf.png}
+    \includegraphics[width=0.8\textwidth]{Ilustraciones/ios_save_pdf.png}
     \caption{Generación del PDF de la factura}
     \label{fig:save_pdf}
   \end{minipage}

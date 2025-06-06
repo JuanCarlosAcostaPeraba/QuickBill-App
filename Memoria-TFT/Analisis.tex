@@ -31,6 +31,76 @@ El portal web, construido con \gls{astro} y alojado en Vercel, muestra en tiempo
 \end{large}
 
 %----------------------------------------------------------
+\section{Requisitos del sistema}
+%----------------------------------------------------------
+
+\subsection{Requisitos funcionales (RF)}
+
+\begin{large}
+
+\begin{enumerate}[label=\textbf{RF\arabic*.}]
+  \item \textbf{Gestión de usuarios}
+        \begin{itemize}
+          \item Registro de empresarios.
+          \item Inicio y cierre de sesión de usuarios.
+          \item Creación y gestión de empleados por parte del empresario.
+          \item Alta de clientes asociados a cada empresa.
+          \item Separación y aislamiento de datos por empresa.
+        \end{itemize}
+
+  \item \textbf{Facturación}
+        \begin{itemize}
+          \item Creación, edición, consulta y eliminación de facturas por el empresario (CRUD).
+          \item Creación, edición y consulta de facturas por empleados (CRU).
+          \item Lectura de facturas filtradas por cliente.
+          \item Descarga de cada factura en formato PDF.
+          \item Envío y reenvío de facturas por correo electrónico.
+          \item Gestión de estados de factura: \emph{Pagada}, \emph{Pendiente}, \emph{Vencida}.
+          \item Marcado manual de factura como pagada por el empresario.
+          \item Notificación push y correo al empresario y al cliente antes del vencimiento.
+        \end{itemize}
+
+  \item \textbf{Funcionalidades avanzadas}
+        \begin{itemize}
+          \item Facturación en modo \emph{offline} con posterior sincronización.
+          \item Firma digital de facturas.
+          \item Escaneo de recibos mediante OCR para precargar datos.
+        \end{itemize}
+
+  \item \textbf{Gestión de clientes}
+        \begin{itemize}
+          \item Listado y búsqueda de clientes.
+          \item Historial de facturas por cliente.
+        \end{itemize}
+
+  \item \textbf{Seguridad y control}
+        \begin{itemize}
+          \item Autenticación segura con Firebase Auth y roles de usuario.
+          \item Registro de actividad de los usuarios en las operaciones sensibles.
+        \end{itemize}
+\end{enumerate}
+
+\end{large}
+
+%----------------------------------------------------------
+% Requisitos no funcionales (RNF)
+%----------------------------------------------------------
+\subsection*{Requisitos no funcionales (RNF)}
+
+\begin{large}
+
+\begin{enumerate}[label=\textbf{RNF\arabic*.}]
+   \item Disponibilidad: la aplicación iOS debe usable tanto con conexión como offline.
+  \item Usabilidad: emitir una factura completa en menos de un minuto.
+  \item Seguridad: todas las operaciones deben pasar por reglas de Firestore y HTTPS. Datos cifrados en tránsito y reposo.
+  \item Escalabilidad: el modelo en Firestore debe soportar al menos 10\,000 facturas por negocio sin rediseño.
+  \item Compatibilidad: portal web operativo en Chrome, Firefox, Safari y Edge con versiones de los últimos dos años.
+  \item Mantenibilidad: el código se organizará en MVVM (iOS) y en componentes desacoplados (Astro) para facilitar refactorización.
+\end{enumerate}
+
+\end{large}
+
+%----------------------------------------------------------
 \section{Metodología}
 %----------------------------------------------------------
 
