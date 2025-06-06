@@ -618,11 +618,30 @@ Estas librerías permiten construir una interfaz moderna y dinámica, reduciendo
 El portal web se despliega en Vercel siguiendo el flujo de integración continua:
 
 \begin{enumerate}
-  \item Cada vez que se hace \emph{push} a la rama \textit{main}, Vercel detecta el cambio y ejecuta el comando \textit{npm run build}.
+  \item Cada vez que se hace \emph{push} a la rama \textit{main}, Vercel detecta el cambio y ejecuta el comando \textit{pnpm run build}.
   \item Una vez compilado, Vercel optimiza los activos estáticos y publica el sitio en una URL de producción.
-  \item Se configuró un dominio personalizado y se activaron los certificados TLS automáticos.
 \end{enumerate}
 
-A continuación se muestra una captura del panel de Vercel donde se observa el estado del último despliegue y la URL asignada (omitida en este texto).
+A continuación se muestra una captura del panel de Vercel donde se observa el estado del último despliegue y la URL asignada.
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.8\textwidth]{Ilustraciones/vercel_deploy.png}
+\caption{Panel de Vercel con el estado del último despliegue}
+\label{fig:vercel_deploy}
+\end{figure}
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.8\textwidth]{Ilustraciones/vercel_deployed.png}
+\caption{Portal web desplegado en Vercel}
+\label{fig:vercel_deployed}
+\end{figure}
+
+\noindent El portal web está disponible en la URL \url{https://quick-bill-app-six.vercel.app/}, donde los usuarios pueden iniciar sesión y acceder a las funcionalidades descritas. Algunas cuentas de prueba que se pueden usar son:
+\begin{itemize}
+	\item \texttt{jcacostaperaba98@gmail.com} / \texttt{qwerty123456}
+	\item \texttt{juancarlos@jcap.com} / \texttt{estoEsUnT3st}
+\end{itemize}
 
 \end{large}
