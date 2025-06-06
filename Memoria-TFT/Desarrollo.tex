@@ -155,19 +155,7 @@ Con estos pasos, la aplicación iOS ya está conectada a Firebase y lista para c
 
 \begin{large}
 
-Para organizar el proyecto, se crearon tres carpetas principales:
-
-\begin{itemize}
-  \item \texttt{Models}: se definieron las entidades principales como \texttt{Client}, \texttt{Employee}, \texttt{Invoice}, \texttt{InvoiceLineItem}, \texttt{InvoiceStatus}, \texttt{Product}, , \texttt{ProductStack} y \texttt{TabItem}. La Figura \ref{fig:models_folder} muestra cómo se organizan los archivos en Xcode.
-  \item \texttt{ViewModels}: agrupa clases que extienden \texttt{ObservableObject} y exponen datos a las vistas.
-  \item \texttt{Views}: contiene los archivos SwiftUI de cada pantalla.
-\end{itemize}
-
-A continuación se describe el flujo para la lista de facturas:
-
-% TODO
-
-De esta manera, el ViewModel maneja los datos y la vista solo se encarga de mostrarlos. Si los datos cambian en Firestore, la lista se actualiza automáticamente.
+La aplicación iOS se organiza siguiendo el patrón \textit{Model–View–ViewModel} (MVVM). En la Figura~\ref{fig:models_folder} se muestra la distribución real de carpetas dentro de Xcode, enfocándose en la carpeta de los modelos:
 
 \begin{figure}[H]
 \centering
@@ -175,6 +163,60 @@ De esta manera, el ViewModel maneja los datos y la vista solo se encarga de most
 \caption{Estructura de la carpeta \texttt{Models} en Xcode}
 \label{fig:models_folder}
 \end{figure}
+
+A continuación se describe brevemente el propósito de cada grupo.
+
+\texttt{Models} agrupa todas las entidades que reflejan los documentos de Firestore. Cada subcarpeta contiene un único fichero con la estructura correspondiente:
+\begin{itemize}
+  \item \textbf{Client/Client.swift}: define la estructura \texttt{Client} con campos básicos de la empresa o persona a facturar.
+  \item \textbf{Employee/Employee.swift}: representa a cada empleado que accede a la app. Incluye su \texttt{userId} (Firebase Auth), nombre, email, teléfono y rol.
+  \item \textbf{Invoice}:
+    \begin{itemize}
+      \item \texttt{Invoice.swift}: entidad principal con fechas, importes y referencias a cliente y empleado.
+      \item \texttt{InvoiceLineItem.swift}: describe cada línea de producto/servicio dentro de una factura.
+      \item \texttt{InvoiceStatus.swift}: \texttt{enum} con los estados \texttt{paid}, \texttt{pending} y \texttt{overdue}.
+    \end{itemize}
+  \item \textbf{Product}:
+    \begin{itemize}
+      \item \texttt{Product.swift}: catálogo de productos con descripción y precio unitario.
+      \item \texttt{ProductStack.swift}: colección de productos que se añaden a una factura.
+    \end{itemize}
+  \item \texttt{TabItem.swift}: enumeración con los tabs de navegación de la app.
+\end{itemize}
+
+\texttt{Services} agrupa la lógica que no depende de la UI pero tampoco encaja como modelo puro:
+\begin{itemize}
+  \item \texttt{AuthService.swift}: envoltorio sencillo sobre Firebase Auth con la finalidad de persistir la sesión de los usuarios en la aplicación.
+  \item \texttt{InvoicePDFBuilder.swift}: genera el PDF de una factura usando UIGraphicsPDFRenderer; recibe una instancia \texttt{Invoice} y devuelve la URL local del fichero.
+  \item \texttt{InvoiceStatusService.swift}: actualiza el estado de una factura (\texttt{paid}, \texttt{pending}, \texttt{overdue}) según \texttt{issuedAt}, \texttt{dueDate} y el \texttt{status} almacenado.
+\end{itemize}
+
+\texttt{Utilities} contiene código de soporte reutilizable. Actualmente sólo incluye \texttt{AppLanguage.swift}, una enumeración para cambiar el idioma de la interfaz mediante la propiedad \texttt{@AppStorage('appLanguage')}.
+
+\texttt{ViewModels} se divide en subcarpetas por dominio de negocio:
+\begin{itemize}
+  \item \textbf{Authentication}: gestiona el inicio de sesión, registro y la opción de 'ovidé mi contraseña'.
+  \item \textbf{Clients}: gestión de listado, creación, borrado y edición de clientes.
+  \item \textbf{Invoice}: \texttt{InvoiceListViewModel.swift}, \texttt{InvoiceDetailViewModel.swift} y \texttt{AddInvoiceViewModel.swift} para listar, mostrar los detalles y crear nuevas faturas.
+  \item \textbf{Products}: ViewModel para el catálogo de productos.
+  \item \textbf{Settings}: controla las preferencias de la app.
+  \item Además, en la raíz de la carpeta está \texttt{AuthViewModel.swift}, que mantiene el estado global de autenticación y se inyecta como \texttt{EnvironmentObject}.
+\end{itemize}
+
+\texttt{Views} organiza las pantallas SwiftUI con la misma lógica de dominios:
+\begin{itemize}
+  \item \textbf{Authentication}: vistas de inicio de sesión y registro.
+  \item \textbf{Clients}: lista de clientes y formulario de creación y edición.
+  \item \textbf{Home}: vista inicial tras iniciar sesión (dashboard con todas las facturas).
+  \item \textbf{Invoice}: formulario de creación y detalles de las facturas.
+  \item \textbf{Products}: listado y formulario de productos.
+  \item \textbf{Settings}: ajustes de idioma y cuenta.
+  \item \texttt{MainTabView.swift}: barra de pestañas inferior que enlaza \textit{Home}, \textit{Products}, \textit{Invoice}, \textit{Clients}, y \textit{Settings}.
+  \item \texttt{StartView.swift}: pantalla que decide si mostrar la vista de autenticación o el \texttt{MainTabView} según el estado de \texttt{AuthViewModel}.
+\end{itemize}
+
+Esta distribución favorece la separación de responsabilidades, donde los 
+ViewModels actúan como enlace entre modelos y vistas, y cada conjunto de vistas se mantiene cohesionado dentro de su propio dominio y los modelos definen la estructura de los datos que se manejan.
 
 \end{large}
 
