@@ -16,9 +16,9 @@ Para esta plataforma, la base de datos se implementó íntegramente en Firestore
 
 \begin{large}
 
-En primer lugar, se creó un proyecto en la consola de Firebase y se habilitaron los servicios de Firestore y Authentication. Dentro de Firestore, se generó la colección raíz \texttt{businesses}, donde cada documento tiene un identificador único (\texttt{businessId}). De forma automática, Firestore asigna una referencia a cada colección y subcolección cuando se insertan documentos por primera vez desde los clientes.
+En primer lugar, se creó un proyecto en la consola de Firebase y se habilitaron los servicios de Firestore y Authentication. Dentro de Firestore, se generó la colección raíz \textit{businesses}, donde cada documento tiene un identificador único (\textit{businessId}). De forma automática, Firestore asigna una referencia a cada colección y subcolección cuando se insertan documentos por primera vez desde los clientes.
 
-Para conectar la aplicación iOS, se descargó el archivo \texttt{GoogleService-Info.plist} desde la consola de Firebase y se añadió al directorio principal del proyecto Xcode. En el caso del portal web, se obtuvo el objeto de configuración (API key, project ID, etc.), se guardó en un archivo \texttt{.env} y se cargó desde un archivo \texttt{config.ts} bajo \texttt{/src/firebase}.
+Para conectar la aplicación iOS, se descargó el archivo \textit{GoogleService-Info.plist} desde la consola de Firebase y se añadió al directorio principal del proyecto Xcode. En el caso del portal web, se obtuvo el objeto de configuración (API key, project ID, etc.), se guardó en un archivo \textit{.env} y se cargó desde un archivo \textit{config.ts} bajo \textit{/src/firebase}.
 
 \end{large}
 
@@ -93,7 +93,7 @@ service cloud.firestore {
 }
 \end{lstlisting}
 
-Con estas reglas, solo el administrador (rol \texttt{admin}) puede crear o eliminar facturas y productos, y cada empleado (rol \texttt{employee}) puede crear o actualizar facturas que él mismo genere. Los clientes solo acceden a sus propios documentos, y todas las operaciones requieren un usuario autenticado (\texttt{request.auth != null}), lo que cumple con los requisitos de seguridad y protección de datos.
+Con estas reglas, solo el administrador (rol \textit{admin}) puede crear o eliminar facturas y productos, y cada empleado (rol \textit{employee}) puede crear o actualizar facturas que él mismo genere. Los clientes solo acceden a sus propios documentos, y todas las operaciones requieren un usuario autenticado (\textit{request.auth != null}), lo que cumple con los requisitos de seguridad y protección de datos.
 
 \end{large}
 
@@ -115,9 +115,9 @@ Para iniciar el proyecto, se utilizó Xcode 16.3 con la plantilla de SwiftUI. Lo
 
 \begin{enumerate}
   \item En Xcode, crear un nuevo proyecto seleccionando \emph{App} y, como lenguaje, \textbf{Swift} con interfaz \textbf{SwiftUI}.
-  \item Descargar \texttt{GoogleService-Info.plist} desde la consola de Firebase y arrastrarlo al grupo raíz del proyecto en Xcode. Asegurarse de marcar la opción de agregarlo a todos los targets.
+  \item Descargar \textit{GoogleService-Info.plist} desde la consola de Firebase y arrastrarlo al grupo raíz del proyecto en Xcode. Asegurarse de marcar la opción de agregarlo a todos los targets.
   \item Instalar el paquete oficial de Firebase mediante Swift Package Manager (\emph{File → Add Packages…}), usando la URL \url{https://github.com/firebase/firebase-ios-sdk.git}.
-  \item En el archivo \texttt{QuickBillApp.swift}, inicializar Firebase antes de cargar la escena principal:
+  \item En el archivo \textit{QuickBillApp.swift}, inicializar Firebase antes de cargar la escena principal:
     \begin{lstlisting}[language={swift}, caption={Inicialización de Firebase en QuickBillApp.swift}]
     import SwiftUI
     import FirebaseCore
@@ -160,50 +160,50 @@ La aplicación iOS se organiza siguiendo el patrón \textit{Model–View–ViewM
 \begin{figure}[H]
 \centering
 \includegraphics[width=0.5\textwidth]{Ilustraciones/ios_models_folder.png}
-\caption{Estructura de la carpeta \texttt{Models} en Xcode}
+\caption{Estructura de la carpeta \textit{Models} en Xcode}
 \label{fig:models_folder}
 \end{figure}
 
 A continuación se describe brevemente el propósito de cada grupo.
 
-\texttt{Models} agrupa todas las entidades que reflejan los documentos de Firestore. Cada subcarpeta contiene un único fichero con la estructura correspondiente:
+\textit{Models} agrupa todas las entidades que reflejan los documentos de Firestore. Cada subcarpeta contiene un único fichero con la estructura correspondiente:
 \begin{itemize}
-  \item \textbf{Client/Client.swift}: define la estructura \texttt{Client} con campos básicos de la empresa o persona a facturar.
-  \item \textbf{Employee/Employee.swift}: representa a cada empleado que accede a la app. Incluye su \texttt{userId} (Firebase Auth), nombre, email, teléfono y rol.
+  \item \textbf{Client/Client.swift}: define la estructura \textit{Client} con campos básicos de la empresa o persona a facturar.
+  \item \textbf{Employee/Employee.swift}: representa a cada empleado que accede a la app. Incluye su \textit{userId} (Firebase Auth), nombre, email, teléfono y rol.
   \item \textbf{Invoice}:
     \begin{itemize}
-      \item \texttt{Invoice.swift}: entidad principal con fechas, importes y referencias a cliente y empleado.
-      \item \texttt{InvoiceLineItem.swift}: describe cada línea de producto/servicio dentro de una factura.
-      \item \texttt{InvoiceStatus.swift}: \texttt{enum} con los estados \texttt{paid}, \texttt{pending} y \texttt{overdue}.
+      \item \textit{Invoice.swift}: entidad principal con fechas, importes y referencias a cliente y empleado.
+      \item \textit{InvoiceLineItem.swift}: describe cada línea de producto/servicio dentro de una factura.
+      \item \textit{InvoiceStatus.swift}: \textit{enum} con los estados \textit{paid}, \textit{pending} y \textit{overdue}.
     \end{itemize}
   \item \textbf{Product}:
     \begin{itemize}
-      \item \texttt{Product.swift}: catálogo de productos con descripción y precio unitario.
-      \item \texttt{ProductStack.swift}: colección de productos que se añaden a una factura.
+      \item \textit{Product.swift}: catálogo de productos con descripción y precio unitario.
+      \item \textit{ProductStack.swift}: colección de productos que se añaden a una factura.
     \end{itemize}
-  \item \texttt{TabItem.swift}: enumeración con los tabs de navegación de la app.
+  \item \textit{TabItem.swift}: enumeración con los tabs de navegación de la app.
 \end{itemize}
 
-\texttt{Services} agrupa la lógica que no depende de la UI pero tampoco encaja como modelo puro:
+\textit{Services} agrupa la lógica que no depende de la UI pero tampoco encaja como modelo puro:
 \begin{itemize}
-  \item \texttt{AuthService.swift}: envoltorio sencillo sobre Firebase Auth con la finalidad de persistir la sesión de los usuarios en la aplicación.
-  \item \texttt{InvoicePDFBuilder.swift}: genera el PDF de una factura usando UIGraphicsPDFRenderer; recibe una instancia \texttt{Invoice} y devuelve la URL local del fichero.
-  \item \texttt{InvoiceStatusService.swift}: actualiza el estado de una factura (\texttt{paid}, \texttt{pending}, \texttt{overdue}) según \texttt{issuedAt}, \texttt{dueDate} y el \texttt{status} almacenado.
+  \item \textit{AuthService.swift}: envoltorio sencillo sobre Firebase Auth con la finalidad de persistir la sesión de los usuarios en la aplicación.
+  \item \textit{InvoicePDFBuilder.swift}: genera el PDF de una factura usando UIGraphicsPDFRenderer; recibe una instancia \textit{Invoice} y devuelve la URL local del fichero.
+  \item \textit{InvoiceStatusService.swift}: actualiza el estado de una factura (\textit{paid}, \textit{pending}, \textit{overdue}) según \textit{issuedAt}, \textit{dueDate} y el \textit{status} almacenado.
 \end{itemize}
 
-\texttt{Utilities} contiene código de soporte reutilizable. Actualmente sólo incluye \texttt{AppLanguage.swift}, una enumeración para cambiar el idioma de la interfaz mediante la propiedad \texttt{@AppStorage('appLanguage')}.
+\textit{Utilities} contiene código de soporte reutilizable. Actualmente sólo incluye \textit{AppLanguage.swift}, una enumeración para cambiar el idioma de la interfaz mediante la propiedad \textit{@AppStorage('appLanguage')}.
 
-\texttt{ViewModels} se divide en subcarpetas por dominio de negocio:
+\textit{ViewModels} se divide en subcarpetas por dominio de negocio:
 \begin{itemize}
   \item \textbf{Authentication}: gestiona el inicio de sesión, registro y la opción de 'ovidé mi contraseña'.
   \item \textbf{Clients}: gestión de listado, creación, borrado y edición de clientes.
-  \item \textbf{Invoice}: \texttt{InvoiceListViewModel.swift}, \texttt{InvoiceDetailViewModel.swift} y \texttt{AddInvoiceViewModel.swift} para listar, mostrar los detalles y crear nuevas faturas.
+  \item \textbf{Invoice}: \textit{InvoiceListViewModel.swift}, \textit{InvoiceDetailViewModel.swift} y \textit{AddInvoiceViewModel.swift} para listar, mostrar los detalles y crear nuevas faturas.
   \item \textbf{Products}: ViewModel para el catálogo de productos.
   \item \textbf{Settings}: controla las preferencias de la app.
-  \item Además, en la raíz de la carpeta está \texttt{AuthViewModel.swift}, que mantiene el estado global de autenticación y se inyecta como \texttt{EnvironmentObject}.
+  \item Además, en la raíz de la carpeta está \textit{AuthViewModel.swift}, que mantiene el estado global de autenticación y se inyecta como \textit{EnvironmentObject}.
 \end{itemize}
 
-\texttt{Views} organiza las pantallas SwiftUI con la misma lógica de dominios:
+\textit{Views} organiza las pantallas SwiftUI con la misma lógica de dominios:
 \begin{itemize}
   \item \textbf{Authentication}: vistas de inicio de sesión y registro.
   \item \textbf{Clients}: lista de clientes y formulario de creación y edición.
@@ -211,8 +211,8 @@ A continuación se describe brevemente el propósito de cada grupo.
   \item \textbf{Invoice}: formulario de creación y detalles de las facturas.
   \item \textbf{Products}: listado y formulario de productos.
   \item \textbf{Settings}: ajustes de idioma y cuenta.
-  \item \texttt{MainTabView.swift}: barra de pestañas inferior que enlaza \textit{Home}, \textit{Products}, \textit{Invoice}, \textit{Clients}, y \textit{Settings}.
-  \item \texttt{StartView.swift}: pantalla que decide si mostrar la vista de autenticación o el \texttt{MainTabView} según el estado de \texttt{AuthViewModel}.
+  \item \textit{MainTabView.swift}: barra de pestañas inferior que enlaza \textit{Home}, \textit{Products}, \textit{Invoice}, \textit{Clients}, y \textit{Settings}.
+  \item \textit{StartView.swift}: pantalla que decide si mostrar la vista de autenticación o el \textit{MainTabView} según el estado de \textit{AuthViewModel}.
 \end{itemize}
 
 Esta distribución favorece la separación de responsabilidades, donde los 
@@ -330,7 +330,7 @@ struct LoginView: View {
 }
 \end{verbatim}
 
-Una vez autenticado, el \texttt{currentUser.uid} se utiliza en cada consulta para filtrar facturas del empleado correspondiente:
+Una vez autenticado, el \textit{currentUser.uid} se utiliza en cada consulta para filtrar facturas del empleado correspondiente:
 
 \begin{verbatim}
 db.collection("businesses")
@@ -351,10 +351,10 @@ db.collection("businesses")
 Para verificar que todo funciona, se realizaron pruebas manuales en el simulador de iOS:
 
 \begin{itemize}
-  \item Crear una nueva factura: abrir \texttt{InvoiceFormView}, rellenar campos, pulsar “Guardar” y comprobar que aparece en \texttt{InvoiceListView}.
+  \item Crear una nueva factura: abrir \textit{InvoiceFormView}, rellenar campos, pulsar “Guardar” y comprobar que aparece en \textit{InvoiceListView}.
   \item Editar estado de factura: marcar una factura pendiente como “Paid” y verificar que cambia su color (verde) en la lista.
-  \item Generar PDF: pulsar “Generar PDF” en \texttt{InvoiceDetailView} y verificar que se guarda en la carpeta \emph{Documents} del simulador.
-  \item Inicio de sesión: probar con credenciales correctas e incorrectas para validar la lógica de \texttt{Auth}.
+  \item Generar PDF: pulsar “Generar PDF” en \textit{InvoiceDetailView} y verificar que se guarda en la carpeta \emph{Documents} del simulador.
+  \item Inicio de sesión: probar con credenciales correctas e incorrectas para validar la lógica de \textit{Auth}.
 \end{itemize}
 
 A continuación se muestran algunas capturas de pantalla (omitidas aquí) que ilustran estos flujos.
@@ -377,28 +377,28 @@ La parte web, aunque más ligera, ofrece tres funcionalidades clave: gráfica de
 
 El repositorio para el portal web sigue la convención estándar de Astro:
 \begin{itemize}
-  \item \texttt{/src/pages}:
+  \item \textit{/src/pages}:
     \begin{itemize}
-      \item \texttt{index.astro}: página principal que importa los tres componentes.
-      \item \texttt{invoices.astro}: gestión de todas las facturas (tabla).
-      \item \texttt{overdue.astro}: listado de clientes morosos.
-      \item \texttt{chart.astro}: componente independiente para la gráfica mensual.
+      \item \textit{index.astro}: página principal que importa los tres componentes.
+      \item \textit{invoices.astro}: gestión de todas las facturas (tabla).
+      \item \textit{overdue.astro}: listado de clientes morosos.
+      \item \textit{chart.astro}: componente independiente para la gráfica mensual.
     \end{itemize}
-  \item \texttt{/src/components}:
+  \item \textit{/src/components}:
     \begin{itemize}
-      \item \texttt{MoneyChart.astro}: renderiza la gráfica de barras usando \emph{lightweight-charts}.
-      \item \texttt{OverdueList.astro}: muestra tarjetas con clientes morosos y sus importes.
-      \item \texttt{InvoiceTable.astro}: tabla con todas las facturas (ID, cliente, importe, estado, fecha).
+      \item \textit{MoneyChart.astro}: renderiza la gráfica de barras usando \emph{lightweight-charts}.
+      \item \textit{OverdueList.astro}: muestra tarjetas con clientes morosos y sus importes.
+      \item \textit{InvoiceTable.astro}: tabla con todas las facturas (ID, cliente, importe, estado, fecha).
     \end{itemize}
-  \item \texttt{/src/firebase}:
+  \item \textit{/src/firebase}:
     \begin{itemize}
-      \item \texttt{firebase.ts}: inicializa Firebase con la configuración y exporta instancias de \texttt{firestore} y \texttt{auth}.
-      \item \texttt{invoiceService.ts}: funciones para leer y escribir facturas en Firestore.
+      \item \textit{firebase.ts}: inicializa Firebase con la configuración y exporta instancias de \textit{firestore} y \textit{auth}.
+      \item \textit{invoiceService.ts}: funciones para leer y escribir facturas en Firestore.
     \end{itemize}
-  \item \texttt{/src/styles}:
+  \item \textit{/src/styles}:
     \begin{itemize}
-      \item \texttt{globals.css}: importa y personaliza TailwindCSS.
-      \item \texttt{variables.css}: define paletas de color y tipografías.
+      \item \textit{globals.css}: importa y personaliza TailwindCSS.
+      \item \textit{variables.css}: define paletas de color y tipografías.
     \end{itemize}
 \end{itemize}
 
@@ -408,7 +408,7 @@ El repositorio para el portal web sigue la convención estándar de Astro:
 
 \begin{large}
 
-Para obtener las facturas del negocio, \texttt{invoiceService.ts} expone:
+Para obtener las facturas del negocio, \textit{invoiceService.ts} expone:
 
 \begin{verbatim}
 import { firestore } from "./firebase";
@@ -422,7 +422,7 @@ export async function getInvoices(businessId) {
 }
 \end{verbatim}
 
-En \texttt{InvoiceTable.astro} se utiliza:
+En \textit{InvoiceTable.astro} se utiliza:
 
 \begin{verbatim}
 ---
@@ -454,9 +454,9 @@ const invoices = await getInvoices(businessId);
 </table>
 \end{verbatim}
 
-Para el listado de morosos, \texttt{OverdueList.astro} filtra facturas cuyo estado sea “Pending” u “Overdue” y agrupa por cliente.
+Para el listado de morosos, \textit{OverdueList.astro} filtra facturas cuyo estado sea “Pending” u “Overdue” y agrupa por cliente.
 
-En \texttt{MoneyChart.astro}, se transforma el array \texttt{invoices} en dos series (pagos y pendientes) para la librería de gráficas:
+En \textit{MoneyChart.astro}, se transforma el array \textit{invoices} en dos series (pagos y pendientes) para la librería de gráficas:
 
 \begin{verbatim}
 ---
@@ -511,12 +511,12 @@ chart.timeScale().fitContent();
 Para la tabla de facturas y la lista de morosos, se usaron clases de TailwindCSS:
 
 \begin{itemize}
-  \item Tablas: \texttt{class="min-w-full bg-white"}, encabezados con \texttt{px-4 py-2 text-left font-medium}, filas con \texttt{border-t text-center}.
-  \item Tarjetas de morosos: \texttt{class="bg-white shadow rounded p-4 hover:shadow-lg grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4"}.
-  \item Gráfica: contenedor con \texttt{class="w-full h-64"} para acomodar el lienzo de \emph{lightweight-charts}.
+  \item Tablas: \textit{class="min-w-full bg-white"}, encabezados con \textit{px-4 py-2 text-left font-medium}, filas con \textit{border-t text-center}.
+  \item Tarjetas de morosos: \textit{class="bg-white shadow rounded p-4 hover:shadow-lg grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4"}.
+  \item Gráfica: contenedor con \textit{class="w-full h-64"} para acomodar el lienzo de \emph{lightweight-charts}.
 \end{itemize}
 
-La configuración responsive se logra con clases como \texttt{grid-cols-1 md:grid-cols-2 lg:grid-cols-3} y utilidades de Tailwind para márgenes y paddings en distintos puntos de ruptura.
+La configuración responsive se logra con clases como \textit{grid-cols-1 md:grid-cols-2 lg:grid-cols-3} y utilidades de Tailwind para márgenes y paddings en distintos puntos de ruptura.
 
 \end{large}
 
@@ -527,7 +527,7 @@ La configuración responsive se logra con clases como \texttt{grid-cols-1 md:gri
 El portal web se despliega en Vercel siguiendo el flujo de integración continua:
 
 \begin{enumerate}
-  \item Cada vez que se hace \emph{push} a la rama \texttt{main}, Vercel detecta el cambio y ejecuta el comando \texttt{npm run build}.
+  \item Cada vez que se hace \emph{push} a la rama \textit{main}, Vercel detecta el cambio y ejecuta el comando \textit{npm run build}.
   \item Una vez compilado, Vercel optimiza los activos estáticos y publica el sitio en una URL de producción.
   \item Se configuró un dominio personalizado y se activaron los certificados TLS automáticos.
 \end{enumerate}
