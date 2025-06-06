@@ -327,20 +327,104 @@ El código completo de la pantalla de inicio de sesión, así como del \textit{S
 
 \subsection{Filtrado avanzado}
 
+\begin{large}
+
+Para mejorar la usabilidad, se implementó un sistema de filtrado avanzado en la lista de facturas. El usuario puede filtrar por cliente, estado, rango de fechas y rango de importe. Esta funcionalidad se encuentra en \textit{HomeView} y se gestiona a través del \textit{InvoiceListViewModel}.
+
+\begin{lstlisting}[language=swift, basicstyle=\ttfamily\small, caption={HomeView.swift - Filtrado avanzado}]
+var filteredInvoices: [Invoice] {
+    invoices.filter { inv in
+        (selectedStatus == .all || inv.status == selectedStatus) &&
+        (
+            searchText.isEmpty ||
+            inv.companyName.lowercased().contains(searchText.lowercased()) ||
+            dateFormatter.string(from: inv.issuedAt).contains(searchText) ||
+            String(format: "%.2f", inv.totalAmount).contains(searchText)
+        ) && (
+            !enableDateFilter ||
+            (
+                (dateFrom == nil || inv.issuedAt >= dateFrom!) &&
+                (dateTo   == nil || inv.issuedAt <= dateTo!)
+            )
+        ) && (
+            !enableAmountFilter ||
+            (
+                (minTotal == nil || inv.totalAmount >= minTotal!) &&
+                (maxTotal == nil || inv.totalAmount <= maxTotal!)
+            )
+        ) &&
+        (selectedClientId == nil || inv.clientId == selectedClientId)
+    }
+}
+\end{lstlisting}
+
+El usuario puede seleccionar el estado de la factura, introducir texto para buscar por cliente o fecha, y activar los filtros de fecha e importe. El resultado se actualiza dinámicamente en la vista.
+
+\end{large}
+
 \subsection{UI/UX y pruebas en simulador}
 
 \begin{large}
 
+La interfaz de usuario se diseñó siguiendo las pautas de Apple para SwiftUI, priorizando la simplicidad y la usabilidad. Se utilizaron componentes estándar como \textit{List}, \textit{Form}, \textit{NavigationView} y \textit{Button} para construir una experiencia coherente.
+
+Se priorizó la accesibilidad y la claridad visual mediante la asignación de colores distintivos a los diferentes estados de las facturas (verde para \textit{paid}, lila para \textit{pending} y rojo para \textit{overdue}), así como la incorporación de animaciones suaves en las transiciones de pantalla. Para la visualización de productos, se optó por \textit{LazyVGrid}, lo que permite una disposición adaptable y eficiente en distintos tamaños de pantalla.
+
 Para verificar que todo funciona, se realizaron pruebas manuales en el simulador de iOS:
 
 \begin{itemize}
-  \item Crear una nueva factura: abrir \textit{InvoiceFormView}, rellenar campos, pulsar “Guardar” y comprobar que aparece en \textit{InvoiceListView}.
+  \item Crear una nueva factura: abrir \textit{AddInvoiceView}, rellenar campos, pulsar “Guardar” y comprobar que aparece en \textit{HomeView}.
   \item Editar estado de factura: marcar una factura pendiente como “Paid” y verificar que cambia su color (verde) en la lista.
   \item Generar PDF: pulsar “Generar PDF” en \textit{InvoiceDetailView} y verificar que se guarda en la carpeta \emph{Documents} del simulador.
   \item Inicio de sesión: probar con credenciales correctas e incorrectas para validar la lógica de \textit{Auth}.
 \end{itemize}
 
-A continuación se muestran algunas capturas de pantalla (omitidas aquí) que ilustran estos flujos.
+A continuación se muestran algunas capturas de pantalla que ilustran estos flujos.
+
+\begin{figure}[H]
+  \centering
+  %------------- Fila 1 -------------
+  \begin{minipage}[t]{0.45\textwidth}
+    \centering
+    \includegraphics[width=\linewidth]{Ilustraciones/ios_sign_in.png}
+    \caption{Pantalla de inicio de sesión}
+    \label{fig:ios_sign_in}
+  \end{minipage}\hfill
+  \begin{minipage}[t]{0.45\textwidth}
+    \centering
+    \includegraphics[width=\linewidth]{Ilustraciones/ios_homeview.png}
+    \caption{Vista principal con lista de facturas}
+    \label{fig:home_view}
+  \end{minipage}
+\end{figure}
+
+\begin{figure}[H]
+	\centering
+	%------------- Fila 2 -------------
+  \begin{minipage}[t]{0.45\textwidth}
+    \centering
+    \includegraphics[width=\linewidth]{Ilustraciones/ios_addinvoice.png}
+    \caption{Formulario para añadir una nueva factura}
+    \label{fig:add_invoice}
+  \end{minipage}\hfill
+  \begin{minipage}[t]{0.45\textwidth}
+    \centering
+    \includegraphics[width=\linewidth]{Ilustraciones/ios_invoicedetails.png}
+    \caption{Detalles de una factura con opción de generar PDF}
+    \label{fig:invoice_details}
+  \end{minipage}
+\end{figure}
+
+\begin{figure}[H]
+	\centering
+	%------------- Fila 3 -------------
+  \begin{minipage}[t]{0.45\textwidth}
+    \centering
+    \includegraphics[width=\linewidth]{Ilustraciones/ios_save_pdf.png}
+    \caption{Generación del PDF de la factura}
+    \label{fig:save_pdf}
+  \end{minipage}
+\end{figure}
 
 \end{large}
 
