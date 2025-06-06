@@ -61,7 +61,7 @@ La plataforma se ha organizado en dos componentes principales, correspondientes 
 
 \end{large}
 
-\subsection*{App iOS (\textit{Swift})}
+\subsection{App iOS (\textit{Swift})}
 
 \begin{large}
 
@@ -85,7 +85,7 @@ El código de la aplicación iOS sigue el patrón Model–View–ViewModel (MVVM
 
 \end{large}
 
-\subsection*{App Android (Kotlin)}
+\subsection{App Android (Kotlin)}
 
 \begin{large}
 
@@ -93,7 +93,7 @@ La versión para Android estaba prevista en Kotlin siguiendo una arquitectura si
 
 \end{large}
 
-\subsection*{Portal Web}
+\subsection{Portal Web (Astro)}
 
 \begin{large}
 
@@ -124,7 +124,7 @@ El portal web se desarrolló con el framework Astro y estilos en TailwindCSS. La
 
 \end{large}
 
-\subsection*{Modelo de datos en Firestore}
+\subsection{Modelo de datos en Firestore}
 
 \begin{large}
 
@@ -208,32 +208,46 @@ Esta organización centraliza la lógica de datos y asegura coherencia en todos 
 
 \begin{large}
 
-Esta sección describe las tecnologías empleadas en cada capa de la plataforma y las razones de su elección.
+En este proyecto hemos elegido herramientas que permitan un flujo de trabajo ágil y tecnológico acorde al alcance de la plataforma:
 
-\subsection*{iOS}
+\end{large}
 
-Las aplicaciones para iPhone se implementan en \textbf{Swift}, un lenguaje moderno creado por Apple que prioriza la seguridad mediante tipado fuerte y gestión automática de memoria, y el rendimiento gracias a la optimización de sus compiladores \gls{llvm} \cite{swift_lang2025}.
+\subsection{iOS}
 
-El entorno de desarrollo es \textbf{Xcode} 16.3. Este IDE integra editor, depurador, simuladores de dispositivos y marcos de pruebas unitarias y de interfaz. Herramientas como Instruments permiten perfilar CPU, memoria y consumo energético, lo que facilita detectar cuellos de botella y mantener la fluidez de la experiencia. Con esta combinación el código se compila a binarios nativos y se alinea con las directrices de accesibilidad de iOS sin recurrir a SDK externos \cite{xcode16_3}.
+\begin{large}
 
-\subsection*{Android}
+Para la app de iPhone se utiliza \textbf{Swift}, un lenguaje moderno que destaca por su seguridad (tipado fuerte y gestión automática de memoria) y buen rendimiento gracias a sus compiladores optimizados \cite{swift_lang2025}. El desarrollo se lleva a cabo en \textbf{Xcode} 16.3, que combina editor, depurador y simulador de dispositivos. Además, Instruments facilita perfilar CPU, memoria y consumo energético, lo que ayuda a mejorar la fluidez de la interfaz. Con SwiftUI, se construyen vistas reutilizables que interactúan con los ViewModels, separando claramente la lógica de negocio de la presentación.
 
-La versión para Android se escribe en \textbf{Kotlin}, un lenguaje conciso y expresivo que incorpora nulabilidad segura y corrutinas para la programación asíncrona \cite{kotlin_lang2025}.
+\end{large}
 
-El desarrollo se realiza en \textbf{Android Studio} 2024.3.2 (Meerkat Feature Drop). Esta versión incorpora emuladores con perfiles personalizables, inspector de bases de datos y analizador de rendimiento en tiempo real, además de plantillas que agilizan la integración con bibliotecas Jetpack \cite{as2024_3_2}. La combinación de Kotlin con Android Studio reduce la verbosidad, mejora la legibilidad y disminuye la probabilidad de errores típicos de Java.
+\subsection{Android}
 
-\subsection*{Web}
+\begin{large}
 
-El portal administrativo se construye con \textbf{Astro}. Este framework genera HTML estático en la compilación y aplica hidratación parcial solo a los componentes que requieren interactividad, de modo que la carga inicial resulta ligera y accesible \cite{astro_docs2025}.
+La versión para Android se prediseñó en \textbf{Kotlin} con una arquitectura MVVM similar a la de iOS, aprovechando su sintaxis concisa, el manejo seguro de nulabilidad y las corrutinas para tareas asíncronas \cite{kotlin_lang2025}. El entorno de trabajo es \textbf{Android Studio} 2024.3.2 (Meerkat Feature Drop), que incluye emuladores configurables, herramientas para inspeccionar bases de datos y analizadores de rendimiento en tiempo real \cite{as2024_3_2}. En esta primera iteración el esqueleto del proyecto está preparado, aunque las funcionalidades principales se documentan para futuras versiones.
 
-Para la gestión de dependencias se utiliza \textbf{pnpm}, un gestor que comparte una caché global y evita duplicados en \textit{node\_modules}, lo que acelera las instalaciones \cite{pnpm_docs2025}. El despliegue se realiza en Firebase Hosting y la lógica de servidor reside en Cloud Functions escritas en TypeScript, lo que proporciona escalado automático sin necesidad de administrar infraestructura.
+\end{large}
 
-\subsection*{Servicios en la nube}
+\subsection{Web}
 
-La capa de backend y servicios gestionados se apoya en \textbf{Firebase}. Este conjunto de productos de Google aporta una base de datos NoSQL en tiempo real (Firestore), reglas de seguridad personalizables, autenticación multifactor y almacenamiento de archivos en Cloud Storage \cite{firebase_docs2025}. La lógica de servidor se desarrolla con Cloud Functions escritas en TypeScript, mientras que Firebase Hosting proporciona un despliegue estático con certificados TLS automáticos. Gracias a sus capacidades de escalado bajo demanda, la plataforma puede crecer sin intervención administrativa y sin inversiones iniciales en infraestructura.
+\begin{large}
 
-\subsection*{Control de versiones}
+El portal administrativo se desarrolla con \textbf{Astro}, que genera HTML estático en tiempo de compilación y aplica hidratación sólo donde se necesita, lo que reduce el tamaño inicial y mejora el rendimiento \cite{astro_docs2025}. Los estilos se gestionan con \textbf{TailwindCSS}, facilitando una personalización rápida y coherente sin escribir CSS extenso. Para instalar dependencias se usa \textbf{pnpm}, que acelera el proceso al compartir una caché global y evitar duplicados \cite{pnpm_docs2025}. El sitio se despliega en \textbf{Vercel}, integrando despliegues automáticos en cada fusión a la rama principal.
 
-El control de cambios se lleva a cabo con \textbf{Git}, sistema distribuido que mantiene un historial completo y permite revertir versiones con precisión \cite{git_book2023}. El repositorio se aloja en \textbf{GitHub}, plataforma que ofrece \textit{pull requests}, revisiones entre pares y flujos de integración y entrega continuas mediante GitHub Actions \cite{github_docs2025}. Cada confirmación ejecuta linters, pruebas y despliegues a canales de previsualización, lo que garantiza calidad continua y retroalimentación temprana.
+\end{large}
+
+\subsection{Servicios en la nube}
+
+\begin{large}
+
+Como backend se optó por \textbf{Firebase}, por su conjunto completo de servicios gestionados. \textit{Firestore} ofrece una base de datos NoSQL en tiempo real y escalable, mientras que \textit{Authentication} gestiona usuarios con correo y contraseña de forma sencilla. Aunque se planteó usar \textit{Cloud Functions} para tareas como generación de PDFs y almacenamiento, algunas de esas funciones quedaron para versiones posteriores debido a restricciones de coste \cite{firebase_docs2025}. Las reglas de Firestore garantizan seguridad tanto en lectura como en escritura, cumpliendo con el \gls{rgpd}.
+
+\end{large}
+
+\subsection{Control de versiones}
+
+\begin{large}
+
+El código se gestiona con \textbf{Git}, un sistema distribuido que conserva el historial completo y permite revertir cambios con precisión \cite{git_book2023}. El repositorio principal se aloja en \textbf{GitHub}, donde las \emph{pull requests} facilitan las revisiones entre pares. Así, cada confirmación se valida y despliega de forma controlada, asegurando una integración continua estable.
 
 \end{large}
