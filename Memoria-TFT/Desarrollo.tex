@@ -241,7 +241,7 @@ let renderer = UIGraphicsPDFRenderer(bounds: bounds, format: format)
 
   \item \textbf{Dibujar encabezados}\newline
   Dentro del bloque \textit{renderer.pdfData \{ ctx in …\}}, se escribe el título y los datos de empresa y cliente:
-  \begin{lstlisting}[language=swift, basicstyle=\ttfamily\small]]
+  \begin{lstlisting}[language=swift, basicstyle=\ttfamily\small]
 ctx.beginPage()
 "INVOICE".draw(at: CGPoint(x: bounds.midX-40, y:36),
                withAttributes: titleAttr)
