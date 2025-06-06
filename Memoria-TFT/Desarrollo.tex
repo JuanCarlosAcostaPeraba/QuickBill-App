@@ -224,51 +224,152 @@ ViewModels actúan como enlace entre modelos y vistas, y cada conjunto de vistas
 
 \begin{large}
 
-En el diseño original se consideró usar Cloud Functions para generar el PDF, pero para evitar costes adicionales se implementó en la app iOS. Se creó una función en el ViewModel de detalle o en un servicio dedicado:
+En el diseño original se consideró usar Cloud Functions para generar el PDF, pero para evitar costes adicionales se implementó en la app iOS, creando un servicio dedicado:
 
-\begin{verbatim}
+\begin{lstlisting}[language={swift}, caption={Servicio para generar PDF de facturas}]
 import UIKit
 import PDFKit
 
-func generatePDF(for invoice: Invoice) -> URL? {
-    let pageWidth: CGFloat = 595.2  // A4 ancho en puntos
-    let pageHeight: CGFloat = 841.8 // A4 alto en puntos
-    let pdfMetaData = [
-        kCGPDFContextCreator: "QuickBill",
-        kCGPDFContextAuthor: "QuickBillApp"
-    ]
-    let format = UIGraphicsPDFRendererFormat()
-    format.documentInfo = pdfMetaData as [String: Any]
-
-    let renderer = UIGraphicsPDFRenderer(bounds: CGRect(x: 0, y: 0, width: pageWidth, height: pageHeight), format: format)
-    let data = renderer.pdfData { (context) in
-        context.beginPage()
-        
-        // Ejemplo de dibujo de título y tabla básica
-        let titleFont = UIFont.systemFont(ofSize: 24, weight: .bold)
-        let textAttributes: [NSAttributedString.Key: Any] = [
-            .font: titleFont,
-            .foregroundColor: UIColor.black
-        ]
-        let title = "Factura \(invoice.id ?? "")"
-        title.draw(at: CGPoint(x: 72, y: 72), withAttributes: textAttributes)
-        
-        // Aquí se añadirían más líneas de texto con subtotales, impuestos, etc.
-        // ...
-    }
-
-    let documentsURL = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask)[0]
-    let pdfURL = documentsURL.appendingPathComponent("factura_\(invoice.id ?? \"\").pdf")
+struct InvoicePDFBuilder {
     
-    do {
-        try data.write(to: pdfURL)
-        return pdfURL
-    } catch {
-        print("Error al guardar PDF: \(error.localizedDescription)")
-        return nil
+    /// Devuelve la URL del PDF generado en el directorio *Documents*
+    static func createPDF(for invoice: Invoice,
+                          businessName: String,
+                          clientName: String,
+                          products: [ProductStack],
+                          productNames: [String: String]) throws -> URL {
+        
+        // 1) Canvas A4
+        let pdfMetaData = [
+            kCGPDFContextCreator: "QuickBill",
+            kCGPDFContextAuthor:  "QuickBill"
+        ]
+        let format = UIGraphicsPDFRendererFormat()
+        format.documentInfo = pdfMetaData as [String: Any]
+        
+        let pageRect = CGRect(x: 0, y: 0, width: 595, height: 842) // A4 @72 dpi
+        let renderer = UIGraphicsPDFRenderer(bounds: pageRect, format: format)
+        
+        let data = renderer.pdfData { ctx in
+            ctx.beginPage()
+            drawInvoice(invoice,
+                        businessName: businessName,
+                        clientName: clientName,
+                        products: products,
+                        productNames: productNames,
+                        in: pageRect)
+        }
+        
+        // 2) Guardar en Documents/Invoice-<id>.pdf
+        let docs = FileManager.default.urls(for: .documentDirectory,
+                                            in: .userDomainMask)[0]
+        let url = docs.appendingPathComponent("Invoice-\(invoice.id).pdf")
+        try data.write(to: url, options: .atomic)
+        return url
+    }
+    
+    // MARK: - Drawing helpers
+    private static func drawInvoice(_ inv: Invoice,
+                                    businessName: String,
+                                    clientName: String,
+                                    products: [ProductStack],
+                                    productNames: [String: String],
+                                    in rect: CGRect) {
+        // Fuentes
+        let titleFont   = UIFont.boldSystemFont(ofSize: 24)
+        let labelFont   = UIFont.systemFont(ofSize: 12)
+        let textFont    = UIFont.systemFont(ofSize: 12)
+        let boldFont    = UIFont.boldSystemFont(ofSize: 12)
+        
+        var y: CGFloat = 36
+        
+        // Title
+        "INVOICE".draw(at: CGPoint(x: rect.midX-40, y: y),
+                       withAttributes: [.font: titleFont])
+        y += 40
+        
+        // Company & Client blocks
+        func drawBlock(label: String, lines: [String]) {
+            label.uppercased().draw(at: CGPoint(x: 36, y: y),
+                                    withAttributes: [.font: boldFont])
+            y += 14
+            for line in lines {
+                line.draw(at: CGPoint(x: 42, y: y),
+                          withAttributes: [.font: textFont])
+                y += 14
+            }
+            y += 10
+        }
+        
+        drawBlock(label: "Your company",
+                  lines: [businessName])
+        drawBlock(label: "Bill to",
+                  lines: [clientName])
+        
+        // Invoice meta
+        "Invoice #\(inv.id)".draw(at: CGPoint(x: 400, y: 80),
+                                  withAttributes: [.font: boldFont])
+        "Issued: \(date(inv.issuedAt))".draw(at: CGPoint(x: 400, y: 94),
+                                             withAttributes: [.font: labelFont])
+        "Due:    \(date(inv.dueDate))".draw(at: CGPoint(x: 400, y: 108),
+                                            withAttributes: [.font: labelFont])
+        
+        y = max(y, 140)
+        // Table header
+        let colX: [CGFloat] = [36, 250, 330, 420, 500]
+        ["Description","Supply","Qty","Unit","Amount"].enumerated().forEach { idx, txt in
+            txt.draw(at: CGPoint(x: colX[idx], y: y),
+                     withAttributes: [.font: boldFont])
+        }
+        y += 16
+        UIColor.black.setStroke()
+        UIBezierPath(rect: CGRect(x: 36, y: y, width: 524, height: 1)).fill()
+        y += 6
+        
+        // Table rows
+        products.forEach { p in
+            let description = productNames[p.productId] ?? p.productId
+            let total = String(format: "%.2f", p.amount)
+            let unit  = String(format: "%.2f", p.amount / Double(p.quantity))
+            let cols = [
+                description,
+                date(p.supplyDate),
+                "\(p.quantity)",
+                unit,
+                total
+            ]
+            for (i, txt) in cols.enumerated() {
+                txt.draw(at: CGPoint(x: colX[i], y: y),
+                         withAttributes: [.font: textFont])
+            }
+            y += 14
+        }
+        
+        // Subtotals
+        y += 10
+        func amountRow(_ label: String, _ value: Double, bold: Bool = false) {
+            let attr: [NSAttributedString.Key: Any] = [.font: bold ? boldFont : textFont]
+            label.draw(at: CGPoint(x: 400, y: y), withAttributes: attr)
+            let val = String(format: "%.2f %@", value, inv.currency)
+            val.draw(at: CGPoint(x: 500 - (val as NSString).size(withAttributes: attr).width, y: y),
+                     withAttributes: attr)
+            y += 14
+        }
+        amountRow("Subtotal",  inv.subtotal)
+        amountRow("Tax",       inv.taxTotal)
+        amountRow("Discounts", inv.discounts)
+        UIBezierPath(rect: CGRect(x: 400, y: y, width: 160, height: 1)).fill()
+        y += 4
+        amountRow("TOTAL",     inv.totalAmount, bold: true)
+    }
+    
+    private static func date(_ d: Date) -> String {
+        let df = DateFormatter()
+        df.dateStyle = .short
+        return df.string(from: d)
     }
 }
-\end{verbatim}
+\end{lstlisting}
 
 Para la numeración, se utilizó el identificador único que Firestore asigna al documento. Así, cada factura ya cuenta con un número único sin necesidad de mantener un contador manual.
 
