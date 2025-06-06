@@ -117,24 +117,33 @@ Para iniciar el proyecto, se utilizó Xcode 16.3 con la plantilla de SwiftUI. Lo
   \item En Xcode, crear un nuevo proyecto seleccionando \emph{App} y, como lenguaje, \textbf{Swift} con interfaz \textbf{SwiftUI}.
   \item Descargar \texttt{GoogleService-Info.plist} desde la consola de Firebase y arrastrarlo al grupo raíz del proyecto en Xcode. Asegurarse de marcar la opción de agregarlo a todos los targets.
   \item Instalar el paquete oficial de Firebase mediante Swift Package Manager (\emph{File → Add Packages…}), usando la URL \url{https://github.com/firebase/firebase-ios-sdk.git}.
-  \item En el archivo \texttt{App.swift}, inicializar Firebase antes de cargar la escena principal:
-    \begin{verbatim}
+  \item En el archivo \texttt{QuickBillApp.swift}, inicializar Firebase antes de cargar la escena principal:
+    \begin{lstlisting}[language={swift}, caption={Inicialización de Firebase en QuickBillApp.swift}]
     import SwiftUI
     import FirebaseCore
-
+    
     @main
     struct QuickBillApp: App {
+        @StateObject private var auth = AuthViewModel()
+        @AppStorage("appLanguage") private var appLanguage: String = AppLanguage.english.rawValue
+        
         init() {
             FirebaseApp.configure()
         }
-
+        
         var body: some Scene {
             WindowGroup {
-                ContentView()
+                if auth.isSignedIn {
+                    MainTabView()
+                } else {
+                    StartView()
+                }
             }
+            .environmentObject(auth)
+            .environment(\.locale, Locale(identifier: appLanguage))
         }
     }
-    \end{verbatim}
+    \end{lstlisting}
   \item Configurar en la consola de Firebase el dominio de la app, activando Authentication con correo/contraseña.
 \end{enumerate}
 
