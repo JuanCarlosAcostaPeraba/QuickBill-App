@@ -1,7 +1,87 @@
 %----------------------------------------------------------
+% Capítulo 4 – Resultados
+%----------------------------------------------------------
+
+%----------------------------------------------------------
 \section{Resultado}
 %----------------------------------------------------------
+
+\begin{large}
+
+La versión actual de la aplicación cumple con los objetivos esenciales planteados en el Capítulo~1:
+\begin{itemize}
+    \item Gestión completa de facturas: creación, edición, filtrado por estado (\textit{Paid} / \textit{Pending} / \textit{Overdue}) y eliminación.
+    \item Catálogo de clientes y productos totalmente operativos.
+    \item Generación de PDF directamente en el dispositivo iOS, con numeración única basada en el \texttt{invoice.id} de Firestore.
+    \item Portal web accesible con tres vistas clave: gráfica de pagos mensuales, listado de morosos y tabla completa de facturas.
+    \item Despliegue continuo en Vercel, con certificados TLS automáticos.
+\end{itemize}
+
+\end{large}
+
+\subsection{Desviaciones respecto al plan inicial}
+
+\begin{large}
+
+\begin{itemize}
+    \item \textbf{Modo offline}: no llegó a implementarse por limitación de tiempo.
+    \item \textbf{App Android}: sólo se completó el esqueleto de proyecto.
+    \item \textbf{Cloud Functions y Cloud Storage}: sustituidos por generación y almacenamiento local de PDFs para evitar costes.
+\end{itemize}
+
+Aun así, el núcleo funcional se encuentra implementado y operativo, permitiendo emitir facturas y visualizar su estado desde cualquier lugar con conexión.
+
+\end{large}
+
+%----------------------------------------------------------
+\section{Conclusión de resultados}
+%----------------------------------------------------------
+
+\begin{large}
+
+El desarrollo de este proyecto ha puesto de manifiesto el esfuerzo que implica diseñar una plataforma coherente en todas sus capas. Desde la definición del modelo de datos en Firestore hasta la disposición final de cada botón en la pantalla, cada decisión ha requerido un equilibrio entre simplicidad de uso y robustez interna.
+
+\textbf{Arquitectura de la base de datos}
+
+El esquema jerárquico (\texttt{businesses\,/invoices\,/clients\,/employees\,/products}) resultó sencillo de consultar y asegurar, pero elegir una estructura que escalara sin duplicar datos supuso múltiples iteraciones. Hubo que considerar, por ejemplo, qué nivel de anidación permitía aplicar reglas de seguridad sin penalizar el rendimiento; o cómo traducir relaciones \emph{n\,:\,1} (una factura pertenece a un único cliente) a un modelo sin uniones nativas. El resultado es una base de datos que mantiene la coherencia y aísla correctamente la información de cada empresa.
+
+\textbf{Diseño minimalista de la app}
+
+Mostrar solo lo imprescindible en cada pantalla exigió agrupar operaciones y reducir opciones visibles. Se descartaron menús redundantes y se reorganizaron flujos para que el usuario pudiese emitir una factura en menos de un minuto: seleccionar cliente, añadir líneas de producto y pulsar “Guardar”. La navegación basada en pestañas (
+\textit{Home}, \textit{Invoices}, \textit{Clients}, \textit{Products}, \textit{Settings}) demostró ser la forma más intuitiva de acceso rápido, y el uso de colores (verde para \textit{Paid}, lila para \textit{Pending}, rojo para \textit{Overdue}) evita distracciones a la vez que señala el estado crítico de cada pago.
+
+\textbf{Lecciones aprendidas}
+
+\begin{itemize}
+  \item Separar la lógica de negocio en ViewModels y servicios facilita testear y añadir nuevas funciones sin efectos colaterales sobre la UI.
+  \item Definir las reglas de Firestore antes de implementar llamadas previene fugas de seguridad y reduce tiempo de depuración.
+  \item El minimalismo en interfaz no implica menos funcionalidad; implica esconder la complejidad hasta que sea necesaria.
+\end{itemize}
+
+En conjunto, la plataforma cumple su objetivo principal: ofrecer una solución de facturación ágil y comprensible. El trabajo invertido en la arquitectura de datos y la experiencia de usuario sienta una base sólida para continuar evolucionando la aplicación.
+
+\end{large}
+
+\break
 
 %----------------------------------------------------------
 \section{Trabajos futuros}
 %----------------------------------------------------------
+
+\begin{large}
+
+Como líneas de evolución se plantean diversas mejoras que consolidarían la plataforma y la harían competitiva frente a soluciones consolidadas:
+\begin{enumerate}
+  \item \textbf{Modo offline completo}.  Implementar caché local persistente (Core Data + Cloud Kit o SQLite) y un mecanismo de sincronización diferencial con Firestore. De esta forma, el usuario podría emitir facturas sin conexión y la reconciliación de cambios se ejecutaría en segundo plano cuando vuelva la red.
+  \item \textbf{OCR y lectura de códigos QR}.  Integrar Vision Kit para capturar facturas de proveedor o tickets y extraer automáticamente importes, fechas e IVA. Además, permitir la lectura de códigos QR europeos (Facturae o Factur-X) para precargar datos de cliente y líneas de producto.
+  \item \textbf{Exportación avanzada}.  Añadir exportación a CSV / Excel y conexión directa con herramientas de contabilidad (A3, Contasol, Holded) mediante APIs públicas. Esto facilitará auditorías y conciliaciones bancarias.
+  \item \textbf{Firma digital}.  Incluir un flujo opcional para firmar digitalmente la factura, asegurando integridad y no repudio.
+  \item \textbf{Automatización de envío}.  Configurar plantillas de correo y adjuntar el PDF firmado directamente desde la app, con opción de recordatorios automáticos a los 7 días y el día de vencimiento.
+  \item \textbf{Notificaciones proactivas}.  Enviar notificaciones push o correos cuando una factura vence, cuando el cliente visualiza el PDF o cuando se acerca el umbral de almacenamiento del plan gratuito.
+  \item \textbf{Refactorización Android}.  Retomar el esqueleto en Kotlin y completar la paridad funcional con iOS, usando Jetpack Compose y el mismo esquema de Firestore.
+  \item \textbf{Dashboard avanzado}.  Añadir nuevos gráficos comparativos y funciones de contabilidad.
+\end{enumerate}
+
+Estas mejoras ampliarían el alcance funcional y aportarían valor añadido a autónomos y pymes.
+
+\end{large}
