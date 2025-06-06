@@ -224,11 +224,11 @@ ViewModels actúan como enlace entre modelos y vistas, y cada conjunto de vistas
 
 \begin{large}
 
-En lugar de recurrir a Cloud Functions, la app genera el PDF de la factura localmente a través del servicio \texttt{InvoicePDFBuilder}. El proceso se resume a continuación; el código completo puede consultarse en el repositorio público.
+En lugar de recurrir a Cloud Functions, la app genera el PDF de la factura localmente a través del servicio \textit{InvoicePDFBuilder}. El proceso se resume a continuación; el código completo puede consultarse en el repositorio público.
 
 \begin{enumerate}
   \item \textbf{Crear el lienzo A4}\newline
-  Se instancia un \texttt{UIGraphicsPDFRenderer} con tamaño A4 y metadatos del documento:
+  Se instancia un \textit{UIGraphicsPDFRenderer} con tamaño A4 y metadatos del documento:
   \begin{lstlisting}[language=swift, basicstyle=\ttfamily\small]
 let bounds = CGRect(x: 0, y: 0, width: 595, height: 842) // A4 @72 dpi
 let format = UIGraphicsPDFRendererFormat()
@@ -240,7 +240,7 @@ let renderer = UIGraphicsPDFRenderer(bounds: bounds, format: format)
   \end{lstlisting}
 
   \item \textbf{Dibujar encabezados}\newline
-  Dentro del bloque \texttt{renderer.pdfData \{ ctx in …\}}, se escribe el título y los datos de empresa y cliente:
+  Dentro del bloque \textit{renderer.pdfData \{ ctx in …\}}, se escribe el título y los datos de empresa y cliente:
   \begin{lstlisting}[language=swift, basicstyle=\ttfamily\small]]
 ctx.beginPage()
 "INVOICE".draw(at: CGPoint(x: bounds.midX-40, y:36),
@@ -251,7 +251,7 @@ drawBlock(label: "Bill to", lines: [clientName])
   \end{lstlisting}
 
   \item \textbf{Renderizar la tabla de productos}\newline
-  Se imprime la cabecera y, para cada elemento de \texttt{products}, se dibujan descripción, cantidad, precio unitario y total.
+  Se imprime la cabecera y, para cada elemento de \textit{products}, se dibujan descripción, cantidad, precio unitario y total.
 
   \item \textbf{Calcular importes}\newline
   Al final se muestran subtotal, impuestos, descuentos y el TOTAL resaltado:
@@ -262,11 +262,11 @@ amountRow("Discounts", invoice.discounts)
 amountRow("TOTAL",     invoice.totalAmount, bold: true)
   \end{lstlisting}
 
-  \item \textbf{Guardar en \texttt{Documents}}\newline
-  El PDF resultante se escribe como \texttt{Invoice-<id>.pdf} en el sandbox de la app y se devuelve la URL para compartir o previsualizar.
+  \item \textbf{Guardar en \textit{Documents}}\newline
+  El PDF resultante se escribe como \textit{Invoice-<id>.pdf} en el sandbox de la app y se devuelve la URL para compartir o previsualizar.
 \end{enumerate}
 
-Este enfoque permite al usuario generar la factura al instante, sin incurrir en costes adicionales. Para la numeración se reutiliza el \texttt{invoice.id} otorgado por Firestore, garantizando unicidad sin contadores globales.
+Este enfoque permite al usuario generar la factura al instante, sin incurrir en costes adicionales. Para la numeración se reutiliza el \textit{invoice.id} otorgado por Firestore, garantizando unicidad sin contadores globales.
 
 \medskip
 \noindent\textit{Código completo:} \url{https://github.com/JuanCarlosAcostaPeraba/QuickBill-App/blob/main/iOS/QuickBill/Services/InvoicePDFBuilder.swift}
@@ -277,71 +277,55 @@ Este enfoque permite al usuario generar la factura al instante, sin incurrir en 
 
 \begin{large}
 
-La app utiliza Firebase Authentication con correo y contraseña. En la pantalla de inicio de sesión:
+La autenticación se resuelve con Firebase Auth usando correo y contraseña. La lógica de inicio de sesión se  encapsula en el \textit{SignInViewModel}, mientras que la interfaz se construye en \textit{SignInView}. A grandes rasgos:
 
-\begin{verbatim}
-import SwiftUI
-import FirebaseAuth
+\begin{itemize}
+  \item \textbf{SignInViewModel.swift}
+    \begin{itemize}
+      \item Propiedades \textit{@Published} para \textit{email}, \textit{password}, estado de alerta y bandera \textit{didSignIn}.
+      \item Método \textit{signIn()} que llama a \textit{Auth.auth().signIn(withEmail:password:)} dentro de una \textit{Task}\,/\textit{await} y gestiona los posibles errores.
+    \end{itemize}
+  \item \textbf{SignInView.swift}
+    \begin{itemize}
+      \item Campos \textit{TextField} y \textit{SecureField} enlazados al ViewModel.
+      \item Botón “Sign in” que ejecuta \textit{await viewModel.signIn()}; si la autenticación tiene éxito se activa \textit{auth.isSignedIn = true} (estado global mediante \textit{AuthViewModel}).
+      \item Enlace a la vista de registro y a la de “Forgot password”.
+    \end{itemize}
+\end{itemize}
 
-struct LoginView: View {
-    @State private var email: String = ""
-    @State private var password: String = ""
-    @State private var errorMessage: String?
-
-    var body: some View {
-        VStack(spacing: 16) {
-            TextField("Correo electrónico", text: $email)
-                .autocapitalization(.none)
-                .keyboardType(.emailAddress)
-                .padding()
-                .background(Color(.secondarySystemBackground))
-                .cornerRadius(8)
-            SecureField("Contraseña", text: $password)
-                .padding()
-                .background(Color(.secondarySystemBackground))
-                .cornerRadius(8)
-            if let error = errorMessage {
-                Text(error)
-                    .foregroundColor(.red)
-            }
-            Button(action: signIn) {
-                Text("Iniciar sesión")
-                    .frame(maxWidth: .infinity)
-                    .padding()
-                    .background(Color.blue)
-                    .foregroundColor(.white)
-                    .cornerRadius(8)
-            }
-        }
-        .padding()
-    }
-
-    func signIn() {
-        Auth.auth().signIn(withEmail: email, password: password) { result, error in
-            if let error = error {
-                self.errorMessage = error.localizedDescription
-            } else {
-                // Guardar uid en AppStorage o pasar a vista principal
-                // ...
-            }
-        }
+\noindent\textbf{Fragmento clave de autenticación:}
+\begin{lstlisting}[language=swift, basicstyle=\ttfamily\small, caption={SignInViewModel.signIn()}]
+@MainActor
+func signIn() async {
+    do {
+        _ = try await Auth.auth()
+            .signIn(withEmail: email, password: password)
+        didSignIn = true
+    } catch {
+        alertMessage = error.localizedDescription
+        showAlert = true
     }
 }
-\end{verbatim}
+\end{lstlisting}
 
-Una vez autenticado, el \textit{currentUser.uid} se utiliza en cada consulta para filtrar facturas del empleado correspondiente:
+\noindent Una vez autenticado, el UID se usa para filtrar datos, por ejemplo:
 
-\begin{verbatim}
-db.collection("businesses")
+\begin{lstlisting}[language=swift, basicstyle=\ttfamily\small]
+let uid = Auth.auth().currentUser?.uid ?? ""
+Firestore.firestore()
+  .collection("businesses")
   .document(businessId)
   .collection("invoices")
-  .whereField("employeeId", isEqualTo: Auth.auth().currentUser?.uid ?? "")
-  .getDocuments { snapshot, error in
-    // ...
-}
-\end{verbatim}
+  .whereField("employeeId", isEqualTo: uid)
+  .getDocuments { snapshot, error in /* … */ }
+\end{lstlisting}
+
+El código completo de la pantalla de inicio de sesión, así como del \textit{SignInViewModel}, puede consultarse en GitHub:
+\url{https://github.com/JuanCarlosAcostaPeraba/QuickBill-App/tree/main/iOS/QuickBill/Views/Authentication}
 
 \end{large}
+
+\subsection{Filtrado avanzado}
 
 \subsection{UI/UX y pruebas en simulador}
 
