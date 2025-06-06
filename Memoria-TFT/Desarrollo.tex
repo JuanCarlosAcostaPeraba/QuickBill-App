@@ -151,133 +151,30 @@ Con estos pasos, la aplicación iOS ya está conectada a Firebase y lista para c
 
 \end{large}
 
-\subsection{Modelo de datos}
-
-\begin{large}
-
-Dentro de \texttt{Models} se definieron las entidades principales como \texttt{Client}, \texttt{Employee}, \texttt{Invoice}, \texttt{InvoiceLineItem}, \texttt{InvoiceStatus}, \texttt{Product}, , \texttt{ProductStack} y \texttt{TabItem}. La Figura \ref{fig:models_folder} muestra cómo se organizan los archivos en Xcode.
-
-\begin{figure}[h]
-\centering
-\includegraphics[width=0.5\textwidth]{Ilustraciones/ios_models_folder.png}
-\caption{Estructura de la carpeta \texttt{Models} en Xcode}
-\label{fig:models_folder}
-\end{figure}
-
-Por ejemplo, \texttt{Invoice.swift} se definió así:
-
-\begin{lstlisting}[language={swift}, caption={Definición de \texttt{Invoice.swift}}]
-import Foundation
-
-struct Invoice: Identifiable {
-    let id: String
-    let companyName: String
-    let issuedAt: Date
-    let dueDate: Date
-    let amount: Double
-    let subtotal: Double
-    let taxTotal: Double
-    let discounts: Double
-    let totalAmount: Double
-    let currency: String
-    let clientId: String
-    let employeeId: String
-    let pdfURL: URL?
-    let deleteAfter: Date?
-    let productsStack: [ProductStack]
-    var status: InvoiceStatus
-}
-\end{lstlisting}
-
-\end{large}
-
-\subsection{Arquitectura MVVM en la práctica}
+\subsection{Arquitectura MVVM}
 
 \begin{large}
 
 Para organizar el proyecto, se crearon tres carpetas principales:
 
 \begin{itemize}
-  \item \texttt{Models}: contiene las estructuras de datos (\texttt{Invoice}, \texttt{Client}, \texttt{Business}, \texttt{Product}).
+  \item \texttt{Models}: se definieron las entidades principales como \texttt{Client}, \texttt{Employee}, \texttt{Invoice}, \texttt{InvoiceLineItem}, \texttt{InvoiceStatus}, \texttt{Product}, , \texttt{ProductStack} y \texttt{TabItem}. La Figura \ref{fig:models_folder} muestra cómo se organizan los archivos en Xcode.
   \item \texttt{ViewModels}: agrupa clases que extienden \texttt{ObservableObject} y exponen datos a las vistas.
   \item \texttt{Views}: contiene los archivos SwiftUI de cada pantalla.
 \end{itemize}
 
 A continuación se describe el flujo para la lista de facturas:
 
-\paragraph{InvoiceListViewModel.swift}
-\begin{verbatim}
-import Foundation
-import Combine
-import FirebaseFirestore
-
-class InvoiceListViewModel: ObservableObject {
-    @Published var invoices: [Invoice] = []
-    private var firestoreService = FirestoreService()
-    private var cancellables = Set<AnyCancellable>()
-    private let businessId: String
-
-    init(businessId: String) {
-        self.businessId = businessId
-        fetchInvoices()
-    }
-
-    func fetchInvoices() {
-        firestoreService.fetchInvoices(for: businessId) { [weak self] fetched in
-            DispatchQueue.main.async {
-                self?.invoices = fetched
-            }
-        }
-    }
-
-    func markAsPaid(invoice: Invoice) {
-        // Lógica para cambiar estado y actualizar Firestore
-    }
-
-    // Otros métodos: createInvoice, deleteInvoice, etc.
-}
-\end{verbatim}
-
-\paragraph{InvoiceListView.swift}
-\begin{verbatim}
-import SwiftUI
-
-struct InvoiceListView: View {
-    @StateObject private var viewModel: InvoiceListViewModel
-
-    init(businessId: String) {
-        _viewModel = StateObject(wrappedValue: InvoiceListViewModel(businessId: businessId))
-    }
-
-    var body: some View {
-        NavigationView {
-            List(viewModel.invoices) { invoice in
-                NavigationLink(destination: InvoiceDetailView(invoice: invoice)) {
-                    HStack {
-                        VStack(alignment: .leading) {
-                            Text("Factura \(invoice.id ?? "")")
-                                .font(.headline)
-                            Text("Total: \(invoice.totalAmount, specifier: \"%.2f\") \(invoice.currency)")
-                                .font(.subheadline)
-                        }
-                        Spacer()
-                        Text(invoice.status)
-                            .foregroundColor(invoice.status == "Paid" ? .green : .orange)
-                    }
-                }
-            }
-            .navigationTitle("Facturas")
-            .toolbar {
-                NavigationLink(destination: InvoiceFormView(businessId: businessId)) {
-                    Image(systemName: "plus")
-                }
-            }
-        }
-    }
-}
-\end{verbatim}
+% TODO
 
 De esta manera, el ViewModel maneja los datos y la vista solo se encarga de mostrarlos. Si los datos cambian en Firestore, la lista se actualiza automáticamente.
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.5\textwidth]{Ilustraciones/ios_models_folder.png}
+\caption{Estructura de la carpeta \texttt{Models} en Xcode}
+\label{fig:models_folder}
+\end{figure}
 
 \end{large}
 
