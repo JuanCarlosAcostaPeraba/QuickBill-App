@@ -151,92 +151,43 @@ Con estos pasos, la aplicación iOS ya está conectada a Firebase y lista para c
 
 \end{large}
 
-\subsection{Modelo de datos y servicios de Firestore}
+\subsection{Modelo de datos}
 
 \begin{large}
 
-En la carpeta \texttt{Models} se definieron las estructuras que representan las entidades principales: \texttt{Business}, \texttt{Employee}, \texttt{Client}, \texttt{Invoice} y \texttt{Product}. Un ejemplo de \texttt{Invoice.swift}:
+Dentro de \texttt{Models} se definieron las entidades principales como \texttt{Client}, \texttt{Employee}, \texttt{Invoice}, \texttt{InvoiceLineItem}, \texttt{InvoiceStatus}, \texttt{Product}, , \texttt{ProductStack} y \texttt{TabItem}. La Figura \ref{fig:models_folder} muestra cómo se organizan los archivos en Xcode.
 
-\begin{verbatim}
+\begin{figure}[h]
+\centering
+\includegraphics[width=0.5\textwidth]{Ilustraciones/ios_models_folder.png}
+\caption{Estructura de la carpeta \texttt{Models} en Xcode}
+\label{fig:models_folder}
+\end{figure}
+
+Por ejemplo, \texttt{Invoice.swift} se definió así:
+
+\begin{lstlisting}[language={swift}, caption={Definición de \texttt{Invoice.swift}}]
 import Foundation
-import FirebaseFirestoreSwift
 
-struct Invoice: Identifiable, Codable {
-    @DocumentID var id: String?
-    var issuedAt: Timestamp
-    var dueDate: Timestamp
-    var status: String        // "Paid", "Pending", "Overdue"
-    var subtotal: Double
-    var taxTotal: Double
-    var discounts: Double
-    var totalAmount: Double
-    var currency: String
-    var clientId: String
-    var employeeId: String
-    var pdfURL: String?
-    var deleteAfter: Timestamp?
-    
-    enum CodingKeys: String, CodingKey {
-        case id
-        case issuedAt
-        case dueDate
-        case status
-        case subtotal
-        case taxTotal
-        case discounts
-        case totalAmount
-        case currency
-        case clientId
-        case employeeId
-        case pdfURL
-        case deleteAfter
-    }
+struct Invoice: Identifiable {
+    let id: String
+    let companyName: String
+    let issuedAt: Date
+    let dueDate: Date
+    let amount: Double
+    let subtotal: Double
+    let taxTotal: Double
+    let discounts: Double
+    let totalAmount: Double
+    let currency: String
+    let clientId: String
+    let employeeId: String
+    let pdfURL: URL?
+    let deleteAfter: Date?
+    let productsStack: [ProductStack]
+    var status: InvoiceStatus
 }
-\end{verbatim}
-
-En \texttt{Services/FirestoreService.swift} se centralizó la lógica de acceso a Firestore. Ejemplo de función para obtener facturas:
-
-\begin{verbatim}
-import FirebaseFirestore
-import FirebaseFirestoreSwift
-
-class FirestoreService {
-    private let db = Firestore.firestore()
-
-    func fetchInvoices(for businessId: String, completion: @escaping ([Invoice]) -> Void) {
-        db.collection("businesses")
-          .document(businessId)
-          .collection("invoices")
-          .order(by: "issuedAt", descending: true)
-          .addSnapshotListener { snapshot, error in
-            guard let documents = snapshot?.documents else {
-                print("No documents or error: \(error?.localizedDescription ?? "")")
-                completion([])
-                return
-            }
-            let invoices = documents.compactMap { doc -> Invoice? in
-                try? doc.data(as: Invoice.self)
-            }
-            completion(invoices)
-        }
-    }
-
-    func createInvoice(_ invoice: Invoice, for businessId: String) {
-        do {
-            _ = try db.collection("businesses")
-                      .document(businessId)
-                      .collection("invoices")
-                      .addDocument(from: invoice)
-        } catch {
-            print("Error creando factura: \(error.localizedDescription)")
-        }
-    }
-
-    // Otras funciones: updateInvoiceStatus, deleteInvoice, fetchClients, etc.
-}
-\end{verbatim}
-
-De este modo, todos los ViewModels pueden invocar a \texttt{FirestoreService} para leer y escribir datos, sin repetir lógica de Firestore en varias partes del código.
+\end{lstlisting}
 
 \end{large}
 
