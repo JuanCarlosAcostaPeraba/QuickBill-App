@@ -242,6 +242,8 @@ El portal administrativo se desarrolla con \textbf{Astro}, que genera HTML está
 
 Como backend se optó por \textbf{Firebase}, por su conjunto completo de servicios gestionados. \textit{Firestore} ofrece una base de datos NoSQL en tiempo real y escalable, mientras que \textit{Authentication} gestiona usuarios con correo y contraseña de forma sencilla. Aunque se planteó usar \textit{Cloud Functions} para tareas como generación de PDFs y almacenamiento, algunas de esas funciones quedaron para versiones posteriores debido a restricciones de coste \cite{firebase_docs2025}. Las reglas de Firestore garantizan seguridad tanto en lectura como en escritura, cumpliendo con el \gls{rgpd}.
 
+Para el despliegue del portal web se eligió \textbf{Vercel}, una plataforma de hosting enfocada en sitios estáticos y Jamstack. Vercel ofrece despliegues automáticos a partir del repositorio de GitHub, gestión de dominios y certificados TLS integrados, así como funciones serverless ligeras si fueran necesarias \cite{vercel_docs2025}. Gracias a su integración continua y facilidad de configuración, el portal se publica con cada push a la rama principal, garantizando que la versión en producción esté siempre actualizada y optimizada.
+
 \end{large}
 
 \subsection{Control de versiones}
